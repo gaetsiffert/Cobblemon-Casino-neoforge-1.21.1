@@ -7,6 +7,10 @@ import java.util.Locale;
 
 public class TextUtils {
 
+    public static String formatWithCommas(long number) {
+        return NumberFormat.getInstance(Locale.US).format(number);
+    }
+
     public static String formatCompact(long number) {
         double value;
         String suffix;

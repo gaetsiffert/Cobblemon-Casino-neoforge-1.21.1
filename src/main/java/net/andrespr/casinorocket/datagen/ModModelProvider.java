@@ -51,6 +51,9 @@ public class ModModelProvider extends FabricModelProvider {
         blockStateModelGenerator.registerAxisRotated(ModBlocks.HEAVY_DIAMOND_PILLAR, TexturedModel.END_FOR_TOP_CUBE_COLUMN);
         blockStateModelGenerator.registerDoor(ModBlocks.DIAMOND_DOOR);
         blockStateModelGenerator.registerTrapdoor(ModBlocks.DIAMOND_TRAPDOOR);
+        BlockStateModelGenerator.BlockTexturePool condensedDiamondBlockPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.CONDENSED_DIAMOND_BLOCK);
+        BlockStateModelGenerator.BlockTexturePool chargedDiamondBlockPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.CHARGED_DIAMOND_BLOCK);
+        BlockStateModelGenerator.BlockTexturePool hyperchargedDiamondBlockPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
     }
 
     @Override
@@ -106,6 +109,12 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerator.register(ModItems.HEARTGOLD_GC_MUSIC_DISC, Models.GENERATED);
         itemModelGenerator.register(ModItems.EMERALD_GC_MUSIC_DISC, Models.GENERATED);
         itemModelGenerator.register(ModItems.PLATINUM_GC_MUSIC_DISC, Models.GENERATED);
+        // ITEM MODEL FOR ECONOMIES
+        itemModelGenerator.register(ModItems.DIAMOND_NUGGET, Models.GENERATED);
+        itemModelGenerator.register(ModItems.CHARGED_DIAMOND, Models.GENERATED);
+        itemModelGenerator.register(ModItems.HYPERCHARGED_DIAMOND, Models.GENERATED);
+        itemModelGenerator.register(ModItems.HANDFUL_OF_RELIC_COINS, Models.GENERATED);
+        itemModelGenerator.register(ModItems.STACK_OF_RELIC_COINS, Models.GENERATED);
     }
 
 }

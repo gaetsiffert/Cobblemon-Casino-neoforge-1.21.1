@@ -61,6 +61,16 @@
 
   "item.casinorocket.wallet": "Wallet",
 
+  "item.casinorocket.diamond_nugget": "Diamond Nugget",
+  "item.casinorocket.charged_diamond": "Charged Diamond",
+  "tooltip.casinorocket.charged_diamond": "Craft this with §64 Diamonds§r!",
+  "item.casinorocket.hypercharged_diamond": "HyperCharged Diamond",
+  "tooltip.casinorocket.hypercharged_diamond": "Craft this with §64 Charged Diamonds§r!",
+  "item.casinorocket.handful_of_relic_coins": "Handful of Relic Coins",
+  "tooltip.casinorocket.handful_of_relic_coins": "Craft this with §64 Relic Coins§r!",
+  "item.casinorocket.stack_of_relic_coins": "Stack of Relic Coins",
+  "tooltip.casinorocket.stack_of_relic_coins": "Craft this with §64 Handful of Relic Coins§r!",
+
   "block.casinorocket.cut_gold_block": "Cut Gold Block",
   "block.casinorocket.cut_gold_stairs": "Cut Gold Stairs",
   "block.casinorocket.cut_gold_slab": "Cut Gold Slab",
@@ -94,6 +104,9 @@
   "block.casinorocket.heavy_diamond_pillar": "Heavy Diamond Pillar",
   "block.casinorocket.diamond_door": "Diamond Door",
   "block.casinorocket.diamond_trapdoor": "Diamond Trapdoor",
+  "block.casinorocket.condensed_diamond_block": "Condensed Diamond Block",
+  "block.casinorocket.charged_diamond_block": "Charged Diamond Block",
+  "block.casinorocket.hypercharged_diamond_block": "Hypercharged Diamond Block",
 
   "block.casinorocket.pokemon_gacha_machine": "Pokemon Gacha Machine",
   "block.casinorocket.gacha_machine": "Item Gacha Machine",
@@ -106,7 +119,8 @@
   "itemgroup.casinorocket.casino_rocket_items": "Casino Rocket",
   "itemgroup.casinorocket.casino_rocket_blocks": "Casino Rocket Blocks",
 
-  "tooltip.casinorocket.chip": "§9Value:§r §6$%s§r",
+  "tooltip.casinorocket.chip_money": "§9Value:§r §6$%s§r",
+  "tooltip.casinorocket.chip_item": "§9Value:§r §6%s %s§r",
   "tooltip.casinorocket.pokemon_pin": "Get this §especial pokémon§r!",
   "tooltip.casinorocket.bill": "Press >§eRight Click§r< while sneaking to add to your balance!",
   "tooltip.casinorocket.wallet": "Press >§eRight Click§r< to open!",

@@ -1,4 +1,4 @@
-package net.andrespr.casinorocket.config;
+package net.andrespr.casinorocket.config.gachapon;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
@@ -8,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@Config(name = "pokemon_gachapon")
+@Config(name = "gachapon/pokemon_gachapon")
 public class PokemonGachaponConfig implements ConfigData {
 
     @CollapsibleObject

@@ -50,7 +50,10 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocks.DIAMOND_PILLAR)
                 .add(ModBlocks.HEAVY_DIAMOND_PILLAR)
                 .add(ModBlocks.DIAMOND_DOOR)
-                .add(ModBlocks.DIAMOND_TRAPDOOR);
+                .add(ModBlocks.DIAMOND_TRAPDOOR)
+                .add(ModBlocks.CONDENSED_DIAMOND_BLOCK)
+                .add(ModBlocks.CHARGED_DIAMOND_BLOCK)
+                .add(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
 
         getOrCreateTagBuilder(BlockTags.NEEDS_IRON_TOOL)
                 // ADDING GOLD BLOCKS
@@ -86,7 +89,10 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocks.DIAMOND_PILLAR)
                 .add(ModBlocks.HEAVY_DIAMOND_PILLAR)
                 .add(ModBlocks.DIAMOND_DOOR)
-                .add(ModBlocks.DIAMOND_TRAPDOOR);
+                .add(ModBlocks.DIAMOND_TRAPDOOR)
+                .add(ModBlocks.CONDENSED_DIAMOND_BLOCK)
+                .add(ModBlocks.CHARGED_DIAMOND_BLOCK)
+                .add(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
 
         getOrCreateTagBuilder(BlockTags.WALLS)
                 .add(ModBlocks.GOLD_BRICK_WALL)

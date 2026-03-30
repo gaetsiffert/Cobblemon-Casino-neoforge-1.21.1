@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 
 import java.util.Arrays;
 
-public record SlotConfigSyncS2CPayload(boolean debug, int reelSize, int[] reel1, int[] reel2, int[] reel3,
+public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reelSize, int[] reel1, int[] reel2, int[] reel3,
                                        int[] betValues, int mode1, int mode2, int mode3, long hash) implements CustomPayload {
 
     public static final Identifier ID_RAW = Identifier.of(CasinoRocket.MOD_ID, "slot_cfg_sync");
@@ -20,6 +20,7 @@ public record SlotConfigSyncS2CPayload(boolean debug, int reelSize, int[] reel1,
 
     private static void write(SlotConfigSyncS2CPayload p, RegistryByteBuf buf) {
         buf.writeBoolean(p.debug());
+        buf.writeBoolean(p.useMoney());
         buf.writeInt(p.reelSize());
 
         writeIntArray(buf, p.reel1());
@@ -37,6 +38,7 @@ public record SlotConfigSyncS2CPayload(boolean debug, int reelSize, int[] reel1,
 
     private static SlotConfigSyncS2CPayload read(RegistryByteBuf buf) {
         boolean debug = buf.readBoolean();
+        boolean useMoney = buf.readBoolean();
         int reelSize = buf.readInt();
 
         int[] r1 = readIntArray(buf);
@@ -51,7 +53,7 @@ public record SlotConfigSyncS2CPayload(boolean debug, int reelSize, int[] reel1,
 
         long hash = buf.readLong();
 
-        return new SlotConfigSyncS2CPayload(debug, reelSize, r1, r2, r3, betValues, mode1, mode2, mode3, hash);
+        return new SlotConfigSyncS2CPayload(debug, useMoney, reelSize, r1, r2, r3, betValues, mode1, mode2, mode3, hash);
     }
 
     private static void writeIntArray(RegistryByteBuf buf, int[] arr) {
@@ -72,29 +74,32 @@ public record SlotConfigSyncS2CPayload(boolean debug, int reelSize, int[] reel1,
     // ===== Helpers to build from server state =====
     public static SlotConfigSyncS2CPayload fromServer() {
         var cfg = CasinoRocket.CONFIG.slotMachine;
+        boolean useMoney = CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive();
 
         SlotSymbol[][] strips = net.andrespr.casinorocket.games.slot.SlotReels.STRIPS;
         int[] r1 = toOrdinalArray(strips[0]);
         int[] r2 = toOrdinalArray(strips[1]);
         int[] r3 = toOrdinalArray(strips[2]);
 
-        int[] bets = cfg.betValues.stream().mapToInt(Integer::intValue).toArray();
+        int[] bets = (useMoney ? cfg.bet_amounts_in_money : cfg.bet_amounts_in_items)
+                .stream().mapToInt(Integer::intValue).toArray();
 
         long hash = Arrays.hashCode(r1) * 31L * 31L + Arrays.hashCode(r2) * 31L + Arrays.hashCode(r3);
 
         hash = hash * 31L + Arrays.hashCode(bets);
-        hash = hash * 31L + cfg.betMultipliers.mode1;
-        hash = hash * 31L + cfg.betMultipliers.mode2;
-        hash = hash * 31L + cfg.betMultipliers.mode3;
+        hash = hash * 31L + cfg.bet_multipliers.mode1;
+        hash = hash * 31L + cfg.bet_multipliers.mode2;
+        hash = hash * 31L + cfg.bet_multipliers.mode3;
         hash = hash * 31L + cfg.reels.reelSize;
 
         return new SlotConfigSyncS2CPayload(
                 cfg.debug,
+                useMoney,
                 cfg.reels.reelSize,
                 r1, r2, r3, bets,
-                cfg.betMultipliers.mode1,
-                cfg.betMultipliers.mode2,
-                cfg.betMultipliers.mode3,
+                cfg.bet_multipliers.mode1,
+                cfg.bet_multipliers.mode2,
+                cfg.bet_multipliers.mode3,
                 hash
         );
     }

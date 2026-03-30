@@ -1,6 +1,6 @@
 package net.andrespr.casinorocket.games.slot;
 
-import net.andrespr.casinorocket.config.SlotMachineConfig;
+import net.andrespr.casinorocket.config.machines.SlotMachineConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;

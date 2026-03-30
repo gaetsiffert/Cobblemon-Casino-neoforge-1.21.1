@@ -152,6 +152,17 @@ public class ModBlocks {
     public static final Block DIAMOND_TRAPDOOR = registerBlock("diamond_trapdoor",
             new TrapdoorBlock(BlockSetType.GOLD, AbstractBlock.Settings.copy(CUT_DIAMOND_BLOCK).nonOpaque()));
 
+    // ECONOMY
+
+    public static final Block CONDENSED_DIAMOND_BLOCK = registerBlock("condensed_diamond_block",
+            new Block(AbstractBlock.Settings.copy(Blocks.DIAMOND_BLOCK)));
+
+    public static final Block CHARGED_DIAMOND_BLOCK = registerBlock("charged_diamond_block",
+            new Block(AbstractBlock.Settings.copy(Blocks.DIAMOND_BLOCK)));
+
+    public static final Block HYPERCHARGED_DIAMOND_BLOCK = registerBlock("hypercharged_diamond_block",
+            new Block(AbstractBlock.Settings.copy(Blocks.DIAMOND_BLOCK)));
+
     // ENTITIES
 
     public static final Block GACHA_MACHINE = registerBlock("gacha_machine",

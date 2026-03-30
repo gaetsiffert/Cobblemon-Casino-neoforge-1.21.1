@@ -1,7 +1,9 @@
 package net.andrespr.casinorocket.block.custom;
 
 import com.mojang.serialization.MapCodec;
+import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.block.entity.custom.ChipTableEntity;
+import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -61,7 +63,7 @@ public class ChipTableBlock extends BlockWithEntity implements BlockEntityProvid
     // === INTERACTION ===
     @Override
     protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if(world.getBlockEntity(pos) instanceof ChipTableEntity chipTableEntity) {
+        if(!world.isClient && world.getBlockEntity(pos) instanceof ChipTableEntity chipTableEntity) {
             player.openHandledScreen(chipTableEntity);
             return ActionResult.CONSUME;
         }

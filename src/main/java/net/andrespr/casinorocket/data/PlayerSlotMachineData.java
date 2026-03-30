@@ -1,6 +1,5 @@
 package net.andrespr.casinorocket.data;
 
-import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.games.slot.SlotMachineConstants;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -10,19 +9,15 @@ import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class PlayerSlotMachineData extends PersistentState {
 
     private static final String STORAGE_KEY = "casinorocket_slot_machine_data";
 
     private final Map<UUID, Long> balances = new HashMap<>();
-    private final Map<UUID, Integer> betBase = new HashMap<>();
+    private final Map<UUID, Integer> betIndex = new HashMap<>();
+    private final Map<UUID, Integer> betBaseLegacy = new HashMap<>();
     private final Map<UUID, Integer> linesMode = new HashMap<>();
 
     private final Map<UUID, Long> totalDeposited = new HashMap<>();
@@ -31,7 +26,7 @@ public class PlayerSlotMachineData extends PersistentState {
     private final Map<UUID, Long> lastWin = new HashMap<>();
     private final Map<UUID, Long> totalSpent = new HashMap<>();
 
-    private static final int DATA_VERSION_CURRENT = 2; // súbelo cuando quieras forzar reset
+    private static final int DATA_VERSION_CURRENT = 2;
     private int dataVersion = DATA_VERSION_CURRENT;
 
     public static PlayerSlotMachineData get(MinecraftServer server) {
@@ -50,9 +45,9 @@ public class PlayerSlotMachineData extends PersistentState {
         balances.forEach((uuid, val) -> balTag.putLong(uuid.toString(), val));
         nbt.put("balances", balTag);
 
-        NbtCompound betTag = new NbtCompound();
-        betBase.forEach((uuid, val) -> betTag.putInt(uuid.toString(), val));
-        nbt.put("betBase", betTag);
+        NbtCompound betIndexTag = new NbtCompound();
+        betIndex.forEach((uuid, val) -> betIndexTag.putInt(uuid.toString(), val));
+        nbt.put("betIndex", betIndexTag);
 
         NbtCompound linesTag = new NbtCompound();
         linesMode.forEach((uuid, val) -> linesTag.putInt(uuid.toString(), val));
@@ -94,11 +89,18 @@ public class PlayerSlotMachineData extends PersistentState {
             });
         }
 
-        if (nbt.contains("betBase", NbtElement.COMPOUND_TYPE)) {
+        if (nbt.contains("betIndex", NbtElement.COMPOUND_TYPE)) {
+            NbtCompound bi = nbt.getCompound("betIndex");
+            bi.getKeys().forEach(key -> {
+                try { data.betIndex.put(UUID.fromString(key), bi.getInt(key)); } catch (Exception ignored) {}
+            });
+        } else if (nbt.contains("betBase", NbtElement.COMPOUND_TYPE)) {
             NbtCompound bb = nbt.getCompound("betBase");
             bb.getKeys().forEach(key -> {
-                try { data.betBase.put(UUID.fromString(key), bb.getInt(key)); } catch (Exception ignored) {}
+                try { data.betBaseLegacy.put(UUID.fromString(key), bb.getInt(key)); } catch (Exception ignored) {}
             });
+            data.migrateBetBaseToIndex();
+            data.markDirty();
         }
 
         if (nbt.contains("linesMode", NbtElement.COMPOUND_TYPE)) {
@@ -146,14 +148,31 @@ public class PlayerSlotMachineData extends PersistentState {
         resetSettingsToDefault();
     }
 
+    private void migrateBetBaseToIndex() {
+        List<Integer> bets = SlotMachineConstants.betValues();
+        int max = Math.max(0, bets.size() - 1);
+
+        for (var e : betBaseLegacy.entrySet()) {
+            UUID id = e.getKey();
+            int oldValue = e.getValue();
+
+            int idx = bets.indexOf(oldValue);
+            if (idx < 0) idx = 0;
+            if (idx > max) idx = max;
+
+            betIndex.put(id, idx);
+        }
+
+        betBaseLegacy.clear();
+    }
+
     private void resetSettingsToDefault() {
-        int defaultBet = SlotMachineConstants.defaultBetBase();
         int defaultMode = SlotMachineConstants.defaultLinesMode();
 
         Set<UUID> players = getAllKnownPlayers();
 
         for (UUID id : players) {
-            betBase.put(id, defaultBet);
+            betIndex.put(id, 0);
             linesMode.put(id, defaultMode);
         }
     }
@@ -164,7 +183,19 @@ public class PlayerSlotMachineData extends PersistentState {
     }
 
     public int getBetBase(UUID id) {
-        return betBase.getOrDefault(id, SlotMachineConstants.defaultBetBase());
+        List<Integer> bets = SlotMachineConstants.betValues();
+        if (bets.isEmpty()) return SlotMachineConstants.defaultBetBase();
+
+        int idx = betIndex.getOrDefault(id, 0);
+        idx = Math.max(0, Math.min(idx, bets.size() - 1));
+
+        return bets.get(idx);
+    }
+
+    public int getBetIndex(UUID id) {
+        int idx = betIndex.getOrDefault(id, 0);
+        int max = Math.max(0, SlotMachineConstants.betValues().size() - 1);
+        return Math.max(0, Math.min(idx, max));
     }
 
     public int getLinesMode(UUID id) {
@@ -203,14 +234,25 @@ public class PlayerSlotMachineData extends PersistentState {
         s.addAll(highestWin.keySet());
         s.addAll(lastWin.keySet());
         s.addAll(totalSpent.keySet());
-        s.addAll(betBase.keySet());
+        s.addAll(betIndex.keySet());
         s.addAll(linesMode.keySet());
         return s;
     }
 
     // === SETTERS ===
-    public void setBetBase(UUID id, int base) {
-        betBase.put(id, base);
+    public void setBetBase(UUID id, int baseValue) {
+        List<Integer> bets = SlotMachineConstants.betValues();
+        int idx = bets.indexOf(baseValue);
+        if (idx < 0) idx = 0;
+
+        betIndex.put(id, idx);
+        markDirty();
+    }
+
+    public void setBetIndex(UUID id, int index) {
+        int max = Math.max(0, SlotMachineConstants.betValues().size() - 1);
+        int idx = Math.max(0, Math.min(index, max));
+        betIndex.put(id, idx);
         markDirty();
     }
 

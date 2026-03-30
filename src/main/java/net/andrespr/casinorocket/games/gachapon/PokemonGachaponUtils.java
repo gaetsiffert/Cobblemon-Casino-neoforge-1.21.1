@@ -1,7 +1,7 @@
 package net.andrespr.casinorocket.games.gachapon;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.andrespr.casinorocket.config.PokemonGachaponConfig;
+import net.andrespr.casinorocket.config.gachapon.PokemonGachaponConfig;
 import net.andrespr.casinorocket.util.CobblemonUtils;
 import net.andrespr.casinorocket.util.TextUtils;
 import net.minecraft.text.MutableText;

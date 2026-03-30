@@ -107,6 +107,20 @@ public final class ModGuiTextures {
     public static final Identifier CARD_BOTTOM =
             id("textures/gui/common/cards/card_bottom.png"); // 24x32
 
+    // === ECONOMY ===
+    public static final Identifier COBBLEDOLLARS =
+            id("textures/gui/common/economy/cobbledollars.png");
+    public static final Identifier COBBLEDOLLARS_GREEN =
+            id("textures/gui/common/economy/cobbledollars_green.png");
+    public static final Identifier DIAMOND =
+            id("textures/gui/common/economy/diamond.png");
+    public static final Identifier DIAMOND_GREEN =
+            id("textures/gui/common/economy/diamond_green.png");
+    public static final Identifier RELIC_COIN =
+            id("textures/gui/common/economy/relic_coin.png");
+    public static final Identifier RELIC_COIN_GREEN =
+            id("textures/gui/common/economy/relic_coin_green.png");
+
     // === MISC ===
     public static final Identifier LINES_LAYOUT =
             Identifier.of(CasinoRocket.MOD_ID, "textures/gui/common/misc/lines_layout.png");

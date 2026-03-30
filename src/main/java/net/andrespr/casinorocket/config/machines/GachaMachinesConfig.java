@@ -1,4 +1,4 @@
-package net.andrespr.casinorocket.config;
+package net.andrespr.casinorocket.config.machines;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-@Config(name = "gacha_machines")
+@Config(name = "machines/gacha_machines")
 public class GachaMachinesConfig implements ConfigData {
 
     @CollapsibleObject

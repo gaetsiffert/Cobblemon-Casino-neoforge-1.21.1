@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.screen.custom.blackjack;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.games.blackjack.BlackjackAction;
 import net.andrespr.casinorocket.games.blackjack.BlackjackPhase;
 import net.andrespr.casinorocket.games.blackjack.BlackjackRules;
@@ -176,6 +177,22 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
         drawDealerCards(context, x, y, this.dealerCards);
         drawPlayerCards(context, x, y, this.playerCards);
+
+        if (CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive()) {
+            context.drawTexture(ModGuiTextures.COBBLEDOLLARS, x + 132, y + 18, 0, 0, 12, 12, 12,12);
+            context.drawTexture(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12,12);
+            context.drawTexture(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12,12);
+        }
+        if (CasinoRocket.CONFIG.generalConfig.isRelicCoinActive()) {
+            context.drawTexture(ModGuiTextures.RELIC_COIN, x + 132, y + 18, 0, 0, 12, 12, 12,12);
+            context.drawTexture(ModGuiTextures.RELIC_COIN_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12,12);
+            context.drawTexture(ModGuiTextures.RELIC_COIN_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12,12);
+        }
+        if (CasinoRocket.CONFIG.generalConfig.isDiamondActive()) {
+            context.drawTexture(ModGuiTextures.DIAMOND, x + 132, y + 18, 0, 0, 12, 12, 12, 12);
+            context.drawTexture(ModGuiTextures.DIAMOND_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12, 12);
+            context.drawTexture(ModGuiTextures.DIAMOND_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12, 12);
+        }
     }
 
     @Override

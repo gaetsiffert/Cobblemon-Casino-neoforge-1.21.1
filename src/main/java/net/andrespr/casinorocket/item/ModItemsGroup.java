@@ -28,6 +28,12 @@ public class ModItemsGroup {
                         entries.add(ModItems.GOLD_CHIP);
                         entries.add(ModItems.DIAMOND_CHIP);
                         entries.add(ModItems.NETHERITE_CHIP);
+                        // ECONOMY
+                        entries.add(ModItems.DIAMOND_NUGGET);
+                        entries.add(ModItems.CHARGED_DIAMOND);
+                        entries.add(ModItems.HYPERCHARGED_DIAMOND);
+                        entries.add(ModItems.HANDFUL_OF_RELIC_COINS);
+                        entries.add(ModItems.STACK_OF_RELIC_COINS);
                         // COINS
                         entries.add(ModItems.COPPER_COIN);
                         entries.add(ModItems.IRON_COIN);
@@ -112,6 +118,9 @@ public class ModItemsGroup {
                         entries.add(ModBlocks.HEAVY_DIAMOND_PILLAR);
                         entries.add(ModBlocks.DIAMOND_DOOR);
                         entries.add(ModBlocks.DIAMOND_TRAPDOOR);
+                        entries.add(ModBlocks.CONDENSED_DIAMOND_BLOCK);
+                        entries.add(ModBlocks.CHARGED_DIAMOND_BLOCK);
+                        entries.add(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
                         // GACHA MACHINES
                         entries.add(ModBlocks.POKEMON_GACHA_MACHINE);
                         entries.add(ModBlocks.GACHA_MACHINE);

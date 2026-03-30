@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.screen.custom.common;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.network.c2s.common.DoBetC2SPayload;
 import net.andrespr.casinorocket.screen.ModGuiTextures;
 import net.andrespr.casinorocket.screen.custom.CasinoMachineScreen;
@@ -55,6 +56,13 @@ public class BetScreen extends CasinoMachineScreen<BetScreenHandler> {
         int y = (height - backgroundHeight) /2;
 
         context.drawTexture(ModGuiTextures.BET_GUI, x, y, 0, 0, backgroundWidth, backgroundHeight);
+
+        if (CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive())
+        { context.drawTexture(ModGuiTextures.COBBLEDOLLARS, x + 112, y + 2, 0, 0, 12, 12, 12,12); }
+        if (CasinoRocket.CONFIG.generalConfig.isRelicCoinActive())
+        { context.drawTexture(ModGuiTextures.RELIC_COIN, x + 112, y + 2, 0, 0, 12, 12, 12,12); }
+        if (CasinoRocket.CONFIG.generalConfig.isDiamondActive())
+        { context.drawTexture(ModGuiTextures.DIAMOND, x + 112, y + 2, 0, 0, 12, 12, 12, 12); }
     }
 
     @Override

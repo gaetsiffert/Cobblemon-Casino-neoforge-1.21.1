@@ -1,7 +1,7 @@
 package net.andrespr.casinorocket.games.gachapon;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.andrespr.casinorocket.config.PlushiesGachaponConfig;
+import net.andrespr.casinorocket.config.gachapon.PlushiesGachaponConfig;
 import net.andrespr.casinorocket.util.TextUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

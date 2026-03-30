@@ -22,7 +22,7 @@ public final class SlotConfigSyncReceiver {
                 SlotSymbol[] r3 = fromOrdinals(payload.reel3(), symbols);
 
                 SlotReels.applySyncedStrips(payload.reelSize(), r1, r2, r3);
-                SlotClientSynced.apply(payload.debug(), payload.betValues(), payload.mode1(), payload.mode2(), payload.mode3());
+                SlotClientSynced.apply(payload.debug(), payload.useMoney(), payload.betValues(), payload.mode1(), payload.mode2(), payload.mode3());
                 LAST_HASH = payload.hash();
             });
         });

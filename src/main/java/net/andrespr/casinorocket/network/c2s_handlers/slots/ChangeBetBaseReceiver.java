@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ChangeBetBaseReceiver {
@@ -21,20 +22,20 @@ public class ChangeBetBaseReceiver {
         PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);
         UUID uuid = player.getUuid();
 
-        int current = storage.getBetBase(uuid);
+        List<Integer> bets = SlotMachineConstants.betValues();
+        if (bets.isEmpty()) return;
 
-        int index = SlotMachineConstants.betValues().indexOf(current);
-        if (index == -1) index = 0;
+        int index = storage.getBetIndex(uuid);
 
         if (payload.increase()) {
-            if (index < SlotMachineConstants.betValues().size() - 1) index++;
+            if (index < bets.size() - 1) index++;
         } else {
             if (index > 0) index--;
         }
 
-        int newBase = SlotMachineConstants.betValues().get(index);
-        storage.setBetBase(uuid, newBase);
+        storage.setBetIndex(uuid, index);
 
+        int newBase = bets.get(index);
         long balance = storage.getBalance(uuid);
         int lines = storage.getLinesMode(uuid);
 

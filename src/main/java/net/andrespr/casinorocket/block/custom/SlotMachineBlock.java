@@ -100,10 +100,6 @@ public class SlotMachineBlock extends BlockWithEntity implements BlockEntityProv
                 }
 
                 player.openHandledScreen(slotMachineEntity);
-                ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
-                    SlotConfigSyncS2CPayload payload = SlotConfigSyncS2CPayload.fromServer();
-                    ServerPlayNetworking.send(handler.player, payload);
-                });
                 return ActionResult.CONSUME;
 
             }

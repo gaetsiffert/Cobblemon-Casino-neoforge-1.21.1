@@ -5,7 +5,6 @@ import net.andrespr.casinorocket.item.custom.ChipItem;
 import net.andrespr.casinorocket.network.s2c.sender.MachineBalanceSender;
 import net.andrespr.casinorocket.screen.ModScreenHandlers;
 import net.andrespr.casinorocket.screen.opening.CommonMachineOpenData;
-import net.andrespr.casinorocket.screen.opening.SlotMachineOpenData;
 import net.andrespr.casinorocket.screen.widget.BetSlot;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
 import net.minecraft.entity.player.PlayerEntity;

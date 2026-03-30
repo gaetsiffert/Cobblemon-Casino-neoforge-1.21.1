@@ -29,8 +29,7 @@
 		"minecraft": "~1.21.1",
 		"java": ">=21",
 		"fabric-api": "*",
-        "cobblemon": ">=1.6.1",
-        "cobbledollars": ">=2.0.0+Beta-5.1"
+        "cobblemon": ">=1.6.1"
 	},
 	"suggests": {
 	}

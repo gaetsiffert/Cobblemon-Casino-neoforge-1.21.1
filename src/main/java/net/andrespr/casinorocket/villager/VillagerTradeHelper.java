@@ -99,7 +99,13 @@ public class VillagerTradeHelper {
     public static void makeMoneyToChipOffer(NbtList trades, ChipItem chip) {
         String chipId = Registries.ITEM.getId(chip).toString();
         String value = String.valueOf(chip.getValue());
-        trades.add(makeOffer(chipId,value));
+        trades.add(makeOffer(chipId, value));
+    }
+
+    public static void makeItemToChipOffer(NbtList trades, ChipItem chip) {
+        String chipId = Registries.ITEM.getId(chip).toString();
+        MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(chip.getItem(), chip.getValue());
+        trades.add(makeVanillaOffer(itemResult.item(), Math.toIntExact(itemResult.amount()), chipId, 1));
     }
 
     public static void makeChipToMoneyOffer(NbtList trades, ChipItem chip) {
@@ -107,6 +113,12 @@ public class VillagerTradeHelper {
         MoneyCalculator.MoneyResult result = MoneyCalculator.calculateDenomination(chip.getValue());
         String billId = Registries.ITEM.getId(result.billType()).toString();
         trades.add(makeVanillaOffer(chipId, 1, billId, result.amount()));
+    }
+
+    public static void makeChipToItemOffer(NbtList trades, ChipItem chip) {
+        String chipId = Registries.ITEM.getId(chip).toString();
+        MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(chip.getItem(), chip.getValue());
+        trades.add(makeVanillaOffer(chipId, 1, itemResult.item(), Math.toIntExact(itemResult.amount())));
     }
 
     public static void makeInCashOffer(NbtList trades, BillItem bill) {

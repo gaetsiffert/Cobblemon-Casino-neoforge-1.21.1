@@ -1,15 +1,19 @@
 package net.andrespr.casinorocket.item;
 
 import net.andrespr.casinorocket.CasinoRocket;
+import net.andrespr.casinorocket.block.ModBlocks;
 import net.andrespr.casinorocket.item.custom.*;
 import net.andrespr.casinorocket.sound.ModSounds;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ModItems {
 
@@ -101,6 +105,21 @@ public class ModItems {
 
     public static final WalletItem WALLET = registerCustomItem("wallet", new WalletItem(new Item.Settings()));
 
+    public static final Item DIAMOND_NUGGET = registerItem("diamond_nugget", new Item(new Item.Settings()));
+    public static final TooltipItem CHARGED_DIAMOND = registerItemWithTooltip("charged_diamond", new TooltipItem(new Item.Settings()));
+    public static final TooltipItem HYPERCHARGED_DIAMOND = registerItemWithTooltip("hypercharged_diamond", new TooltipItem(new Item.Settings()));
+
+    public static final Map<Item, Long> DIAMOND_VALUES = Map.of(
+            Items.DIAMOND, 1L,
+            CHARGED_DIAMOND, 4L,
+            Items.DIAMOND_BLOCK, 9L,
+            HYPERCHARGED_DIAMOND, 16L,
+            ModBlocks.CONDENSED_DIAMOND_BLOCK.asItem(), 81L
+    );
+
+    public static final TooltipItem HANDFUL_OF_RELIC_COINS = registerItemWithTooltip("handful_of_relic_coins", new TooltipItem(new Item.Settings()));
+    public static final TooltipItem STACK_OF_RELIC_COINS = registerItemWithTooltip("stack_of_relic_coins", new TooltipItem(new Item.Settings()));
+
     public static final Item FIRERED_GC_MUSIC_DISC = registerItem("firered_gc_music_disc",
             new Item(new Item.Settings().jukeboxPlayable(ModSounds.FIRERED_GC_KEY).maxCount(1)));
     public static final Item HEARTGOLD_GC_MUSIC_DISC = registerItem("heartgold_gc_music_disc",
@@ -114,19 +133,44 @@ public class ModItems {
         return Registry.register(Registries.ITEM, Identifier.of(CasinoRocket.MOD_ID, name), item);
     }
 
+    private static TooltipItem registerItemWithTooltip(String name, TooltipItem item) {
+        return Registry.register(Registries.ITEM, Identifier.of(CasinoRocket.MOD_ID, name), item);
+    }
+
     private static <T extends Item> T registerCustomItem(String name, T item) {
         return Registry.register(Registries.ITEM, Identifier.of(CasinoRocket.MOD_ID, name), item);
     }
 
     private static ChipItem registerChipItem(String name) {
-        long value = CasinoRocket.CONFIG.casinoChips.getChipPrice(name);
-        ChipItem newChipitem = new ChipItem(new Item.Settings(), value);
+        String typeRaw = CasinoRocket.CONFIG.generalConfig.economy_type;
+        String type = (typeRaw == null ? "" : typeRaw.trim().toLowerCase());
+        long value;
+        switch (type) {
+            case "cobbledollars", "cobbledollar"
+                    -> value = CasinoRocket.CONFIG.generalConfig.getChipPriceInMoney(name);
+            case "diamonds", "diamond", "relic_coins", "relic_coin"
+                    -> value = CasinoRocket.CONFIG.generalConfig.getChipPriceInItems(name);
+            default -> {
+                CasinoRocket.LOGGER.warn("Unknown economy_type='{}'. Only admits 'relic_coins', 'diamonds' or 'cobbledollars'. Falling back to 'relic_coins'.", typeRaw);
+                value = CasinoRocket.CONFIG.generalConfig.getChipPriceInItems(name);
+                type = "relic_coins";
+            }
+        }
+        ChipItem newChipitem = new ChipItem(new Item.Settings(), value, type);
         Registry.register(Registries.ITEM, Identifier.of(CasinoRocket.MOD_ID, name), newChipitem);
         return newChipitem;
     }
 
     public static void registerModItems() {
         CasinoRocket.LOGGER.info("Registering Mod Items for " + CasinoRocket.MOD_ID);
+    }
+
+    // === HELPERS ===
+
+    public static long getDiamondValue(ItemStack stack) {
+        Long value = DIAMOND_VALUES.get(stack.getItem());
+        if (value == null) return 0L;
+        return value * stack.getCount();
     }
 
 }

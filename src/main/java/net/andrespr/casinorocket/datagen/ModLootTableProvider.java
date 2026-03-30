@@ -49,6 +49,9 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(ModBlocks.HEAVY_DIAMOND_PILLAR);
         addDrop(ModBlocks.DIAMOND_DOOR, doorDrops(ModBlocks.DIAMOND_DOOR));
         addDrop(ModBlocks.DIAMOND_TRAPDOOR);
+        addDrop(ModBlocks.CONDENSED_DIAMOND_BLOCK);
+        addDrop(ModBlocks.CHARGED_DIAMOND_BLOCK);
+        addDrop(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
     }
 
 }

@@ -1,4 +1,4 @@
-package net.andrespr.casinorocket.config;
+package net.andrespr.casinorocket.config.gachapon;
 
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
@@ -6,7 +6,7 @@ import me.shedaniel.autoconfig.annotation.Config;
 import java.util.ArrayList;
 import java.util.List;
 
-@Config(name = "plushies_gachapon")
+@Config(name = "gachapon/plushies_gachapon")
 public class PlushiesGachaponConfig implements ConfigData {
 
     public List<GachaEntry> plushies = defaultPlushies();
