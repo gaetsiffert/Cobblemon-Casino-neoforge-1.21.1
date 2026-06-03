@@ -34,3 +34,9 @@ type="required"
 versionRange="[1.6.1,)"
 ordering="AFTER"
 side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="cobbledollars"
+type="optional"
+ordering="AFTER"
+side="BOTH"
