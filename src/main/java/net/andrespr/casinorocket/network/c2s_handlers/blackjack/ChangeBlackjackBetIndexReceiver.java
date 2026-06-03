@@ -9,7 +9,6 @@ import net.andrespr.casinorocket.games.blackjack.BlackjackPhase;
 import net.andrespr.casinorocket.network.c2s.blackjack.ChangeBlackjackBetIndexC2SPayload;
 import net.andrespr.casinorocket.network.s2c.sender.BlackjackStateSender;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
-import net.andrespr.casinorocket.network.CasinoRocketPackets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;

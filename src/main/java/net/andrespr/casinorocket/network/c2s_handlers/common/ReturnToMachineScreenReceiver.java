@@ -8,7 +8,6 @@ import net.andrespr.casinorocket.block.entity.custom.SlotMachineEntity;
 import net.andrespr.casinorocket.network.c2s.common.ReturnToMachineScreenC2SPayload;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
-import net.andrespr.casinorocket.network.CasinoRocketPackets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;

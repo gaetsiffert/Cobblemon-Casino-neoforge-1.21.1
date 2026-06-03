@@ -1,6 +1,6 @@
 package net.andrespr.casinorocket.screen.custom.chip_table;
 
-import net.andrespr.casinorocket.screen.ModScreenHandlers;
+import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.widget.BetSlot;
 import net.andrespr.casinorocket.util.IChipBankHolder;
 import net.minecraft.core.BlockPos;
@@ -17,7 +17,7 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
     private final Container bankInventory;
 
     public ChipTableScreenHandler(int syncId, Inventory playerInventory, BlockPos pos) {
-        super(ModScreenHandlers.CHIP_TABLE_SCREEN_HANDLER, syncId);
+        super(ModMenuTypes.CHIP_TABLE_MENU_TYPE, syncId);
 
         if (playerInventory.player.level().isClientSide) {
             this.bankInventory = new SimpleContainer(27);

@@ -19,38 +19,38 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-public class ModScreenHandlers {
-    private static final DeferredRegister<MenuType<?>> MENUS =
+public final class ModMenuTypes {
+    private static final DeferredRegister<MenuType<?>> MENU_TYPES =
             DeferredRegister.create(Registries.MENU, CasinoRocket.MOD_ID);
 
-    public static MenuType<SlotMachineScreenHandler> SLOT_MACHINE_SCREEN_HANDLER;
-    public static MenuType<SlotMachineMenuScreenHandler> SLOT_MACHINE_MENU_SCREEN_HANDLER;
-    public static MenuType<BetScreenHandler> BET_SCREEN_HANDLER;
-    public static MenuType<WithdrawScreenHandler> WITHDRAW_SCREEN_HANDLER;
-    public static MenuType<BlackjackTableScreenHandler> BLACKJACK_TABLE_SCREEN_HANDLER;
-    public static MenuType<ChipTableScreenHandler> CHIP_TABLE_SCREEN_HANDLER;
+    public static MenuType<SlotMachineScreenHandler> SLOT_MACHINE_MENU_TYPE;
+    public static MenuType<SlotMachineMenuScreenHandler> SLOT_MACHINE_CONFIG_MENU_TYPE;
+    public static MenuType<BetScreenHandler> BET_MENU_TYPE;
+    public static MenuType<WithdrawScreenHandler> WITHDRAW_MENU_TYPE;
+    public static MenuType<BlackjackTableScreenHandler> BLACKJACK_TABLE_MENU_TYPE;
+    public static MenuType<ChipTableScreenHandler> CHIP_TABLE_MENU_TYPE;
 
     static {
-        register("slot_machine_screen_handler", () -> SLOT_MACHINE_SCREEN_HANDLER =
+        register("slot_machine_menu", () -> SLOT_MACHINE_MENU_TYPE =
                 IMenuTypeExtension.create((syncId, inv, buf) -> new SlotMachineScreenHandler(syncId, inv, SlotMachineOpenData.CODEC.decode(buf))));
-        register("slot_machine_menu_screen_handler", () -> SLOT_MACHINE_MENU_SCREEN_HANDLER =
+        register("slot_machine_config_menu", () -> SLOT_MACHINE_CONFIG_MENU_TYPE =
                 IMenuTypeExtension.create((syncId, inv, buf) -> new SlotMachineMenuScreenHandler(syncId, inv, SlotMachineOpenData.CODEC.decode(buf))));
-        register("bet_screen_handler", () -> BET_SCREEN_HANDLER =
+        register("bet_menu", () -> BET_MENU_TYPE =
                 IMenuTypeExtension.create((syncId, inv, buf) -> new BetScreenHandler(syncId, inv, CommonMachineOpenData.CODEC.decode(buf))));
-        register("withdraw_screen_handler", () -> WITHDRAW_SCREEN_HANDLER =
+        register("withdraw_menu", () -> WITHDRAW_MENU_TYPE =
                 IMenuTypeExtension.create((syncId, inv, buf) -> new WithdrawScreenHandler(syncId, inv, CommonMachineOpenData.CODEC.decode(buf))));
-        register("blackjack_table_screen_handler", () -> BLACKJACK_TABLE_SCREEN_HANDLER =
+        register("blackjack_table_menu", () -> BLACKJACK_TABLE_MENU_TYPE =
                 IMenuTypeExtension.create((syncId, inv, buf) -> new BlackjackTableScreenHandler(syncId, inv, BlackjackTableOpenData.CODEC.decode(buf))));
-        register("chip_table_screen_handler", () -> CHIP_TABLE_SCREEN_HANDLER =
+        register("chip_table_menu", () -> CHIP_TABLE_MENU_TYPE =
                 IMenuTypeExtension.create((syncId, inv, buf) -> new ChipTableScreenHandler(syncId, inv, BlockPos.STREAM_CODEC.decode(buf))));
     }
 
     private static <T extends MenuType<?>> void register(String name, Supplier<T> supplier) {
-        MENUS.register(name, supplier);
+        MENU_TYPES.register(name, supplier);
     }
 
-    public static void registerScreenHandlers(IEventBus eventBus) {
-        MENUS.register(eventBus);
-        CasinoRocket.LOGGER.info("Registering Screen Handlers for " + CasinoRocket.MOD_ID);
+    public static void registerMenuTypes(IEventBus eventBus) {
+        MENU_TYPES.register(eventBus);
+        CasinoRocket.LOGGER.info("Registering menu types for " + CasinoRocket.MOD_ID);
     }
 }

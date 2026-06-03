@@ -1,9 +1,7 @@
 package net.andrespr.casinorocket.block.custom;
 
 import com.mojang.serialization.MapCodec;
-import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.block.entity.custom.ChipTableEntity;
-import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;

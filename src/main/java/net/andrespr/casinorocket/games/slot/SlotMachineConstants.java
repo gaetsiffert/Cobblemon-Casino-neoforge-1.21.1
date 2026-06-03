@@ -5,7 +5,6 @@ import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.config.CasinoRocketConfig;
 import net.andrespr.casinorocket.config.machines.SlotMachineConfig;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class SlotMachineConstants {

@@ -3,7 +3,7 @@ package net.andrespr.casinorocket.screen.custom.common;
 import net.andrespr.casinorocket.item.custom.BillItem;
 import net.andrespr.casinorocket.item.custom.ChipItem;
 import net.andrespr.casinorocket.network.s2c.sender.MachineBalanceSender;
-import net.andrespr.casinorocket.screen.ModScreenHandlers;
+import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.CommonMachineOpenData;
 import net.andrespr.casinorocket.screen.widget.BetSlot;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
@@ -32,7 +32,7 @@ public class BetScreenHandler extends AbstractContainerMenu implements IMachineB
     }
 
     public BetScreenHandler(int syncId, Inventory playerInventory, BlockPos pos, String machineKey) {
-        super(ModScreenHandlers.BET_SCREEN_HANDLER, syncId);
+        super(ModMenuTypes.BET_MENU_TYPE, syncId);
 
         this.pos = pos;
         this.machineKey = machineKey;

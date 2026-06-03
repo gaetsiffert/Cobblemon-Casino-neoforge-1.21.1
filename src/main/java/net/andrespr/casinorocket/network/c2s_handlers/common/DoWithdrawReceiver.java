@@ -7,7 +7,6 @@ import net.andrespr.casinorocket.games.blackjack.BlackjackWithdrawLogic;
 import net.andrespr.casinorocket.games.slot.SlotsWithdrawLogic;
 import net.andrespr.casinorocket.network.c2s.common.DoWithdrawC2SPayload;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
-import net.andrespr.casinorocket.network.CasinoRocketPackets;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 

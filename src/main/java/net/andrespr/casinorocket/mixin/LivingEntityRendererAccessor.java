@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 
 @Mixin(LivingEntityRenderer.class)
 public interface LivingEntityRendererAccessor {
-    @Accessor("features")
+    @Accessor("layers")
     List<RenderLayer<?, ?>> casinorocket$getFeatures();
 }
 

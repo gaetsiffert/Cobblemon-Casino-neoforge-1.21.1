@@ -16,7 +16,7 @@ import net.andrespr.casinorocket.item.ModItemsGroup;
 import net.andrespr.casinorocket.network.CasinoRocketPackets;
 import net.andrespr.casinorocket.network.SuitSyncPayload;
 import net.andrespr.casinorocket.network.s2c.SlotConfigSyncS2CPayload;
-import net.andrespr.casinorocket.screen.ModScreenHandlers;
+import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.sound.ModSounds;
 import net.andrespr.casinorocket.util.SuitData;
 import net.andrespr.casinorocket.villager.ModVillagers;
@@ -49,7 +49,7 @@ public class CasinoRocket {
         ModItems.registerModItems(modEventBus);
         ModSounds.registerSounds(modEventBus);
         ModBlockEntities.registerBlockEntities(modEventBus);
-        ModScreenHandlers.registerScreenHandlers(modEventBus);
+        ModMenuTypes.registerMenuTypes(modEventBus);
         ModVillagers.registerVillagers(modEventBus);
         ModItemsGroup.registerItemGroups(modEventBus);
 

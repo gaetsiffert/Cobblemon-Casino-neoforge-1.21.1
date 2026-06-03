@@ -18,7 +18,7 @@ public class CustomVillagerTextureMixin {
     private static final ResourceLocation TUX_WHITE = ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "textures/entity/villager/white_tuxedo.png");
     private static final ResourceLocation TUX_GOLD  = ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "textures/entity/villager/gold_tuxedo.png");
 
-    @Inject(method = "getTexture(Lnet/minecraft/entity/passive/VillagerEntity;)Lnet/minecraft/util/Identifier;",
+    @Inject(method = "getTextureLocation(Lnet/minecraft/world/entity/npc/Villager;)Lnet/minecraft/resources/ResourceLocation;",
             at = @At("HEAD"), cancellable = true)
     private void casinorocket$getTexture(Villager villager, CallbackInfoReturnable<ResourceLocation> cir) {
         int suit = SuitData.getSuit(villager);

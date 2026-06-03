@@ -1,7 +1,7 @@
 package net.andrespr.casinorocket.screen.custom.blackjack;
 
 import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
-import net.andrespr.casinorocket.screen.ModScreenHandlers;
+import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.BlackjackTableOpenData;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
 import net.minecraft.core.BlockPos;
@@ -21,7 +21,7 @@ public class BlackjackTableScreenHandler extends AbstractContainerMenu implement
     private final int initialBetIndex;
 
     public BlackjackTableScreenHandler(int syncId, Inventory inv, BlackjackTableOpenData data) {
-        super(ModScreenHandlers.BLACKJACK_TABLE_SCREEN_HANDLER, syncId);
+        super(ModMenuTypes.BLACKJACK_TABLE_MENU_TYPE, syncId);
         this.pos = data.pos();
         this.machineKey = data.machineKey();
         this.initialBalance = data.balance();
@@ -29,7 +29,7 @@ public class BlackjackTableScreenHandler extends AbstractContainerMenu implement
     }
 
     public BlackjackTableScreenHandler(int syncId, Inventory inv, BlockPos pos, String machineKey, long balance, int betIndex) {
-        super(ModScreenHandlers.BLACKJACK_TABLE_SCREEN_HANDLER, syncId);
+        super(ModMenuTypes.BLACKJACK_TABLE_MENU_TYPE, syncId);
         this.pos = pos;
         this.machineKey = machineKey;
         this.initialBalance = balance;

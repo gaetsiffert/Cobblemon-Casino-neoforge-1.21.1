@@ -1,7 +1,7 @@
 package net.andrespr.casinorocket.screen.custom.slot;
 
 import net.andrespr.casinorocket.block.entity.custom.SlotMachineEntity;
-import net.andrespr.casinorocket.screen.ModScreenHandlers;
+import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.SlotMachineOpenData;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
 import net.minecraft.core.BlockPos;
@@ -22,7 +22,7 @@ public class SlotMachineScreenHandler extends AbstractContainerMenu implements I
     private final int initialLinesMode;
 
     public SlotMachineScreenHandler(int syncId, Inventory inv, SlotMachineOpenData data) {
-        super(ModScreenHandlers.SLOT_MACHINE_SCREEN_HANDLER, syncId);
+        super(ModMenuTypes.SLOT_MACHINE_MENU_TYPE, syncId);
         this.pos = data.pos();
         this.machineKey = data.machineKey();
         this.initialBalance = data.balance();
@@ -32,7 +32,7 @@ public class SlotMachineScreenHandler extends AbstractContainerMenu implements I
 
     public SlotMachineScreenHandler(int syncId, Inventory inv, BlockPos pos, String machineKey,
                                     long balance, int betBase, int linesMode) {
-        super(ModScreenHandlers.SLOT_MACHINE_SCREEN_HANDLER, syncId);
+        super(ModMenuTypes.SLOT_MACHINE_MENU_TYPE, syncId);
         this.pos = pos;
         this.machineKey = machineKey;
         this.initialBalance = balance;

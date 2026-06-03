@@ -3,7 +3,7 @@ package net.andrespr.casinorocket.screen.custom.common;
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
 import net.andrespr.casinorocket.network.s2c.sender.MachineBalanceSender;
-import net.andrespr.casinorocket.screen.ModScreenHandlers;
+import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.CommonMachineOpenData;
 import net.andrespr.casinorocket.screen.widget.WithdrawSlot;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
@@ -30,7 +30,7 @@ public class WithdrawScreenHandler extends AbstractContainerMenu implements IMac
     }
 
     public WithdrawScreenHandler(int syncId, Inventory playerInventory, BlockPos pos, String machineKey) {
-        super(ModScreenHandlers.WITHDRAW_SCREEN_HANDLER, syncId);
+        super(ModMenuTypes.WITHDRAW_MENU_TYPE, syncId);
         this.machineKey = machineKey;
         this.pos = pos;
 

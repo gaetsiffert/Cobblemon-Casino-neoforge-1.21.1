@@ -1,7 +1,6 @@
 package net.andrespr.casinorocket.villager.shops;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.andrespr.casinorocket.config.CasinoRocketConfig;
 import net.andrespr.casinorocket.config.GeneralConfig;
 import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.villager.VillagerTradeHelper;

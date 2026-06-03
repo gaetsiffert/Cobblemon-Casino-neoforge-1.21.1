@@ -3,7 +3,7 @@ package net.andrespr.casinorocket;
 import net.andrespr.casinorocket.block.ModBlocks;
 import net.andrespr.casinorocket.games.slot.SlotReels;
 import net.andrespr.casinorocket.item.ModItems;
-import net.andrespr.casinorocket.screen.ModScreenHandlers;
+import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.custom.blackjack.BlackjackTableScreen;
 import net.andrespr.casinorocket.screen.custom.chip_table.ChipTableScreen;
 import net.andrespr.casinorocket.screen.custom.common.BetScreen;
@@ -50,12 +50,12 @@ public final class CasinoRocketClient {
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(ModScreenHandlers.SLOT_MACHINE_SCREEN_HANDLER, SlotMachineScreen::new);
-        event.register(ModScreenHandlers.SLOT_MACHINE_MENU_SCREEN_HANDLER, SlotMachineMenuScreen::new);
-        event.register(ModScreenHandlers.BET_SCREEN_HANDLER, BetScreen::new);
-        event.register(ModScreenHandlers.WITHDRAW_SCREEN_HANDLER, WithdrawScreen::new);
-        event.register(ModScreenHandlers.BLACKJACK_TABLE_SCREEN_HANDLER, BlackjackTableScreen::new);
-        event.register(ModScreenHandlers.CHIP_TABLE_SCREEN_HANDLER, ChipTableScreen::new);
+        event.register(ModMenuTypes.SLOT_MACHINE_MENU_TYPE, SlotMachineScreen::new);
+        event.register(ModMenuTypes.SLOT_MACHINE_CONFIG_MENU_TYPE, SlotMachineMenuScreen::new);
+        event.register(ModMenuTypes.BET_MENU_TYPE, BetScreen::new);
+        event.register(ModMenuTypes.WITHDRAW_MENU_TYPE, WithdrawScreen::new);
+        event.register(ModMenuTypes.BLACKJACK_TABLE_MENU_TYPE, BlackjackTableScreen::new);
+        event.register(ModMenuTypes.CHIP_TABLE_MENU_TYPE, ChipTableScreen::new);
     }
 }
 

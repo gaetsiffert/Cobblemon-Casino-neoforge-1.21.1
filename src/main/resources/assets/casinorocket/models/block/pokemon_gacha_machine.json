@@ -1,7 +1,7 @@
 {
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
-	"parent": "casinorocket:gacha_machine",
+	"parent": "casinorocket:block/gacha_machine",
 	"textures": {
 		"0": "casinorocket:block/pokemon_gacha_machine_ball_top",
 		"1": "casinorocket:block/gacha_machine_ball_middle",
