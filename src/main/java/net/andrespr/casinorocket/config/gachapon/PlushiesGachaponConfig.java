@@ -33,3 +33,4 @@ public class PlushiesGachaponConfig implements ConfigData {
     }
 
 }
+

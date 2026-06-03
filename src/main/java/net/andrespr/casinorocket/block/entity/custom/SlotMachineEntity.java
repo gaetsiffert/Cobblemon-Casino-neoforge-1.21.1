@@ -2,23 +2,25 @@ package net.andrespr.casinorocket.block.entity.custom;
 
 import net.andrespr.casinorocket.block.entity.ModBlockEntities;
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
+import net.andrespr.casinorocket.screen.custom.slot.SlotMachineMenuScreenHandler;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineScreenHandler;
 import net.andrespr.casinorocket.screen.opening.SlotMachineOpenData;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.extensions.IMenuProviderExtension;
 import java.util.Objects;
 import java.util.UUID;
 
-public class SlotMachineEntity extends BlockEntity implements ExtendedScreenHandlerFactory<SlotMachineOpenData> {
+public class SlotMachineEntity extends BlockEntity implements MenuProvider, IMenuProviderExtension {
 
     private UUID currentUser;
 
@@ -31,69 +33,83 @@ public class SlotMachineEntity extends BlockEntity implements ExtendedScreenHand
         return currentUser != null;
     }
 
-    public boolean isUsedBy(PlayerEntity player) {
-        return currentUser != null && currentUser.equals(player.getUuid());
+    public boolean isUsedBy(Player player) {
+        return currentUser != null && currentUser.equals(player.getUUID());
     }
 
-    public boolean tryLock(PlayerEntity player) {
-        UUID id = player.getUuid();
+    public boolean tryLock(Player player) {
+        UUID id = player.getUUID();
         if (currentUser == null) {
             currentUser = id;
-            markDirty();
+            setChanged();
             return true;
         }
         return currentUser.equals(id);
     }
 
-    public void unlock(PlayerEntity player) {
-        if (currentUser != null && currentUser.equals(player.getUuid())) {
+    public void unlock(Player player) {
+        if (currentUser != null && currentUser.equals(player.getUUID())) {
             currentUser = null;
-            markDirty();
+            setChanged();
         }
     }
 
     public void forceUnlock() {
         if (currentUser != null) {
             currentUser = null;
-            markDirty();
+            setChanged();
         }
     }
 
     // === DISPLAY NAME ===
     @Override
-    public Text getDisplayName() {
-        return Text.translatable("gui.casinorocket.slot_machine");
+    public Component getDisplayName() {
+        return Component.translatable("gui.casinorocket.slot_machine");
     }
 
     // === OPENING DATA ===
-    @Override
-    public SlotMachineOpenData getScreenOpeningData(ServerPlayerEntity player) {
+    public SlotMachineOpenData getScreenOpeningData(ServerPlayer player) {
         MinecraftServer server = Objects.requireNonNull(player.getServer());
         PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);
-        UUID uuid = player.getUuid();
+        UUID uuid = player.getUUID();
 
         long balance = storage.getBalance(uuid);
         int betBase = storage.getBetBase(uuid);
         int lines = storage.getLinesMode(uuid);
 
-        return new SlotMachineOpenData(this.pos, "slots", balance, betBase, lines);
+        return new SlotMachineOpenData(this.worldPosition, "slots", balance, betBase, lines);
     }
 
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        if (player instanceof ServerPlayerEntity sp) {
+    public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
+        SlotMachineOpenData data;
+        if (menu instanceof SlotMachineScreenHandler handler) {
+            data = new SlotMachineOpenData(this.worldPosition, handler.getMachineKey(), handler.getInitialBalance(), handler.getInitialBetBase(), handler.getInitialLinesMode());
+        } else if (menu instanceof SlotMachineMenuScreenHandler handler) {
+            data = new SlotMachineOpenData(this.worldPosition, handler.getMachineKey(), handler.getInitialBalance(), handler.getInitialBetBase(), handler.getInitialLinesMode());
+        } else {
+            data = new SlotMachineOpenData(this.worldPosition, "slots", 0L, 10, 1);
+        }
+        SlotMachineOpenData.CODEC.encode(buffer, data);
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        if (player instanceof ServerPlayer sp) {
             MinecraftServer server = Objects.requireNonNull(sp.getServer());
             PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);
-            UUID uuid = sp.getUuid();
+            UUID uuid = sp.getUUID();
 
             long balance = storage.getBalance(uuid);
             int betBase = storage.getBetBase(uuid);
             int lines = storage.getLinesMode(uuid);
 
-            return new SlotMachineScreenHandler(syncId, inv, this.getPos(), "slots", balance, betBase, lines);
+            return new SlotMachineScreenHandler(syncId, inv, this.getBlockPos(), "slots", balance, betBase, lines);
         }
 
-        return new SlotMachineScreenHandler(syncId, inv, this.getPos(), "slots", 0L, 10, 1);
+        return new SlotMachineScreenHandler(syncId, inv, this.getBlockPos(), "slots", 0L, 10, 1);
     }
 
 }
+
+

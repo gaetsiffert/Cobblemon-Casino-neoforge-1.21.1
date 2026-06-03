@@ -1,20 +1,20 @@
 package net.andrespr.casinorocket.villager;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
 
 public final class VillagerNbtFactory {
 
     private VillagerNbtFactory() {}
 
-    public static NbtCompound createBaseVillagerNbt(String displayName, BlockPos jobPos, String profession) {
+    public static CompoundTag createBaseVillagerNbt(String displayName, BlockPos jobPos, String profession) {
         return createBaseVillagerNbt(displayName, jobPos, profession, 0);
     }
 
-    public static NbtCompound createBaseVillagerNbt(String displayName, BlockPos jobPos, String profession, int suitId) {
+    public static CompoundTag createBaseVillagerNbt(String displayName, BlockPos jobPos, String profession, int suitId) {
 
-        NbtCompound root = new NbtCompound();
+        CompoundTag root = new CompoundTag();
 
         // Villager ID
         root.putString("id", "minecraft:villager");
@@ -24,7 +24,7 @@ public final class VillagerNbtFactory {
         root.putString("CustomName", nameJson);
 
         // VillagerData
-        NbtCompound villagerData = new NbtCompound();
+        CompoundTag villagerData = new CompoundTag();
         villagerData.putString("profession", profession);
         villagerData.putInt("level", 5);
         villagerData.putString("type", "minecraft:plains");
@@ -40,10 +40,10 @@ public final class VillagerNbtFactory {
 
         // JobPos Memories
         if (jobPos != null) {
-            NbtCompound brain = new NbtCompound();
-            NbtCompound memories = new NbtCompound();
-            NbtCompound jobSiteEntry = new NbtCompound();
-            NbtCompound jobSiteValue = new NbtCompound();
+            CompoundTag brain = new CompoundTag();
+            CompoundTag memories = new CompoundTag();
+            CompoundTag jobSiteEntry = new CompoundTag();
+            CompoundTag jobSiteValue = new CompoundTag();
 
             int[] posArray = new int[]{ jobPos.getX(), jobPos.getY(), jobPos.getZ() };
             jobSiteValue.putIntArray("pos", posArray);
@@ -68,3 +68,4 @@ public final class VillagerNbtFactory {
     }
 
 }
+

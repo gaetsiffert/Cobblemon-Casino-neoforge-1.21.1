@@ -1,24 +1,24 @@
 package net.andrespr.casinorocket.item.custom;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
 import java.util.List;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 
 public class TooltipItem extends Item {
 
-    public TooltipItem(Settings settings) {
+    public TooltipItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        Identifier id = Registries.ITEM.getId(stack.getItem());
-        tooltip.add(Text.translatable("tooltip." + id.getNamespace() + "." + id.getPath()));
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        tooltip.add(Component.translatable("tooltip." + id.getNamespace() + "." + id.getPath()));
     }
 
 }
+

@@ -3,8 +3,7 @@ package net.andrespr.casinorocket.util;
 import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.item.custom.BillItem;
 import net.andrespr.casinorocket.item.custom.ChipItem;
-import net.minecraft.item.ItemStack;
-
+import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -134,3 +133,4 @@ public class MoneyCalculator {
     }
 
 }
+

@@ -1,23 +1,25 @@
 package net.andrespr.casinorocket.network.c2s_handlers.common;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.games.blackjack.BlackjackWithdrawLogic;
 import net.andrespr.casinorocket.games.slot.SlotsWithdrawLogic;
 import net.andrespr.casinorocket.network.c2s.common.DoWithdrawC2SPayload;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.andrespr.casinorocket.network.CasinoRocketPackets;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 public class DoWithdrawReceiver {
 
-    public static void handle(DoWithdrawC2SPayload packet, ServerPlayNetworking.Context ctx) {
+    public static void handle(DoWithdrawC2SPayload packet, IPayloadContext ctx) {
 
-        ServerPlayerEntity player = ctx.player();
+        ServerPlayer player = (ServerPlayer) ctx.player();
         MinecraftServer server = player.getServer();
         if (server == null) return;
 
-        if (!(player.currentScreenHandler instanceof IMachineBoundHandler bound)) return;
+        if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
         if (!packet.pos().equals(bound.getMachinePos())) return;
         if (!packet.machineKey().equals(bound.getMachineKey())) return;
 
@@ -30,3 +32,5 @@ public class DoWithdrawReceiver {
     }
 
 }
+
+

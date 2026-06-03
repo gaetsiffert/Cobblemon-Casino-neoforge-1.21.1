@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "casinorocket:block/diamond_brick_slab"
+    },
+    "type=double": {
+      "model": "casinorocket:block/diamond_bricks"
+    },
+    "type=top": {
+      "model": "casinorocket:block/diamond_brick_slab_top"
+    }
+  }
+}

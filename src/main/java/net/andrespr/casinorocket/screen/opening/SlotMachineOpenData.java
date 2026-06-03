@@ -1,25 +1,25 @@
 package net.andrespr.casinorocket.screen.opening;
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 
 public record SlotMachineOpenData(BlockPos pos, String machineKey, long balance, int betBase, int linesMode) {
 
-    public static final PacketCodec<RegistryByteBuf, SlotMachineOpenData> CODEC =
-            PacketCodec.of(SlotMachineOpenData::write, SlotMachineOpenData::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SlotMachineOpenData> CODEC =
+            StreamCodec.ofMember(SlotMachineOpenData::write, SlotMachineOpenData::read);
 
-    private static void write(SlotMachineOpenData data, RegistryByteBuf buf) {
+    private static void write(SlotMachineOpenData data, RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(data.pos());
-        buf.writeString(data.machineKey());
+        buf.writeUtf(data.machineKey());
         buf.writeLong(data.balance());
         buf.writeInt(data.betBase());
         buf.writeInt(data.linesMode());
     }
 
-    private static SlotMachineOpenData read(RegistryByteBuf buf) {
+    private static SlotMachineOpenData read(RegistryFriendlyByteBuf buf) {
         BlockPos pos = buf.readBlockPos();
-        String machineKey = buf.readString();
+        String machineKey = buf.readUtf();
         long balance = buf.readLong();
         int betBase = buf.readInt();
         int linesMode = buf.readInt();
@@ -27,3 +27,4 @@ public record SlotMachineOpenData(BlockPos pos, String machineKey, long balance,
     }
 
 }
+

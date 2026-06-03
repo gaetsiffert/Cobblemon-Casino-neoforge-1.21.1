@@ -2,39 +2,40 @@ package net.andrespr.casinorocket.item.custom;
 
 import net.andrespr.casinorocket.screen.custom.chip_table.WalletScreenFactory;
 import net.andrespr.casinorocket.sound.ModSounds;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class WalletItem extends Item {
 
-    public WalletItem(Settings settings) {
-        super(settings.maxCount(1));
+    public WalletItem(Properties settings) {
+        super(settings.stacksTo(1));
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
-        if (!world.isClient) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+        if (!world.isClientSide) {
             boolean rare = world.random.nextInt(64) == 0;
-            world.playSound(null, player.getBlockPos(), rare ? ModSounds.WALLET2 : ModSounds.WALLET, SoundCategory.PLAYERS,2.0F, 1.0F);
-            player.openHandledScreen(new WalletScreenFactory());
+            world.playSound(null, player.blockPosition(), rare ? ModSounds.WALLET2 : ModSounds.WALLET, SoundSource.PLAYERS,2.0F, 1.0F);
+            player.openMenu(new WalletScreenFactory());
         }
-        return TypedActionResult.consume(player.getStackInHand(hand));
+        return InteractionResultHolder.consume(player.getItemInHand(hand));
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, @NotNull List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.translatable("tooltip.casinorocket.wallet"));
-        super.appendTooltip(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, @NotNull List<Component> tooltip, TooltipFlag type) {
+        tooltip.add(Component.translatable("tooltip.casinorocket.wallet"));
+        super.appendHoverText(stack, context, tooltip, type);
     }
 
 }
+

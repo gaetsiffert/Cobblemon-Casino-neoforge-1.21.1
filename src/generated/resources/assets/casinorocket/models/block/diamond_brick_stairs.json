@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "casinorocket:block/diamond_bricks",
+    "side": "casinorocket:block/diamond_bricks",
+    "top": "casinorocket:block/diamond_bricks"
+  }
+}

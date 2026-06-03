@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_hypercharged_diamond": {
+      "conditions": {
+        "items": [
+          {
+            "items": "casinorocket:hypercharged_diamond"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "casinorocket:charged_diamond_from_hypercharged_diamond"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_hypercharged_diamond"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "casinorocket:charged_diamond_from_hypercharged_diamond"
+    ]
+  }
+}

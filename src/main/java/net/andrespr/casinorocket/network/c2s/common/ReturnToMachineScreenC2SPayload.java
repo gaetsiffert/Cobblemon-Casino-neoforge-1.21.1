@@ -1,30 +1,31 @@
 package net.andrespr.casinorocket.network.c2s.common;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
-public record ReturnToMachineScreenC2SPayload(BlockPos pos, String machineKey) implements CustomPayload {
+public record ReturnToMachineScreenC2SPayload(BlockPos pos, String machineKey) implements CustomPacketPayload {
 
-    public static final Identifier ID_RAW = Identifier.of(CasinoRocket.MOD_ID, "return_to_machine");
-    public static final Id<ReturnToMachineScreenC2SPayload> ID = new Id<>(ID_RAW);
+    public static final ResourceLocation ID_RAW = ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "return_to_machine");
+    public static final Type<ReturnToMachineScreenC2SPayload> ID = new Type<>(ID_RAW);
 
-    public static final PacketCodec<RegistryByteBuf, ReturnToMachineScreenC2SPayload> CODEC =
-            PacketCodec.of(ReturnToMachineScreenC2SPayload::write, ReturnToMachineScreenC2SPayload::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, ReturnToMachineScreenC2SPayload> CODEC =
+            StreamCodec.ofMember(ReturnToMachineScreenC2SPayload::write, ReturnToMachineScreenC2SPayload::read);
 
-    private static void write(ReturnToMachineScreenC2SPayload p, RegistryByteBuf buf) {
+    private static void write(ReturnToMachineScreenC2SPayload p, RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(p.pos());
-        buf.writeString(p.machineKey());
+        buf.writeUtf(p.machineKey());
     }
 
-    private static ReturnToMachineScreenC2SPayload read(RegistryByteBuf buf) {
-        return new ReturnToMachineScreenC2SPayload(buf.readBlockPos(), buf.readString());
+    private static ReturnToMachineScreenC2SPayload read(RegistryFriendlyByteBuf buf) {
+        return new ReturnToMachineScreenC2SPayload(buf.readBlockPos(), buf.readUtf());
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() { return ID; }
+    public Type<? extends CustomPacketPayload> type() { return ID; }
 
 }
+

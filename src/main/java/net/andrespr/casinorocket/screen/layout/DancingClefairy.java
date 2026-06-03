@@ -1,7 +1,7 @@
 package net.andrespr.casinorocket.screen.layout;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 
 public class DancingClefairy {
 
@@ -11,7 +11,7 @@ public class DancingClefairy {
         WIN      // prize
     }
 
-    private final Identifier texture;
+    private final ResourceLocation texture;
     private final int width;
     private final int frameHeight;
     private final int totalHeight;
@@ -22,7 +22,7 @@ public class DancingClefairy {
 
     private static final int TICKS_PER_SWAP = 6;
 
-    public DancingClefairy(Identifier texture, int width, int frameHeight) {
+    public DancingClefairy(ResourceLocation texture, int width, int frameHeight) {
         this.texture = texture;
         this.width = width;
         this.frameHeight = frameHeight;
@@ -39,7 +39,7 @@ public class DancingClefairy {
         }
     }
 
-    public void render(DrawContext context, int x, int y) {
+    public void render(GuiGraphics context, int x, int y) {
         int pairIndex = switch (currentPhase) {
             case NEUTRAL -> 0;
             case LOSS    -> 1;
@@ -49,7 +49,8 @@ public class DancingClefairy {
         int frame = pairIndex * 2 + frameToggle;
         int v = frame * frameHeight;
 
-        context.drawTexture(texture, x, y, 0, v, width, frameHeight, width, totalHeight);
+        context.blit(texture, x, y, 0, v, width, frameHeight, width, totalHeight);
     }
 
 }
+

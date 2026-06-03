@@ -3,8 +3,6 @@
 	"package": "net.andrespr.casinorocket.mixin",
 	"compatibilityLevel": "JAVA_21",
     "mixins": [
-      "EntityPersistentDataMixin",
-      "EntityStartTrackingMixin",
       "PlayerEntityChipBankMixin",
       "VillagerSetProfessionMixin",
       "VillagerLookAtPlayerMixin"

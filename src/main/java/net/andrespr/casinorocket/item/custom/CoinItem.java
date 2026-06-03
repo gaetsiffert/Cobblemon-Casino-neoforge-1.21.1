@@ -1,23 +1,23 @@
 package net.andrespr.casinorocket.item.custom;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-
 import java.util.List;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 
 public class CoinItem extends Item {
 
-    public CoinItem(Settings settings) {
+    public CoinItem(Properties settings) {
         super(settings);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        tooltip.add(Text.translatable("tooltip.casinorocket." + Registries.ITEM.getId(this).getPath()));
-        super.appendTooltip(stack, context, tooltip, type);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag type) {
+        tooltip.add(Component.translatable("tooltip.casinorocket." + BuiltInRegistries.ITEM.getKey(this).getPath()));
+        super.appendHoverText(stack, context, tooltip, type);
     }
 
 }
+

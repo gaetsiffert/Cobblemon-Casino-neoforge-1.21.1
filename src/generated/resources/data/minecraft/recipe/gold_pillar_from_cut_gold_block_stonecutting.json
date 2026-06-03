@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "casinorocket:cut_gold_block"
+  },
+  "result": {
+    "count": 1,
+    "id": "casinorocket:gold_pillar"
+  }
+}

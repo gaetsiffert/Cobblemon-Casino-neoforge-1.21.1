@@ -6,15 +6,15 @@ import net.andrespr.casinorocket.network.c2s.common.OpenWithdrawScreenC2SPayload
 import net.andrespr.casinorocket.network.c2s.common.ReturnToMachineScreenC2SPayload;
 import net.andrespr.casinorocket.screen.opening.MouseRestore;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
+import net.andrespr.casinorocket.network.CasinoRocketPackets;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
-public abstract class CasinoMachineScreen<T extends ScreenHandler> extends HandledScreen<T> {
+public abstract class CasinoMachineScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
 
-    public CasinoMachineScreen(T handler, PlayerInventory inventory, Text title) {
+    public CasinoMachineScreen(T handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
     }
 
@@ -24,21 +24,21 @@ public abstract class CasinoMachineScreen<T extends ScreenHandler> extends Handl
     }
 
     protected void onBetPressed() {
-        if (client != null && client.player != null) {
-            ClientPlayNetworking.send(new OpenBetScreenC2SPayload());
+        if (minecraft != null && minecraft.player != null) {
+            CasinoRocketPackets.sendToServer(new OpenBetScreenC2SPayload());
         }
     }
 
     protected void onWithdrawPressed() {
-        if (client != null && client.player != null) {
-            ClientPlayNetworking.send(new OpenWithdrawScreenC2SPayload());
+        if (minecraft != null && minecraft.player != null) {
+            CasinoRocketPackets.sendToServer(new OpenWithdrawScreenC2SPayload());
         }
     }
 
     protected void onMenuPressed() {
-        if (client != null && client.player != null) {
+        if (minecraft != null && minecraft.player != null) {
             MouseRestore.capture();
-            ClientPlayNetworking.send(new OpenMenuScreenC2SPayload());
+            CasinoRocketPackets.sendToServer(new OpenMenuScreenC2SPayload());
         }
     }
 
@@ -47,20 +47,21 @@ public abstract class CasinoMachineScreen<T extends ScreenHandler> extends Handl
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         if (returnToMachineOnEsc() && tryReturnToMachine()) return;
-        super.close();
+        super.onClose();
     }
 
     protected boolean tryReturnToMachine() {
-        if (client == null || client.player == null) return false;
+        if (minecraft == null || minecraft.player == null) return false;
 
-        if (this.handler instanceof IMachineBoundHandler machine) {
+        if (this.menu instanceof IMachineBoundHandler machine) {
             MouseRestore.capture();
-            ClientPlayNetworking.send(new ReturnToMachineScreenC2SPayload(machine.getMachinePos(), machine.getMachineKey()));
+            CasinoRocketPackets.sendToServer(new ReturnToMachineScreenC2SPayload(machine.getMachinePos(), machine.getMachineKey()));
             return true;
         }
         return false;
     }
 
 }
+

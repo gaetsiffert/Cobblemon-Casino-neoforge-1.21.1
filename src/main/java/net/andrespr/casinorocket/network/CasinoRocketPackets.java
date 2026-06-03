@@ -1,102 +1,78 @@
 package net.andrespr.casinorocket.network;
 
-import net.andrespr.casinorocket.network.c2s.common.*;
-import net.andrespr.casinorocket.network.c2s.slots.*;
-import net.andrespr.casinorocket.network.c2s.blackjack.*;
-import net.andrespr.casinorocket.network.c2s_handlers.common.*;
-import net.andrespr.casinorocket.network.c2s_handlers.slots.*;
-import net.andrespr.casinorocket.network.c2s_handlers.blackjack.*;
-import net.andrespr.casinorocket.network.s2c.*;
-import net.andrespr.casinorocket.network.s2c_handlers.*;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.andrespr.casinorocket.CasinoRocket;
+import net.andrespr.casinorocket.network.c2s.blackjack.BlackjackActionC2SPayload;
+import net.andrespr.casinorocket.network.c2s.blackjack.ChangeBlackjackBetIndexC2SPayload;
+import net.andrespr.casinorocket.network.c2s.common.DoBetC2SPayload;
+import net.andrespr.casinorocket.network.c2s.common.DoWithdrawC2SPayload;
+import net.andrespr.casinorocket.network.c2s.common.OpenBetScreenC2SPayload;
+import net.andrespr.casinorocket.network.c2s.common.OpenMenuScreenC2SPayload;
+import net.andrespr.casinorocket.network.c2s.common.OpenWithdrawScreenC2SPayload;
+import net.andrespr.casinorocket.network.c2s.common.ReturnToMachineScreenC2SPayload;
+import net.andrespr.casinorocket.network.c2s.slots.ChangeBetBaseC2SPayload;
+import net.andrespr.casinorocket.network.c2s.slots.ChangeLinesModeC2SPayload;
+import net.andrespr.casinorocket.network.c2s.slots.DoSpinC2SPayload;
+import net.andrespr.casinorocket.network.c2s_handlers.blackjack.BlackjackActionReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.blackjack.ChangeBlackjackBetIndexReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.common.BetScreenReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.common.DoBetReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.common.DoWithdrawReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.common.MenuScreenReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.common.ReturnToMachineScreenReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.common.WithdrawScreenReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.slots.ChangeBetBaseReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.slots.ChangeLinesModeReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.slots.DoSpinReceiver;
+import net.andrespr.casinorocket.network.s2c.SendBlackjackStateS2CPayload;
+import net.andrespr.casinorocket.network.s2c.SendMachineBalanceS2CPayload;
+import net.andrespr.casinorocket.network.s2c.SendMenuSettingsS2CPayload;
+import net.andrespr.casinorocket.network.s2c.SendSpinResultS2CPayload;
+import net.andrespr.casinorocket.network.s2c.SlotConfigSyncS2CPayload;
+import net.andrespr.casinorocket.network.s2c_handlers.BlackjackStateReceiver;
+import net.andrespr.casinorocket.network.s2c_handlers.MachineBalanceReceiver;
+import net.andrespr.casinorocket.network.s2c_handlers.MenuScreenSettingsReceiver;
+import net.andrespr.casinorocket.network.s2c_handlers.SlotConfigSyncReceiver;
+import net.andrespr.casinorocket.network.s2c_handlers.SpinResultReceiver;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-public class CasinoRocketPackets {
+public final class CasinoRocketPackets {
 
-    // =============================
-    // SERVER: register C2S + S2C TYPES
-    // =============================
-    public static void registerServer() {
+    private CasinoRocketPackets() {}
 
-        registerC2S();
+    public static void registerPayloads(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar(CasinoRocket.MOD_ID);
 
-        // Register ONLY TYPES (CODEC) — NO handlers here
-        PayloadTypeRegistry.playS2C().register(SendMachineBalanceS2CPayload.ID, SendMachineBalanceS2CPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(SendMenuSettingsS2CPayload.ID, SendMenuSettingsS2CPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(SendSpinResultS2CPayload.ID, SendSpinResultS2CPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(SendBlackjackStateS2CPayload.ID, SendBlackjackStateS2CPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(SlotConfigSyncS2CPayload.ID, SlotConfigSyncS2CPayload.CODEC);
+        registrar.playToServer(OpenBetScreenC2SPayload.ID, OpenBetScreenC2SPayload.CODEC, BetScreenReceiver::openBetScreen);
+        registrar.playToServer(DoBetC2SPayload.ID, DoBetC2SPayload.CODEC, DoBetReceiver::handle);
+        registrar.playToServer(OpenWithdrawScreenC2SPayload.ID, OpenWithdrawScreenC2SPayload.CODEC, WithdrawScreenReceiver::openWithdrawScreen);
+        registrar.playToServer(DoWithdrawC2SPayload.ID, DoWithdrawC2SPayload.CODEC, DoWithdrawReceiver::handle);
+        registrar.playToServer(OpenMenuScreenC2SPayload.ID, OpenMenuScreenC2SPayload.CODEC, MenuScreenReceiver::openMenuScreen);
+        registrar.playToServer(ReturnToMachineScreenC2SPayload.ID, ReturnToMachineScreenC2SPayload.CODEC, ReturnToMachineScreenReceiver::handle);
+        registrar.playToServer(DoSpinC2SPayload.ID, DoSpinC2SPayload.CODEC, DoSpinReceiver::handle);
+        registrar.playToServer(ChangeBetBaseC2SPayload.ID, ChangeBetBaseC2SPayload.CODEC, ChangeBetBaseReceiver::handle);
+        registrar.playToServer(ChangeLinesModeC2SPayload.ID, ChangeLinesModeC2SPayload.CODEC, ChangeLinesModeReceiver::handle);
+        registrar.playToServer(BlackjackActionC2SPayload.ID, BlackjackActionC2SPayload.CODEC, BlackjackActionReceiver::handle);
+        registrar.playToServer(ChangeBlackjackBetIndexC2SPayload.ID, ChangeBlackjackBetIndexC2SPayload.CODEC, ChangeBlackjackBetIndexReceiver::handle);
 
+        registrar.playToClient(SendMachineBalanceS2CPayload.ID, SendMachineBalanceS2CPayload.CODEC, MachineBalanceReceiver::handle);
+        registrar.playToClient(SendMenuSettingsS2CPayload.ID, SendMenuSettingsS2CPayload.CODEC, MenuScreenSettingsReceiver::handle);
+        registrar.playToClient(SendSpinResultS2CPayload.ID, SendSpinResultS2CPayload.CODEC, SpinResultReceiver::handle);
+        registrar.playToClient(SendBlackjackStateS2CPayload.ID, SendBlackjackStateS2CPayload.CODEC, BlackjackStateReceiver::handle);
+        registrar.playToClient(SlotConfigSyncS2CPayload.ID, SlotConfigSyncS2CPayload.CODEC, SlotConfigSyncReceiver::handle);
+        registrar.playToClient(SuitSyncPayload.ID, SuitSyncPayload.CODEC, SuitSync::handleClientPayload);
     }
 
-    // =============================
-    // CLIENT: register S2C HANDLERS ONLY
-    // =============================
-    public static void registerClient() {
-
-        MachineBalanceReceiver.register();
-        MenuScreenSettingsReceiver.register();
-        SpinResultReceiver.register();
-        BlackjackStateReceiver.register();
-        SlotConfigSyncReceiver.register();
-
+    public static void sendToServer(CustomPacketPayload payload) {
+        PacketDistributor.sendToServer(payload);
     }
 
-    // =============================
-    // REGISTER C2S PACKETS (SERVER ONLY)
-    // =============================
-    private static void registerC2S() {
-
-        // ===== COMMON =====
-
-        // BetScreen
-        PayloadTypeRegistry.playC2S().register(OpenBetScreenC2SPayload.ID, OpenBetScreenC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(OpenBetScreenC2SPayload.ID, BetScreenReceiver::openBetScreen);
-
-        // DoBet
-        PayloadTypeRegistry.playC2S().register(DoBetC2SPayload.ID, DoBetC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(DoBetC2SPayload.ID, DoBetReceiver::handle);
-
-        // WithdrawScreen
-        PayloadTypeRegistry.playC2S().register(OpenWithdrawScreenC2SPayload.ID, OpenWithdrawScreenC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(OpenWithdrawScreenC2SPayload.ID, WithdrawScreenReceiver::openWithdrawScreen);
-
-        // DoWithdraw
-        PayloadTypeRegistry.playC2S().register(DoWithdrawC2SPayload.ID, DoWithdrawC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(DoWithdrawC2SPayload.ID, DoWithdrawReceiver::handle);
-
-        // MenuScreen
-        PayloadTypeRegistry.playC2S().register(OpenMenuScreenC2SPayload.ID, OpenMenuScreenC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(OpenMenuScreenC2SPayload.ID, MenuScreenReceiver::openMenuScreen);
-
-        // ReturnToMachine
-        PayloadTypeRegistry.playC2S().register(ReturnToMachineScreenC2SPayload.ID, ReturnToMachineScreenC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(ReturnToMachineScreenC2SPayload.ID, ReturnToMachineScreenReceiver::handle);
-
-        // ===== SLOTS =====
-
-        // DoSpin
-        PayloadTypeRegistry.playC2S().register(DoSpinC2SPayload.ID, DoSpinC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(DoSpinC2SPayload.ID, DoSpinReceiver::handle);
-
-        // ChangeBetBase
-        PayloadTypeRegistry.playC2S().register(ChangeBetBaseC2SPayload.ID, ChangeBetBaseC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(ChangeBetBaseC2SPayload.ID, ChangeBetBaseReceiver::handle);
-
-        // ChangeLinesMode
-        PayloadTypeRegistry.playC2S().register(ChangeLinesModeC2SPayload.ID, ChangeLinesModeC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(ChangeLinesModeC2SPayload.ID, ChangeLinesModeReceiver::handle);
-
-        // ===== BLACKJACK =====
-
-        // BlackjackAction
-        PayloadTypeRegistry.playC2S().register(BlackjackActionC2SPayload.ID, BlackjackActionC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(BlackjackActionC2SPayload.ID, BlackjackActionReceiver::handle);
-
-        // ChangeBetIndex
-        PayloadTypeRegistry.playC2S().register(ChangeBlackjackBetIndexC2SPayload.ID, ChangeBlackjackBetIndexC2SPayload.CODEC);
-        ServerPlayNetworking.registerGlobalReceiver(ChangeBlackjackBetIndexC2SPayload.ID, ChangeBlackjackBetIndexReceiver::handle);
-
+    public static void sendToPlayer(ServerPlayer player, CustomPacketPayload payload) {
+        PacketDistributor.sendToPlayer(player, payload);
     }
-
 }
+
+

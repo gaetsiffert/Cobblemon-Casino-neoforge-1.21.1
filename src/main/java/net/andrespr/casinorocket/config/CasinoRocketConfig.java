@@ -37,3 +37,4 @@ public class CasinoRocketConfig extends PartitioningSerializer.GlobalData {
     public SlotMachineConfig slotMachine = new SlotMachineConfig();
 
 }
+

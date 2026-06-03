@@ -1,18 +1,17 @@
 package net.andrespr.casinorocket.data;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.PersistentState;
-import net.minecraft.world.PersistentStateManager;
-import net.minecraft.world.World;
-
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class GachaDataStorage extends PersistentState {
+public class GachaDataStorage extends SavedData {
 
     public Map<UUID, Map<String, Integer>> pityTracker = new HashMap<>();
     public Map<UUID, GachaStats> playerStats = new HashMap<>();
@@ -21,24 +20,24 @@ public class GachaDataStorage extends PersistentState {
 
     // === MAIN LOADER ===
     public static GachaDataStorage get(MinecraftServer server) {
-        PersistentStateManager manager = Objects.requireNonNull(server.getWorld(World.OVERWORLD)).getPersistentStateManager();
+        DimensionDataStorage manager = Objects.requireNonNull(server.getLevel(Level.OVERWORLD)).getDataStorage();
 
-        PersistentState.Type<GachaDataStorage> type = new PersistentState.Type<>(
+        SavedData.Factory<GachaDataStorage> type = new SavedData.Factory<>(
                 GachaDataStorage::new,
                 GachaDataStorage::readNbt,
                 null
         );
 
-        return manager.getOrCreate(type, STORAGE_KEY);
+        return manager.computeIfAbsent(type, STORAGE_KEY);
     }
 
     // === SAVE ===
     @Override
-    public NbtCompound writeNbt(NbtCompound nbt, net.minecraft.registry.RegistryWrapper.WrapperLookup registryLookup) {
-        NbtCompound pityTag = new NbtCompound();
+    public CompoundTag save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registryLookup) {
+        CompoundTag pityTag = new CompoundTag();
         for (var entry : pityTracker.entrySet()) {
             UUID uuid = entry.getKey();
-            NbtCompound coinMap = new NbtCompound();
+            CompoundTag coinMap = new CompoundTag();
             for (var coinEntry : entry.getValue().entrySet()) {
                 coinMap.putInt(coinEntry.getKey(), coinEntry.getValue());
             }
@@ -46,7 +45,7 @@ public class GachaDataStorage extends PersistentState {
         }
         nbt.put("PityTracker", pityTag);
 
-        NbtCompound statsTag = new NbtCompound();
+        CompoundTag statsTag = new CompoundTag();
         for (var entry : playerStats.entrySet()) {
             statsTag.put(entry.getKey().toString(), entry.getValue().toNbt());
         }
@@ -56,17 +55,17 @@ public class GachaDataStorage extends PersistentState {
     }
 
     // === LOAD ===
-    private static GachaDataStorage readNbt(NbtCompound nbt, net.minecraft.registry.RegistryWrapper.WrapperLookup registryLookup) {
+    private static GachaDataStorage readNbt(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registryLookup) {
         GachaDataStorage data = new GachaDataStorage();
 
-        if (nbt.contains("PityTracker", NbtElement.COMPOUND_TYPE)) {
-            NbtCompound pityTag = nbt.getCompound("PityTracker");
-            for (String uuidStr : pityTag.getKeys()) {
+        if (nbt.contains("PityTracker", Tag.TAG_COMPOUND)) {
+            CompoundTag pityTag = nbt.getCompound("PityTracker");
+            for (String uuidStr : pityTag.getAllKeys()) {
                 try {
                     UUID uuid = UUID.fromString(uuidStr);
-                    NbtCompound coinTag = pityTag.getCompound(uuidStr);
+                    CompoundTag coinTag = pityTag.getCompound(uuidStr);
                     Map<String, Integer> coinMap = new HashMap<>();
-                    for (String coin : coinTag.getKeys()) {
+                    for (String coin : coinTag.getAllKeys()) {
                         coinMap.put(coin, coinTag.getInt(coin));
                     }
                     data.pityTracker.put(uuid, coinMap);
@@ -74,9 +73,9 @@ public class GachaDataStorage extends PersistentState {
             }
         }
 
-        if (nbt.contains("PlayerStats", NbtElement.COMPOUND_TYPE)) {
-            NbtCompound statsTag = nbt.getCompound("PlayerStats");
-            for (String uuidStr : statsTag.getKeys()) {
+        if (nbt.contains("PlayerStats", Tag.TAG_COMPOUND)) {
+            CompoundTag statsTag = nbt.getCompound("PlayerStats");
+            for (String uuidStr : statsTag.getAllKeys()) {
                 try {
                     UUID uuid = UUID.fromString(uuidStr);
                     data.playerStats.put(uuid, GachaStats.fromNbt(statsTag.getCompound(uuidStr)));
@@ -93,3 +92,4 @@ public class GachaDataStorage extends PersistentState {
     }
 
 }
+

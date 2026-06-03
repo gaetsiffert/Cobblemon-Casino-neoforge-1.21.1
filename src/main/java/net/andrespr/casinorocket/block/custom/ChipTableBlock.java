@@ -4,110 +4,116 @@ import com.mojang.serialization.MapCodec;
 import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.block.entity.custom.ChipTableEntity;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-public class ChipTableBlock extends BlockWithEntity implements BlockEntityProvider {
+public class ChipTableBlock extends BaseEntityBlock implements EntityBlock {
 
-    public static final MapCodec<ChipTableBlock> CODEC = createCodec(ChipTableBlock::new);
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final MapCodec<ChipTableBlock> CODEC = simpleCodec(ChipTableBlock::new);
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    private static final VoxelShape LEG1 = Block.createCuboidShape(1,0,1,3,15,3);
-    private static final VoxelShape LEG2 = Block.createCuboidShape(1,0,13,3,15,15);
-    private static final VoxelShape LEG3 = Block.createCuboidShape(13,0,13,15,15,15);
-    private static final VoxelShape LEG4 = Block.createCuboidShape(13,0,1,15,15,3);
-    private static final VoxelShape LEGS = VoxelShapes.union(LEG1, LEG2, LEG3, LEG4);
+    private static final VoxelShape LEG1 = Block.box(1,0,1,3,15,3);
+    private static final VoxelShape LEG2 = Block.box(1,0,13,3,15,15);
+    private static final VoxelShape LEG3 = Block.box(13,0,13,15,15,15);
+    private static final VoxelShape LEG4 = Block.box(13,0,1,15,15,3);
+    private static final VoxelShape LEGS = Shapes.or(LEG1, LEG2, LEG3, LEG4);
 
-    private static final VoxelShape STAND1 = Block.createCuboidShape(3,4,1,13,6,3);
-    private static final VoxelShape STAND2 = Block.createCuboidShape(1,4,3,3,6,13);
-    private static final VoxelShape STAND3 = Block.createCuboidShape(3,4,13,13,6,15);
-    private static final VoxelShape STAND4 = Block.createCuboidShape(13,4,3,15,6,13);
-    private static final VoxelShape STAND = VoxelShapes.union(STAND1, STAND2, STAND3, STAND4);
+    private static final VoxelShape STAND1 = Block.box(3,4,1,13,6,3);
+    private static final VoxelShape STAND2 = Block.box(1,4,3,3,6,13);
+    private static final VoxelShape STAND3 = Block.box(3,4,13,13,6,15);
+    private static final VoxelShape STAND4 = Block.box(13,4,3,15,6,13);
+    private static final VoxelShape STAND = Shapes.or(STAND1, STAND2, STAND3, STAND4);
 
-    private static final VoxelShape TABLE1 = Block.createCuboidShape(3,11,1,13,13,3);
-    private static final VoxelShape TABLE2 = Block.createCuboidShape(3,11,13,13,13,15);
-    private static final VoxelShape TABLE3 = Block.createCuboidShape(1,11,3,3,13,13);
-    private static final VoxelShape TABLE4 = Block.createCuboidShape(13,11,3,15,13,13);
-    private static final VoxelShape TABLES = VoxelShapes.union(TABLE1, TABLE2, TABLE3, TABLE4);
+    private static final VoxelShape TABLE1 = Block.box(3,11,1,13,13,3);
+    private static final VoxelShape TABLE2 = Block.box(3,11,13,13,13,15);
+    private static final VoxelShape TABLE3 = Block.box(1,11,3,3,13,13);
+    private static final VoxelShape TABLE4 = Block.box(13,11,3,15,13,13);
+    private static final VoxelShape TABLES = Shapes.or(TABLE1, TABLE2, TABLE3, TABLE4);
 
-    private static final VoxelShape CHIPS = Block.createCuboidShape(3,9,3,13,15,13);
-    private static final VoxelShape BLOCK_SHAPE = VoxelShapes.union(LEGS, STAND, TABLES, CHIPS);
+    private static final VoxelShape CHIPS = Block.box(3,9,3,13,15,13);
+    private static final VoxelShape BLOCK_SHAPE = Shapes.or(LEGS, STAND, TABLES, CHIPS);
 
-    public ChipTableBlock(Settings settings) {
+    public ChipTableBlock(Properties settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState().with(FACING, Direction.NORTH));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
     // === CODEC ===
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
+    protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
     // === INTERACTION ===
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if(!world.isClient && world.getBlockEntity(pos) instanceof ChipTableEntity chipTableEntity) {
-            player.openHandledScreen(chipTableEntity);
-            return ActionResult.CONSUME;
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit) {
+        if(!world.isClientSide && world.getBlockEntity(pos) instanceof ChipTableEntity chipTableEntity) {
+            player.openMenu(chipTableEntity);
+            return InteractionResult.CONSUME;
         }
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     // === SHAPE ===
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         return BLOCK_SHAPE;
     }
 
     // === PLACEMENT ===
     @Override
-    public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     // === FACING ===
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     // === PROPERTIES ===
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING);
     }
 
     // === BLOCK ENTITY ===
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ChipTableEntity(pos, state);
     }
 
     @Override
-    protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
 }
+

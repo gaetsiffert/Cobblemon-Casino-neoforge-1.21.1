@@ -1,120 +1,150 @@
 package net.andrespr.casinorocket.datagen;
 
+import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.ModBlocks;
 import net.andrespr.casinorocket.item.ModItems;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
-import net.minecraft.data.client.BlockStateModelGenerator;
-import net.minecraft.data.client.ItemModelGenerator;
-import net.minecraft.data.client.Models;
-import net.minecraft.data.client.TexturedModel;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallBlock;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
-public class ModModelProvider extends FabricModelProvider {
+public class ModModelProvider extends BlockStateProvider {
 
-    public ModModelProvider(FabricDataOutput output) {
-        super(output);
+    public ModModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
+        super(output, CasinoRocket.MOD_ID, existingFileHelper);
     }
 
     @Override
-    public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-        // BLOCK STATES FOR GOLD BLOCKS
-        BlockStateModelGenerator.BlockTexturePool cutGoldBlockPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.CUT_GOLD_BLOCK);
-        cutGoldBlockPool.stairs(ModBlocks.CUT_GOLD_STAIRS);
-        cutGoldBlockPool.slab(ModBlocks.CUT_GOLD_SLAB);
-        BlockStateModelGenerator.BlockTexturePool goldBricksPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.GOLD_BRICKS);
-        goldBricksPool.stairs(ModBlocks.GOLD_BRICK_STAIRS);
-        goldBricksPool.slab(ModBlocks.GOLD_BRICK_SLAB);
-        goldBricksPool.wall(ModBlocks.GOLD_BRICK_WALL);
-        BlockStateModelGenerator.BlockTexturePool goldTilesPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.GOLD_TILES);
-        goldTilesPool.stairs(ModBlocks.GOLD_TILE_STAIRS);
-        goldTilesPool.slab(ModBlocks.GOLD_TILE_SLAB);
-        goldTilesPool.wall(ModBlocks.GOLD_TILE_WALL);
-        blockStateModelGenerator.registerSingleton(ModBlocks.CHISELED_GOLD_BLOCK, TexturedModel.END_FOR_TOP_CUBE_COLUMN);
-        blockStateModelGenerator.registerAxisRotated(ModBlocks.GOLD_PILLAR, TexturedModel.END_FOR_TOP_CUBE_COLUMN);
-        blockStateModelGenerator.registerAxisRotated(ModBlocks.HEAVY_GOLD_PILLAR, TexturedModel.END_FOR_TOP_CUBE_COLUMN);
-        blockStateModelGenerator.registerDoor(ModBlocks.GOLD_DOOR);
-        blockStateModelGenerator.registerTrapdoor(ModBlocks.GOLD_TRAPDOOR);
-        // BLOCK STATES FOR DIAMOND BLOCKS
-        BlockStateModelGenerator.BlockTexturePool cutDiamondBlockPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.CUT_DIAMOND_BLOCK);
-        cutDiamondBlockPool.stairs(ModBlocks.CUT_DIAMOND_STAIRS);
-        cutDiamondBlockPool.slab(ModBlocks.CUT_DIAMOND_SLAB);
-        BlockStateModelGenerator.BlockTexturePool diamondBricksPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.DIAMOND_BRICKS);
-        diamondBricksPool.stairs(ModBlocks.DIAMOND_BRICK_STAIRS);
-        diamondBricksPool.slab(ModBlocks.DIAMOND_BRICK_SLAB);
-        diamondBricksPool.wall(ModBlocks.DIAMOND_BRICK_WALL);
-        BlockStateModelGenerator.BlockTexturePool diamondTilesPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.DIAMOND_TILES);
-        diamondTilesPool.stairs(ModBlocks.DIAMOND_TILE_STAIRS);
-        diamondTilesPool.slab(ModBlocks.DIAMOND_TILE_SLAB);
-        diamondTilesPool.wall(ModBlocks.DIAMOND_TILE_WALL);
-        blockStateModelGenerator.registerSingleton(ModBlocks.CHISELED_DIAMOND_BLOCK, TexturedModel.END_FOR_TOP_CUBE_COLUMN);
-        blockStateModelGenerator.registerAxisRotated(ModBlocks.DIAMOND_PILLAR, TexturedModel.END_FOR_TOP_CUBE_COLUMN);
-        blockStateModelGenerator.registerAxisRotated(ModBlocks.HEAVY_DIAMOND_PILLAR, TexturedModel.END_FOR_TOP_CUBE_COLUMN);
-        blockStateModelGenerator.registerDoor(ModBlocks.DIAMOND_DOOR);
-        blockStateModelGenerator.registerTrapdoor(ModBlocks.DIAMOND_TRAPDOOR);
-        BlockStateModelGenerator.BlockTexturePool condensedDiamondBlockPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.CONDENSED_DIAMOND_BLOCK);
-        BlockStateModelGenerator.BlockTexturePool chargedDiamondBlockPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.CHARGED_DIAMOND_BLOCK);
-        BlockStateModelGenerator.BlockTexturePool hyperchargedDiamondBlockPool = blockStateModelGenerator.registerCubeAllModelTexturePool(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
+    protected void registerStatesAndModels() {
+        blockFamily(ModBlocks.CUT_GOLD_BLOCK, ModBlocks.CUT_GOLD_STAIRS, ModBlocks.CUT_GOLD_SLAB, null);
+        blockFamily(ModBlocks.GOLD_BRICKS, ModBlocks.GOLD_BRICK_STAIRS, ModBlocks.GOLD_BRICK_SLAB, ModBlocks.GOLD_BRICK_WALL);
+        blockFamily(ModBlocks.GOLD_TILES, ModBlocks.GOLD_TILE_STAIRS, ModBlocks.GOLD_TILE_SLAB, ModBlocks.GOLD_TILE_WALL);
+        column(ModBlocks.CHISELED_GOLD_BLOCK);
+        column(ModBlocks.GOLD_PILLAR);
+        column(ModBlocks.HEAVY_GOLD_PILLAR);
+        door(ModBlocks.GOLD_DOOR);
+        trapdoor(ModBlocks.GOLD_TRAPDOOR);
+
+        blockFamily(ModBlocks.CUT_DIAMOND_BLOCK, ModBlocks.CUT_DIAMOND_STAIRS, ModBlocks.CUT_DIAMOND_SLAB, null);
+        blockFamily(ModBlocks.DIAMOND_BRICKS, ModBlocks.DIAMOND_BRICK_STAIRS, ModBlocks.DIAMOND_BRICK_SLAB, ModBlocks.DIAMOND_BRICK_WALL);
+        blockFamily(ModBlocks.DIAMOND_TILES, ModBlocks.DIAMOND_TILE_STAIRS, ModBlocks.DIAMOND_TILE_SLAB, ModBlocks.DIAMOND_TILE_WALL);
+        column(ModBlocks.CHISELED_DIAMOND_BLOCK);
+        column(ModBlocks.DIAMOND_PILLAR);
+        column(ModBlocks.HEAVY_DIAMOND_PILLAR);
+        door(ModBlocks.DIAMOND_DOOR);
+        trapdoor(ModBlocks.DIAMOND_TRAPDOOR);
+
+        cube(ModBlocks.CONDENSED_DIAMOND_BLOCK);
+        cube(ModBlocks.CHARGED_DIAMOND_BLOCK);
+        cube(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
+
+        flatItems(
+                ModItems.BASIC_CHIP,
+                ModItems.RED_CHIP,
+                ModItems.BLUE_CHIP,
+                ModItems.PURPLE_CHIP,
+                ModItems.COPPER_CHIP,
+                ModItems.IRON_CHIP,
+                ModItems.EMERALD_CHIP,
+                ModItems.GOLD_CHIP,
+                ModItems.DIAMOND_CHIP,
+                ModItems.NETHERITE_CHIP,
+                ModItems.COPPER_COIN,
+                ModItems.IRON_COIN,
+                ModItems.GOLD_COIN,
+                ModItems.DIAMOND_COIN,
+                ModItems.EVENT_COIN,
+                ModItems.PRIMOGEM,
+                ModItems.POKE_GACHAPON,
+                ModItems.GREAT_GACHAPON,
+                ModItems.ULTRA_GACHAPON,
+                ModItems.MASTER_GACHAPON,
+                ModItems.CHERISH_GACHAPON,
+                ModItems.PREMIER_GACHAPON,
+                ModItems.EVENT_GACHAPON,
+                ModItems.POKEMON_POKE_GACHAPON,
+                ModItems.POKEMON_GREAT_GACHAPON,
+                ModItems.POKEMON_ULTRA_GACHAPON,
+                ModItems.POKEMON_MASTER_GACHAPON,
+                ModItems.POKEMON_CHERISH_GACHAPON,
+                ModItems.POKEMON_PREMIER_GACHAPON,
+                ModItems.POKEMON_EVENT_GACHAPON,
+                ModItems.LITWICK_PIN,
+                ModItems.STARYU_PIN,
+                ModItems.BELLSPROUT_PIN,
+                ModItems.TYROGUE_PIN,
+                ModItems.SCYTHER_PIN,
+                ModItems.EEVEE_PIN,
+                ModItems.DRATINI_PIN,
+                ModItems.ROTOM_PIN,
+                ModItems.DITTO_PIN,
+                ModItems.PORYGON_PIN,
+                ModItems.WALLET,
+                ModItems.FIRERED_GC_MUSIC_DISC,
+                ModItems.HEARTGOLD_GC_MUSIC_DISC,
+                ModItems.EMERALD_GC_MUSIC_DISC,
+                ModItems.PLATINUM_GC_MUSIC_DISC,
+                ModItems.DIAMOND_NUGGET,
+                ModItems.CHARGED_DIAMOND,
+                ModItems.HYPERCHARGED_DIAMOND,
+                ModItems.HANDFUL_OF_RELIC_COINS,
+                ModItems.STACK_OF_RELIC_COINS
+        );
     }
 
-    @Override
-    public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        // ITEM MODELS FOR CHIPS
-        itemModelGenerator.register(ModItems.BASIC_CHIP, Models.GENERATED);
-        itemModelGenerator.register(ModItems.RED_CHIP, Models.GENERATED);
-        itemModelGenerator.register(ModItems.BLUE_CHIP, Models.GENERATED);
-        itemModelGenerator.register(ModItems.PURPLE_CHIP, Models.GENERATED);
-        itemModelGenerator.register(ModItems.COPPER_CHIP, Models.GENERATED);
-        itemModelGenerator.register(ModItems.IRON_CHIP, Models.GENERATED);
-        itemModelGenerator.register(ModItems.EMERALD_CHIP, Models.GENERATED);
-        itemModelGenerator.register(ModItems.GOLD_CHIP, Models.GENERATED);
-        itemModelGenerator.register(ModItems.DIAMOND_CHIP, Models.GENERATED);
-        itemModelGenerator.register(ModItems.NETHERITE_CHIP, Models.GENERATED);
-        // ITEM MODELS FOR COINS
-        itemModelGenerator.register(ModItems.COPPER_COIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.IRON_COIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.GOLD_COIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.DIAMOND_COIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.EVENT_COIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.PRIMOGEM, Models.GENERATED);
-        // ITEM MODEL FOR GACHAPON
-        itemModelGenerator.register(ModItems.POKE_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.GREAT_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.ULTRA_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.MASTER_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.CHERISH_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.PREMIER_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.EVENT_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.POKEMON_POKE_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.POKEMON_GREAT_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.POKEMON_ULTRA_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.POKEMON_MASTER_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.POKEMON_CHERISH_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.POKEMON_PREMIER_GACHAPON, Models.GENERATED);
-        itemModelGenerator.register(ModItems.POKEMON_EVENT_GACHAPON, Models.GENERATED);
-        // ITEM MODELS FOR POKEMON PINS
-        itemModelGenerator.register(ModItems.LITWICK_PIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.STARYU_PIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.BELLSPROUT_PIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.TYROGUE_PIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.SCYTHER_PIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.EEVEE_PIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.DRATINI_PIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.ROTOM_PIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.DITTO_PIN, Models.GENERATED);
-        itemModelGenerator.register(ModItems.PORYGON_PIN, Models.GENERATED);
-        // ITEM MODEL FOR WALLET
-        itemModelGenerator.register(ModItems.WALLET, Models.GENERATED);
-        // ITEM MODEL FOR DISCS
-        itemModelGenerator.register(ModItems.FIRERED_GC_MUSIC_DISC, Models.GENERATED);
-        itemModelGenerator.register(ModItems.HEARTGOLD_GC_MUSIC_DISC, Models.GENERATED);
-        itemModelGenerator.register(ModItems.EMERALD_GC_MUSIC_DISC, Models.GENERATED);
-        itemModelGenerator.register(ModItems.PLATINUM_GC_MUSIC_DISC, Models.GENERATED);
-        // ITEM MODEL FOR ECONOMIES
-        itemModelGenerator.register(ModItems.DIAMOND_NUGGET, Models.GENERATED);
-        itemModelGenerator.register(ModItems.CHARGED_DIAMOND, Models.GENERATED);
-        itemModelGenerator.register(ModItems.HYPERCHARGED_DIAMOND, Models.GENERATED);
-        itemModelGenerator.register(ModItems.HANDFUL_OF_RELIC_COINS, Models.GENERATED);
-        itemModelGenerator.register(ModItems.STACK_OF_RELIC_COINS, Models.GENERATED);
+    private void blockFamily(Block base, Block stairs, Block slab, Block wall) {
+        cube(base);
+        stairsBlock((StairBlock) stairs, blockTexture(base));
+        itemModels().simpleBlockItem(stairs);
+        slabBlock((SlabBlock) slab, blockTexture(base), blockTexture(base));
+        itemModels().simpleBlockItem(slab);
+        if (wall != null) {
+            wallBlock((WallBlock) wall, blockTexture(base));
+            itemModels().wallInventory(name(wall), blockTexture(base));
+        }
     }
 
+    private void cube(Block block) {
+        simpleBlockWithItem(block, cubeAll(block));
+    }
+
+    private void column(Block block) {
+        axisBlock((RotatedPillarBlock) block, texture(name(block)), texture(name(block) + "_top"));
+        itemModels().simpleBlockItem(block);
+    }
+
+    private void door(Block block) {
+        String name = name(block);
+        doorBlock((DoorBlock) block, texture(name + "_bottom"), texture(name + "_top"));
+        itemModels().basicItem(block.asItem());
+    }
+
+    private void trapdoor(Block block) {
+        String name = name(block);
+        trapdoorBlock((TrapDoorBlock) block, blockTexture(block), true);
+        itemModels().withExistingParent(name, modLoc("block/" + name + "_bottom"));
+    }
+
+    private void flatItems(Item... items) {
+        for (Item item : items) {
+            itemModels().basicItem(item);
+        }
+    }
+
+    private ResourceLocation texture(String path) {
+        return modLoc("block/" + path);
+    }
+
+    private String name(Block block) {
+        return BuiltInRegistries.BLOCK.getKey(block).getPath();
+    }
 }

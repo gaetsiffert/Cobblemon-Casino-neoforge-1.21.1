@@ -4,23 +4,23 @@ import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.screen.ModScreenHandlers;
 import net.andrespr.casinorocket.screen.opening.BlackjackTableOpenData;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
-public class BlackjackTableScreenHandler extends ScreenHandler implements IMachineBoundHandler {
+public class BlackjackTableScreenHandler extends AbstractContainerMenu implements IMachineBoundHandler {
 
     private final BlockPos pos;
     private final String machineKey;
     private final long initialBalance;
     private final int initialBetIndex;
 
-    public BlackjackTableScreenHandler(int syncId, PlayerInventory inv, BlackjackTableOpenData data) {
+    public BlackjackTableScreenHandler(int syncId, Inventory inv, BlackjackTableOpenData data) {
         super(ModScreenHandlers.BLACKJACK_TABLE_SCREEN_HANDLER, syncId);
         this.pos = data.pos();
         this.machineKey = data.machineKey();
@@ -28,7 +28,7 @@ public class BlackjackTableScreenHandler extends ScreenHandler implements IMachi
         this.initialBetIndex = data.betIndex();
     }
 
-    public BlackjackTableScreenHandler(int syncId, PlayerInventory inv, BlockPos pos, String machineKey, long balance, int betIndex) {
+    public BlackjackTableScreenHandler(int syncId, Inventory inv, BlockPos pos, String machineKey, long balance, int betIndex) {
         super(ModScreenHandlers.BLACKJACK_TABLE_SCREEN_HANDLER, syncId);
         this.pos = pos;
         this.machineKey = machineKey;
@@ -37,22 +37,22 @@ public class BlackjackTableScreenHandler extends ScreenHandler implements IMachi
     }
 
     @Override
-    public void onClosed(PlayerEntity player) {
-        super.onClosed(player);
-        if (player.getWorld().isClient) return;
-        if (!(player instanceof ServerPlayerEntity sp)) return;
+    public void removed(Player player) {
+        super.removed(player);
+        if (player.level().isClientSide) return;
+        if (!(player instanceof ServerPlayer sp)) return;
 
         BlockPos machinePos = this.pos;
         MinecraftServer server = sp.getServer();
         if (server == null) return;
 
         server.execute(() -> {
-            if (sp.currentScreenHandler instanceof IMachineBoundHandler bound
+            if (sp.containerMenu instanceof IMachineBoundHandler bound
                     && bound.getMachinePos().equals(machinePos)) {
                 return;
             }
 
-            BlockEntity be = sp.getWorld().getBlockEntity(machinePos);
+            BlockEntity be = sp.level().getBlockEntity(machinePos);
             if (be instanceof BlackjackTableEntity table) {
                 table.unlock(sp);
             }
@@ -60,12 +60,12 @@ public class BlackjackTableScreenHandler extends ScreenHandler implements IMachi
     }
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int slot) {
+    public ItemStack quickMoveStack(Player player, int slot) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return true;
     }
 
@@ -80,3 +80,4 @@ public class BlackjackTableScreenHandler extends ScreenHandler implements IMachi
     }
 
 }
+

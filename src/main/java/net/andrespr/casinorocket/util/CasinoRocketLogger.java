@@ -1,10 +1,9 @@
 package net.andrespr.casinorocket.util;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.world.entity.player.Player;
 
 public class CasinoRocketLogger {
 
@@ -15,13 +14,13 @@ public class CasinoRocketLogger {
     }
 
     // DIRECT MESSAGE TO A PLAYER
-    public static void toPlayer(PlayerEntity player, String message, boolean overlay) {
-        player.sendMessage(Text.literal(message), overlay);
+    public static void toPlayer(Player player, String message, boolean overlay) {
+        player.displayClientMessage(Component.literal(message), overlay);
     }
 
     // DIRECT TRANSLATED MESSAGE TO A PLAYER
-    public static void toPlayerTranslated(PlayerEntity player, String translationKey, boolean overlay, Object... args) {
-        player.sendMessage(Text.translatable(translationKey, args), overlay);
+    public static void toPlayerTranslated(Player player, String translationKey, boolean overlay, Object... args) {
+        player.displayClientMessage(Component.translatable(translationKey, args), overlay);
     }
 
     // INFO LOG
@@ -49,9 +48,9 @@ public class CasinoRocketLogger {
     // TO OPERATORS AND LOG
     public static void toOps(MinecraftServer server, LogLevel level, String message) {
         String formatted = "[CasinoRocket] " + message;
-        server.getPlayerManager().getPlayerList().forEach(p -> {
-            if (server.getPlayerManager().isOperator(p.getGameProfile())) {
-                p.sendMessage(Text.literal(formatted), false);
+        server.getPlayerList().getPlayers().forEach(p -> {
+            if (server.getPlayerList().isOp(p.getGameProfile())) {
+                p.displayClientMessage(Component.literal(formatted), false);
             }
         });
         switch (level) {
@@ -64,8 +63,9 @@ public class CasinoRocketLogger {
     // TO EVERYONE
     public static void broadcast(MinecraftServer server, String level, String message) {
         String formatted = "[CasinoRocket] " + message;
-        server.getPlayerManager().broadcast(Text.literal(formatted), false);
+        server.getPlayerList().broadcastSystemMessage(Component.literal(formatted), false);
         info("[Broadcast/" + level.toUpperCase() + "] " + message);
     }
 
 }
+

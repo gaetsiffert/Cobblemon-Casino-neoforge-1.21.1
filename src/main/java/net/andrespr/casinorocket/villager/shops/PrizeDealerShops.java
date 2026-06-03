@@ -1,17 +1,17 @@
 package net.andrespr.casinorocket.villager.shops;
 
 import net.andrespr.casinorocket.villager.VillagerTradeHelper;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.ListTag;
 
 public final class PrizeDealerShops implements IShop {
 
     @Override
     public VillagerTradeHelper.ShopData build() {
 
-        NbtList shops = new NbtList();
+        ListTag shops = new ListTag();
 
         // ===== POKEMON PIN =====
-        NbtList pokemonOffers = new NbtList();
+        ListTag pokemonOffers = new ListTag();
         pokemonOffers.add(VillagerTradeHelper.makeOffer("casinorocket:litwick_pin", "10000"));
         pokemonOffers.add(VillagerTradeHelper.makeOffer("casinorocket:staryu_pin", "10000"));
         pokemonOffers.add(VillagerTradeHelper.makeOffer("casinorocket:bellsprout_pin", "10000"));
@@ -25,7 +25,7 @@ public final class PrizeDealerShops implements IShop {
         shops.add(VillagerTradeHelper.makeShopCompound("Pokemon", pokemonOffers));
 
         // ===== FOSSILS =====
-        NbtList fossilOffers = new NbtList();
+        ListTag fossilOffers = new ListTag();
         fossilOffers.add(VillagerTradeHelper.makeOffer("cobblemon:helix_fossil","50000"));
         fossilOffers.add(VillagerTradeHelper.makeOffer("cobblemon:dome_fossil","50000"));
         fossilOffers.add(VillagerTradeHelper.makeOffer("cobblemon:root_fossil","75000"));
@@ -43,3 +43,4 @@ public final class PrizeDealerShops implements IShop {
     }
 
 }
+

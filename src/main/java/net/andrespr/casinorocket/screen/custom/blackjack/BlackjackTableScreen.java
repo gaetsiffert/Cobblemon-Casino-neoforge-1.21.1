@@ -16,11 +16,11 @@ import net.andrespr.casinorocket.screen.widget.SlotButton;
 import net.andrespr.casinorocket.sound.ModSounds;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.andrespr.casinorocket.util.TextUtils;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Text;
+import net.andrespr.casinorocket.network.CasinoRocketPackets;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
 public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScreenHandler> {
 
@@ -50,14 +50,14 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
     // --- RESULT CONTROL ---
     private int lastSeenResultId = -1;
-    private Text resultText = null;
+    private Component resultText = null;
     private int resultColor = 0xFFFFFF;
     private int resultTicks = 0;
 
-    public BlackjackTableScreen(BlackjackTableScreenHandler handler, PlayerInventory inventory, Text title) {
+    public BlackjackTableScreen(BlackjackTableScreenHandler handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
-        this.backgroundWidth = 242;
-        this.backgroundHeight = 222;
+        this.imageWidth = 242;
+        this.imageHeight = 222;
     }
 
     @Override
@@ -65,18 +65,18 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
     protected void init() {
         super.init();
 
-        int baseX = (this.width - this.backgroundWidth) / 2;
-        int baseY = (this.height - this.backgroundHeight) / 2;
+        int baseX = (this.width - this.imageWidth) / 2;
+        int baseY = (this.height - this.imageHeight) / 2;
 
         this.betButton = ModButtons.bet(baseX, baseY, 6, 6, b -> onBetPressed());
         this.withdrawButton = ModButtons.withdraw(baseX, baseY, 164, 6, b -> onWithdrawPressed());
         this.subtractButton = ModButtons.subtract(baseX, baseY, 84, 18, b -> onSubtractPressed());
         this.plusButton = ModButtons.plus(baseX, baseY, 145, 18, b -> onPlusPressed());
 
-        this.addDrawableChild(betButton);
-        this.addDrawableChild(withdrawButton);
-        this.addDrawableChild(subtractButton);
-        this.addDrawableChild(plusButton);
+        this.addRenderableWidget(betButton);
+        this.addRenderableWidget(withdrawButton);
+        this.addRenderableWidget(subtractButton);
+        this.addRenderableWidget(plusButton);
 
         this.playBtn = ModButtons.play(baseX, baseY, 166, 133, b -> sendAction(BlackjackAction.PLAY));
         this.hitBtn = ModButtons.hit(baseX, baseY, 166, 148, b -> sendAction(BlackjackAction.HIT));
@@ -86,12 +86,12 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
         this.finishBtn = ModButtons.finish(baseX, baseY, 166, 148, b -> sendAction(BlackjackAction.FINISH));
         this.doubleOrNothingBtn = ModButtons.doubleOrNothing(baseX, baseY, 166, 163, b -> sendAction(BlackjackAction.DOUBLE_OR_NOTHING));
 
-        this.addDrawableChild(playBtn);
-        this.addDrawableChild(hitBtn);
-        this.addDrawableChild(standBtn);
-        this.addDrawableChild(doubleDownBtn);
-        this.addDrawableChild(finishBtn);
-        this.addDrawableChild(doubleOrNothingBtn);
+        this.addRenderableWidget(playBtn);
+        this.addRenderableWidget(hitBtn);
+        this.addRenderableWidget(standBtn);
+        this.addRenderableWidget(doubleDownBtn);
+        this.addRenderableWidget(finishBtn);
+        this.addRenderableWidget(doubleOrNothingBtn);
 
         updateButtons();
 
@@ -99,23 +99,23 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
     // === BUTTONS ===
     private void sendAction(BlackjackAction action) {
-        if (client == null || client.player == null) return;
+        if (minecraft == null || minecraft.player == null) return;
 
-        if (action == BlackjackAction.HIT) client.player.playSound(ModSounds.CARD, 1.0f, 1.0f);
+        if (action == BlackjackAction.HIT) minecraft.player.playSound(ModSounds.CARD, 1.0f, 1.0f);
 
-        ClientPlayNetworking.send(new BlackjackActionC2SPayload(
-                this.handler.getMachinePos(), this.handler.getMachineKey(), action));
+        CasinoRocketPackets.sendToServer(new BlackjackActionC2SPayload(
+                this.menu.getMachinePos(), this.menu.getMachineKey(), action));
     }
 
     private void onPlusPressed() {
-        if (client != null && client.player != null) {
-            ClientPlayNetworking.send(new ChangeBlackjackBetIndexC2SPayload(true));
+        if (minecraft != null && minecraft.player != null) {
+            CasinoRocketPackets.sendToServer(new ChangeBlackjackBetIndexC2SPayload(true));
         }
     }
 
     private void onSubtractPressed() {
-        if (client != null && client.player != null) {
-            ClientPlayNetworking.send(new ChangeBlackjackBetIndexC2SPayload(false));
+        if (minecraft != null && minecraft.player != null) {
+            CasinoRocketPackets.sendToServer(new ChangeBlackjackBetIndexC2SPayload(false));
         }
     }
 
@@ -155,8 +155,8 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
     // === TICK ===
     @Override
-    public void handledScreenTick() {
-        super.handledScreenTick();
+    public void containerTick() {
+        super.containerTick();
         if (resultTicks > 0) {
             resultTicks--;
             if (resultTicks == 0) resultText = null;
@@ -165,54 +165,54 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
     // === DRAW BACKGROUND ===
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
+    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
 
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
         RenderSystem.setShaderTexture(0, ModGuiTextures.BLACKJACK_TABLE_GUI);
-        context.drawTexture(ModGuiTextures.BLACKJACK_TABLE_GUI, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        context.blit(ModGuiTextures.BLACKJACK_TABLE_GUI, x, y, 0, 0, imageWidth, imageHeight);
 
         drawDealerCards(context, x, y, this.dealerCards);
         drawPlayerCards(context, x, y, this.playerCards);
 
         if (CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive()) {
-            context.drawTexture(ModGuiTextures.COBBLEDOLLARS, x + 132, y + 18, 0, 0, 12, 12, 12,12);
-            context.drawTexture(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12,12);
-            context.drawTexture(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.COBBLEDOLLARS, x + 132, y + 18, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12,12);
         }
         if (CasinoRocket.CONFIG.generalConfig.isRelicCoinActive()) {
-            context.drawTexture(ModGuiTextures.RELIC_COIN, x + 132, y + 18, 0, 0, 12, 12, 12,12);
-            context.drawTexture(ModGuiTextures.RELIC_COIN_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12,12);
-            context.drawTexture(ModGuiTextures.RELIC_COIN_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.RELIC_COIN, x + 132, y + 18, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12,12);
         }
         if (CasinoRocket.CONFIG.generalConfig.isDiamondActive()) {
-            context.drawTexture(ModGuiTextures.DIAMOND, x + 132, y + 18, 0, 0, 12, 12, 12, 12);
-            context.drawTexture(ModGuiTextures.DIAMOND_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12, 12);
-            context.drawTexture(ModGuiTextures.DIAMOND_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12, 12);
+            context.blit(ModGuiTextures.DIAMOND, x + 132, y + 18, 0, 0, 12, 12, 12, 12);
+            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12, 12);
+            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12, 12);
         }
     }
 
     @Override
-    protected void drawForeground(DrawContext ctx, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics ctx, int mouseX, int mouseY) {
 
         // ===== LABELS =====
         // Bet Amount
-        drawCenteredTextInBox(ctx, Text.translatable("gui.casinorocket.blackjack_table.bet_amount").getString(),
+        drawCenteredTextInBox(ctx, Component.translatable("gui.casinorocket.blackjack_table.bet_amount").getString(),
                 85, 7, 155, 14, 0xFFFFFF);
         // Dealer's Hand
-        drawCenteredTextInBox(ctx, Text.translatable("gui.casinorocket.blackjack_table.dealers_hand", dealerValueText).getString(),
+        drawCenteredTextInBox(ctx, Component.translatable("gui.casinorocket.blackjack_table.dealers_hand", dealerValueText).getString(),
                 53, 46, 188, 53, 0xFFFFFF);
         // Player's Hand
-        drawCenteredTextInBox(ctx, Text.translatable("gui.casinorocket.blackjack_table.players_hand", playerValueText).getString(),
+        drawCenteredTextInBox(ctx, Component.translatable("gui.casinorocket.blackjack_table.players_hand", playerValueText).getString(),
                 15, 143, 150, 150, 0xFFFFFF);
         // Balance
-        drawCenteredTextInBox(ctx, Text.translatable("gui.casinorocket.blackjack_table.balance").getString(),
+        drawCenteredTextInBox(ctx, Component.translatable("gui.casinorocket.blackjack_table.balance").getString(),
                 15, 209, 64, 216, 0xFFFFFF);
         // Last Win
-        drawCenteredTextInBox(ctx, Text.translatable("gui.casinorocket.blackjack_table.last_win").getString(),
+        drawCenteredTextInBox(ctx, Component.translatable("gui.casinorocket.blackjack_table.last_win").getString(),
                 130, 209, 179, 216, 0xFFFFFF);
         // Result text
         if (resultText != null && resultTicks > 0) {
@@ -224,7 +224,7 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
     }
 
-    private void drawNumericValues(DrawContext ctx) {
+    private void drawNumericValues(GuiGraphics ctx) {
 
         long betAmount = BlackjackRules.BET_VALUES.get(betIndex);
 
@@ -240,12 +240,12 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
     // === BLOCK ESC / CLOSE SCREEN ===
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (isBusy() && client != null && client.player != null) {
+        if (isBusy() && minecraft != null && minecraft.player != null) {
             if (keyCode == 256 /* GLFW.GLFW_KEY_ESCAPE */) {
-                CasinoRocketLogger.toPlayerTranslated(client.player, "gui.casinorocket.blackjack.esc", true);
+                CasinoRocketLogger.toPlayerTranslated(minecraft.player, "gui.casinorocket.blackjack.esc", true);
                 return true;
             }
-            if (client.options != null && client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
+            if (minecraft.options != null && minecraft.options.keyInventory.matches(keyCode, scanCode)) {
                 return true;
             }
         }
@@ -253,11 +253,11 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         if (isBusy()) {
             return;
         }
-        super.close();
+        super.onClose();
     }
 
     @Override
@@ -270,7 +270,7 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
     }
 
     // === DRAW CARDS METHODS ===
-    private void drawDealerCards(DrawContext context, int guiX, int guiY, int[] cards) {
+    private void drawDealerCards(GuiGraphics context, int guiX, int guiY, int[] cards) {
         if (cards == null || cards.length == 0) return;
 
         for (int i = 0; i < cards.length; i++) {
@@ -293,7 +293,7 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
         }
     }
 
-    private void drawPlayerCards(DrawContext context, int guiX, int guiY, int[] cards) {
+    private void drawPlayerCards(GuiGraphics context, int guiX, int guiY, int[] cards) {
         if (cards == null || cards.length == 0) return;
 
         for (int i = 0; i < cards.length; i++) {
@@ -316,22 +316,22 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
         }
     }
 
-    private void drawCardAt(DrawContext context, int x, int y, int cardId) {
+    private void drawCardAt(GuiGraphics context, int x, int y, int cardId) {
         if (cardId < 0) {
-            context.drawTexture(ModGuiTextures.CARD_BOTTOM, x, y, 0, 0, 24, 32, 24, 32);
+            context.blit(ModGuiTextures.CARD_BOTTOM, x, y, 0, 0, 24, 32, 24, 32);
             return;
         }
         drawCardFromSpritesheet(context, x, y, cardId);
     }
 
-    private void drawCardFromSpritesheet(DrawContext context, int x, int y, int cardId) {
+    private void drawCardFromSpritesheet(GuiGraphics context, int x, int y, int cardId) {
         int i = Math.floorMod(cardId, 13);
         int j = Math.floorDiv(cardId, 13);
 
         int u = i * 24;
         int v = j * 32;
 
-        context.drawTexture(ModGuiTextures.CARDS_SPRITESHEET, x, y, u, v, 24, 32, 312, 128);
+        context.blit(ModGuiTextures.CARDS_SPRITESHEET, x, y, u, v, 24, 32, 312, 128);
     }
 
     // === BUTTONS STATE / VISUAL ===
@@ -415,42 +415,42 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
     // === SOUND ===
     private void playResultSound(long resolvedBet, long resolvedPayout) {
-        if (client == null || client.player == null) return;
+        if (minecraft == null || minecraft.player == null) return;
 
         if (resolvedPayout > resolvedBet) {
-            client.player.playSound(ModSounds.WIN, 1.0f, 1.0f);
+            minecraft.player.playSound(ModSounds.WIN, 1.0f, 1.0f);
             return;
         }
 
         if (resolvedPayout == resolvedBet && resolvedBet > 0) {
-            client.player.playSound(ModSounds.DRAW, 1.0f, 1.0f);
+            minecraft.player.playSound(ModSounds.DRAW, 1.0f, 1.0f);
             return;
         }
 
-        client.player.playSound(ModSounds.LOSE, 1.0f, 1.0f);
+        minecraft.player.playSound(ModSounds.LOSE, 1.0f, 1.0f);
     }
 
     // === TEXT ===
-    private void drawCenteredTextInBox(DrawContext ctx, String text,
+    private void drawCenteredTextInBox(GuiGraphics ctx, String text,
                                        int x1, int y1, int x2, int y2, int color) {
-        int textWidth = textRenderer.getWidth(text);
+        int textWidth = font.width(text);
         int textHeight = 8;
 
         int cx = x1 + (x2 - x1 - textWidth) / 2;
         int cy = y1 + (y2 - y1 - textHeight) / 2;
 
-        ctx.drawText(textRenderer, text, cx, cy, color, true);
+        ctx.drawString(font, text, cx, cy, color, true);
     }
 
-    private void drawRightAlignedTextInBox(DrawContext ctx, String text,
+    private void drawRightAlignedTextInBox(GuiGraphics ctx, String text,
                                            int x1, int y1, int x2, int y2, int color) {
-        int textWidth = textRenderer.getWidth(text);
+        int textWidth = font.width(text);
         int textHeight = 8;
 
         int cx = x2 - textWidth;
         int cy = y1 + (y2 - y1 - textHeight) / 2;
 
-        ctx.drawText(textRenderer, text, cx, cy, color, true);
+        ctx.drawString(font, text, cx, cy, color, true);
     }
 
     private int resolveInsufficientBalance(long balance, int betIndex) {
@@ -461,13 +461,13 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
     private void showResultText(long bet, long payout) {
         if (payout > bet) {
-            resultText = Text.translatable("gui.casinorocket.blackjack.win");
+            resultText = Component.translatable("gui.casinorocket.blackjack.win");
             resultColor = 0xFFFFFF;
         } else if (payout == bet && bet > 0) {
-            resultText = Text.translatable("gui.casinorocket.blackjack.draw");
+            resultText = Component.translatable("gui.casinorocket.blackjack.draw");
             resultColor = 0xAAAAAA;
         } else {
-            resultText = Text.translatable("gui.casinorocket.blackjack.lose");
+            resultText = Component.translatable("gui.casinorocket.blackjack.lose");
             resultColor = 0xFF5555;
         }
 
@@ -475,3 +475,4 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
     }
 
 }
+

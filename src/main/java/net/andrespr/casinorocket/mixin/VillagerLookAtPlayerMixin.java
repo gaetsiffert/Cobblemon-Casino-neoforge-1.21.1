@@ -2,16 +2,16 @@ package net.andrespr.casinorocket.mixin;
 
 import net.andrespr.casinorocket.util.IdleYawData;
 import net.andrespr.casinorocket.util.LookPlayerData;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(VillagerEntity.class)
+@Mixin(Villager.class)
 public abstract class VillagerLookAtPlayerMixin {
 
     private static final double RANGE = 10.0;
@@ -20,19 +20,19 @@ public abstract class VillagerLookAtPlayerMixin {
 
     @Inject(method = "tick()V", at = @At("TAIL"))
     private void casinorocket$lookAtClosestPlayerOrIdle(CallbackInfo ci) {
-        VillagerEntity villager = (VillagerEntity) (Object) this;
-        if (villager.getWorld().isClient()) return;
+        Villager villager = (Villager) (Object) this;
+        if (villager.level().isClientSide()) return;
 
         if (LookPlayerData.getLookPlayer(villager) != 1) return;
 
-        PlayerEntity player = villager.getWorld().getClosestPlayer(villager, RANGE);
+        Player player = villager.level().getNearestPlayer(villager, RANGE);
 
         float targetYaw;
         float targetPitch;
 
         if (player != null && !player.isSpectator()) {
-            Vec3d from = villager.getEyePos();
-            Vec3d to = player.getEyePos();
+            Vec3 from = villager.getEyePosition();
+            Vec3 to = player.getEyePosition();
 
             double dx = to.x - from.x;
             double dy = to.y - from.y;
@@ -41,33 +41,34 @@ public abstract class VillagerLookAtPlayerMixin {
             double distXZ = Math.sqrt(dx * dx + dz * dz);
             if (distXZ < 1.0e-4) return;
 
-            targetYaw = (float) (MathHelper.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0f;
-            targetPitch = (float) (-(MathHelper.atan2(dy, distXZ) * (180.0 / Math.PI)));
+            targetYaw = (float) (Mth.atan2(dz, dx) * (180.0 / Math.PI)) - 90.0f;
+            targetPitch = (float) (-(Mth.atan2(dy, distXZ) * (180.0 / Math.PI)));
         } else {
             targetYaw = IdleYawData.get(villager);
             targetPitch = 0.0f;
         }
 
-        float newYaw = stepAngle(villager.getYaw(), targetYaw, MAX_YAW_STEP);
-        float newPitch = stepAngle(villager.getPitch(), targetPitch, MAX_PITCH_STEP);
+        float newYaw = stepAngle(villager.getYRot(), targetYaw, MAX_YAW_STEP);
+        float newPitch = stepAngle(villager.getXRot(), targetPitch, MAX_PITCH_STEP);
 
-        villager.setYaw(newYaw);
-        villager.bodyYaw = newYaw;
-        villager.headYaw = newYaw;
+        villager.setYRot(newYaw);
+        villager.yBodyRot = newYaw;
+        villager.yHeadRot = newYaw;
 
-        villager.setPitch(newPitch);
+        villager.setXRot(newPitch);
 
-        villager.prevYaw = newYaw;
-        villager.prevHeadYaw = newYaw;
-        villager.prevBodyYaw = newYaw;
-        villager.prevPitch = newPitch;
+        villager.yRotO = newYaw;
+        villager.yHeadRotO = newYaw;
+        villager.yBodyRotO = newYaw;
+        villager.xRotO = newPitch;
     }
 
     private static float stepAngle(float current, float target, float maxStep) {
-        float delta = MathHelper.wrapDegrees(target - current);
+        float delta = Mth.wrapDegrees(target - current);
         if (delta > maxStep) delta = maxStep;
         if (delta < -maxStep) delta = -maxStep;
         return current + delta;
     }
 
 }
+

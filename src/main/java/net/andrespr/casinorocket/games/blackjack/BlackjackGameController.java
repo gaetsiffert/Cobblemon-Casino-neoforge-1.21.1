@@ -1,8 +1,7 @@
 package net.andrespr.casinorocket.games.blackjack;
 
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
-import net.minecraft.server.network.ServerPlayerEntity;
-
+import net.minecraft.server.level.ServerPlayer;
 import java.util.UUID;
 
 public final class BlackjackGameController {
@@ -104,7 +103,7 @@ public final class BlackjackGameController {
     }
 
     // === DECIDE ACTION ===
-    public void handleAction(ServerPlayerEntity player, BlackjackAction action) {
+    public void handleAction(ServerPlayer player, BlackjackAction action) {
         switch (action) {
             case PLAY -> play();
             case HIT -> hit();
@@ -130,3 +129,4 @@ public final class BlackjackGameController {
     }
 
 }
+

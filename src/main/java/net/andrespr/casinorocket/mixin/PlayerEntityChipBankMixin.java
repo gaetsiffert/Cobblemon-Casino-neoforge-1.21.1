@@ -2,16 +2,16 @@ package net.andrespr.casinorocket.mixin;
 
 import net.andrespr.casinorocket.inventory.ChipBankInventory;
 import net.andrespr.casinorocket.util.IChipBankHolder;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public abstract class PlayerEntityChipBankMixin implements IChipBankHolder {
 
     @Unique
@@ -25,21 +25,22 @@ public abstract class PlayerEntityChipBankMixin implements IChipBankHolder {
         return casinorocket$chipBankInventory;
     }
 
-    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
-    private void casinorocket$writeChipBank(NbtCompound nbt, CallbackInfo ci) {
-        PlayerEntity self = (PlayerEntity) (Object) this;
-        nbt.put(CHIP_BANK_KEY, casinorocket$chipBankInventory.toNbtList(self.getRegistryManager()));
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    private void casinorocket$writeChipBank(CompoundTag nbt, CallbackInfo ci) {
+        Player self = (Player) (Object) this;
+        nbt.put(CHIP_BANK_KEY, casinorocket$chipBankInventory.createTag(self.registryAccess()));
     }
 
-    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
-    private void casinorocket$readChipBank(NbtCompound nbt, CallbackInfo ci) {
-        PlayerEntity self = (PlayerEntity) (Object) this;
-        if (nbt.contains(CHIP_BANK_KEY, NbtElement.LIST_TYPE)) {
-            casinorocket$chipBankInventory.readNbtList(
-                    nbt.getList(CHIP_BANK_KEY, NbtElement.COMPOUND_TYPE),
-                    self.getRegistryManager()
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    private void casinorocket$readChipBank(CompoundTag nbt, CallbackInfo ci) {
+        Player self = (Player) (Object) this;
+        if (nbt.contains(CHIP_BANK_KEY, Tag.TAG_LIST)) {
+            casinorocket$chipBankInventory.fromTag(
+                    nbt.getList(CHIP_BANK_KEY, Tag.TAG_COMPOUND),
+                    self.registryAccess()
             );
         }
     }
 
 }
+

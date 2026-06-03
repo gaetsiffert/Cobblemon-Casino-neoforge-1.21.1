@@ -17,13 +17,12 @@ import net.andrespr.casinorocket.screen.widget.SlotButton;
 import net.andrespr.casinorocket.sound.ModSounds;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.andrespr.casinorocket.util.TextUtils;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
+import net.andrespr.casinorocket.network.CasinoRocketPackets;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.EnumSet;
@@ -89,10 +88,10 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
     private DancingClefairy clefairy;
     private boolean hasSpunOnce = false;
 
-    public SlotMachineScreen(SlotMachineScreenHandler handler, PlayerInventory inv, Text title) {
+    public SlotMachineScreen(SlotMachineScreenHandler handler, Inventory inv, Component title) {
         super(handler, inv, title);
-        this.backgroundWidth = 220;
-        this.backgroundHeight = 205;
+        this.imageWidth = 220;
+        this.imageHeight = 205;
     }
 
     // === INIT ===
@@ -103,18 +102,18 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
 
         initRandomReels();
 
-        int baseX = (this.width - this.backgroundWidth) / 2;
-        int baseY = (this.height - this.backgroundHeight) / 2;
+        int baseX = (this.width - this.imageWidth) / 2;
+        int baseY = (this.height - this.imageHeight) / 2;
 
         this.betButton = ModButtons.bet(baseX, baseY, 4, 4, b -> onBetPressed());
         this.menuButton = ModButtons.menu(baseX, baseY, 83, 4, b -> onMenuPressed());
         this.withdrawButton = ModButtons.withdraw(baseX, baseY, 144, 4, b -> onWithdrawPressed());
         this.spinButton = ModButtons.spin(baseX, baseY, 90, 161, b -> onSpinPressed());
 
-        this.addDrawableChild(betButton);
-        this.addDrawableChild(menuButton);
-        this.addDrawableChild(withdrawButton);
-        this.addDrawableChild(spinButton);
+        this.addRenderableWidget(betButton);
+        this.addRenderableWidget(menuButton);
+        this.addRenderableWidget(withdrawButton);
+        this.addRenderableWidget(spinButton);
 
         lineOneSprite = new SlotLineSprite(ModGuiTextures.SLOT_LINE_ONE, 160, 14);
         lineTwoSprite = new SlotLineSprite(ModGuiTextures.SLOT_LINE_TWO, 160, 14);
@@ -124,9 +123,9 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
         clefairy = new DancingClefairy(ModGuiTextures.DANCING_CLEFAIRY, 22, 23);
 
         updateDisplay(
-                this.handler.getInitialBalance(),
-                this.handler.getInitialBetBase(),
-                this.handler.getInitialLinesMode()
+                this.menu.getInitialBalance(),
+                this.menu.getInitialBetBase(),
+                this.menu.getInitialLinesMode()
         );
     }
 
@@ -143,8 +142,8 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
 
     // === BUTTONS ===
     private void onSpinPressed() {
-        if (client != null && client.player != null && !isSpinning) {
-            ClientPlayNetworking.send(new DoSpinC2SPayload());
+        if (minecraft != null && minecraft.player != null && !isSpinning) {
+            CasinoRocketPackets.sendToServer(new DoSpinC2SPayload());
         }
     }
 
@@ -199,8 +198,8 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
         hasSpunOnce = true;
         updateSpinButtonState();
 
-        if (client != null && client.player != null) {
-            client.player.playSound(ModSounds.REELS_SPINNING, 1.0f, 1.0f);
+        if (minecraft != null && minecraft.player != null) {
+            minecraft.player.playSound(ModSounds.REELS_SPINNING, 1.0f, 1.0f);
         }
 
         if (this.spinButton != null) this.spinButton.active = false;
@@ -249,9 +248,9 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
 
     // === EVERY TICK ===
     @Override
-    public void handledScreenTick() {
-        super.handledScreenTick();
-        MouseRestore.applyIfPending(client);
+    public void containerTick() {
+        super.containerTick();
+        MouseRestore.applyIfPending(minecraft);
 
         if (isSpinning) {
             boolean anySpinning = false;
@@ -309,7 +308,7 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
     }
 
     // === DRAW ===
-    private void drawSymbols(DrawContext ctx, int originX, int originY) {
+    private void drawSymbols(GuiGraphics ctx, int originX, int originY) {
         for (int col = 0; col < 3; col++) {
             SlotSymbol[] strip = SlotReels.STRIPS[col];
             int len = strip.length;
@@ -320,18 +319,18 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
                 SlotSymbol symbol = strip[stripIndex];
                 if (symbol == null) continue;
 
-                Identifier texture = ModGuiTextures.SlotTextures.SYMBOL_TEXTURES.get(symbol);
+                ResourceLocation texture = ModGuiTextures.SlotTextures.SYMBOL_TEXTURES.get(symbol);
 
                 int drawX = originX + COLUMN_X[col];
                 int drawY = originY + ROW_Y + ((row - 1) * SYMBOL_SIZE) + (int) reelOffset[col];
 
-                ctx.drawTexture(texture, drawX, drawY,
+                ctx.blit(texture, drawX, drawY,
                         0, 0, SYMBOL_SIZE, SYMBOL_SIZE, SYMBOL_SIZE, SYMBOL_SIZE);
             }
         }
     }
 
-    private void drawLines(DrawContext context, int originX, int originY) {
+    private void drawLines(GuiGraphics context, int originX, int originY) {
         if (lineOneSprite == null) return;
 
         int x = originX + 30;
@@ -365,17 +364,17 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
     }
 
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1f,1f,1f,1f);
         RenderSystem.setShaderTexture(0, ModGuiTextures.SLOT_MACHINE_GUI);
 
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
 
-        context.drawTexture(ModGuiTextures.REELS, x + 50, y + 47, 0, 0, 120, 112, 120, 112);
+        context.blit(ModGuiTextures.REELS, x + 50, y + 47, 0, 0, 120, 112, 120, 112);
         drawSymbols(context, x, y);
-        context.drawTexture(ModGuiTextures.SLOT_MACHINE_GUI, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        context.blit(ModGuiTextures.SLOT_MACHINE_GUI, x, y, 0, 0, imageWidth, imageHeight);
         drawLines(context, x, y);
 
         if (clefairy != null) {
@@ -384,24 +383,24 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
         }
 
         if (CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive()) {
-            context.drawTexture(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 151, y + 34, 0, 0, 12, 12, 12,12);
-            context.drawTexture(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 69, y + 184, 0, 0, 12, 12, 12,12);
-            context.drawTexture(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 193, y + 184, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 151, y + 34, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 69, y + 184, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 193, y + 184, 0, 0, 12, 12, 12,12);
         }
         if (CasinoRocket.CONFIG.generalConfig.isRelicCoinActive()) {
-            context.drawTexture(ModGuiTextures.RELIC_COIN_GREEN, x + 151, y + 34, 0, 0, 12, 12, 12,12);
-            context.drawTexture(ModGuiTextures.RELIC_COIN_GREEN, x + 69, y + 184, 0, 0, 12, 12, 12,12);
-            context.drawTexture(ModGuiTextures.RELIC_COIN_GREEN, x + 193, y + 184, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 151, y + 34, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 69, y + 184, 0, 0, 12, 12, 12,12);
+            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 193, y + 184, 0, 0, 12, 12, 12,12);
         }
         if (CasinoRocket.CONFIG.generalConfig.isDiamondActive()) {
-            context.drawTexture(ModGuiTextures.DIAMOND_GREEN, x + 151, y + 34, 0, 0, 12, 12, 12, 12);
-            context.drawTexture(ModGuiTextures.DIAMOND_GREEN, x + 69, y + 184, 0, 0, 12, 12, 12, 12);
-            context.drawTexture(ModGuiTextures.DIAMOND_GREEN, x + 193, y + 184, 0, 0, 12, 12, 12, 12);
+            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 151, y + 34, 0, 0, 12, 12, 12, 12);
+            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 69, y + 184, 0, 0, 12, 12, 12, 12);
+            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 193, y + 184, 0, 0, 12, 12, 12, 12);
         }
     }
 
     @Override
-    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphics context, int mouseX, int mouseY) {
         drawBalanceAmount(context);
         drawBetAmount(context);
         drawWinAmount(context);
@@ -410,12 +409,12 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
     // === BLOCK ESC / CLOSE SCREEN ===
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (isBusy() && client != null && client.player != null) {
+        if (isBusy() && minecraft != null && minecraft.player != null) {
             if (keyCode == 256 /* GLFW.GLFW_KEY_ESCAPE */) {
-                CasinoRocketLogger.toPlayerTranslated(client.player, "gui.casinorocket.slot_machine.esc", true);
+                CasinoRocketLogger.toPlayerTranslated(minecraft.player, "gui.casinorocket.slot_machine.esc", true);
                 return true;
             }
-            if (client.options != null && client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
+            if (minecraft.options != null && minecraft.options.keyInventory.matches(keyCode, scanCode)) {
                 return true;
             }
         }
@@ -423,9 +422,9 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         if (isBusy()) return;
-        super.close();
+        super.onClose();
     }
 
     @Override
@@ -507,7 +506,7 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
 
     // === HELPER: SOUND ===
     private void playWinSound(List<SlotLineResult> wins) {
-        if (client == null || client.player == null) return;
+        if (minecraft == null || minecraft.player == null) return;
         if (wins.isEmpty()) return;
 
         SlotSymbol best = null;
@@ -524,13 +523,13 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
         if (best == null) return;
 
         switch (best) {
-            case SEVEN -> client.player.playSound(ModSounds.JACKPOT, 1f, 1f);
-            case ROCKET -> client.player.playSound(ModSounds.LEGENDARY_PRIZE, 1f, 1f);
-            case MEW -> client.player.playSound(ModSounds.ULTRARARE_PRIZE, 1f, 1f);
-            case PIKACHU -> client.player.playSound(ModSounds.RARE_PRIZE, 1f, 1f);
+            case SEVEN -> minecraft.player.playSound(ModSounds.JACKPOT, 1f, 1f);
+            case ROCKET -> minecraft.player.playSound(ModSounds.LEGENDARY_PRIZE, 1f, 1f);
+            case MEW -> minecraft.player.playSound(ModSounds.ULTRARARE_PRIZE, 1f, 1f);
+            case PIKACHU -> minecraft.player.playSound(ModSounds.RARE_PRIZE, 1f, 1f);
             case BULBASAUR, SQUIRTLE, CHARMANDER ->
-                    client.player.playSound(ModSounds.COMMON_PRIZE, 1f, 1f);
-            case CHERRY -> client.player.playSound(ModSounds.BONUS_PRIZE, 1f, 1f);
+                    minecraft.player.playSound(ModSounds.COMMON_PRIZE, 1f, 1f);
+            case CHERRY -> minecraft.player.playSound(ModSounds.BONUS_PRIZE, 1f, 1f);
             default -> {} // No sound
         }
     }
@@ -571,37 +570,37 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
     }
 
     // === HELPERS: TEXT ===
-    private void drawBetAmount(DrawContext context) {
+    private void drawBetAmount(GuiGraphics context) {
         String formatted = TextUtils.formatCompact(betAmount);
 
-        int width = textRenderer.getWidth(formatted);
+        int width = font.width(formatted);
         int drawX = Math.max(146 - width, 120);
 
-        context.drawText(textRenderer, formatted, drawX, 36, betAmount > balance ? 0xFF5555 : 0x00FF00, true);
-        context.drawText(textRenderer, "Bet Amount", 60, 36, 0xFFFFFF, true);
+        context.drawString(font, formatted, drawX, 36, betAmount > balance ? 0xFF5555 : 0x00FF00, true);
+        context.drawString(font, "Bet Amount", 60, 36, 0xFFFFFF, true);
     }
 
-    private void drawBalanceAmount(DrawContext context) {
+    private void drawBalanceAmount(GuiGraphics context) {
         String formatted = TextUtils.formatLarge(balance);
 
-        int width = textRenderer.getWidth(formatted);
+        int width = font.width(formatted);
         int drawX = Math.max(64 - width, 17);
 
-        context.drawText(textRenderer, formatted, drawX, 186,0x00FF00, true);
+        context.drawString(font, formatted, drawX, 186,0x00FF00, true);
     }
 
-    private void drawWinAmount(DrawContext context) {
+    private void drawWinAmount(GuiGraphics context) {
         String formatted = TextUtils.formatLarge(lastWinAmount);
 
-        int width = textRenderer.getWidth(formatted);
+        int width = font.width(formatted);
         int drawX = Math.max(188 - width, 141);
 
-        context.drawText(textRenderer, formatted, drawX, 186, 0x00FF00, true);
+        context.drawString(font, formatted, drawX, 186, 0x00FF00, true);
     }
 
     private void debugCheckSpin(SlotSymbol[][] matrix, int stop1, int stop2, int stop3) {
         if (!net.andrespr.casinorocket.games.slot.SlotClientSynced.DEBUG) return;
-        if (client == null || client.player == null) return;
+        if (minecraft == null || minecraft.player == null) return;
 
         int[] stops = { stop1, stop2, stop3 };
 
@@ -636,9 +635,9 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
         }
 
         if (ok) {
-            client.player.sendMessage(net.minecraft.text.Text.literal("§a[SlotDebug] OK (no desync)"), true); // actionbar
+            minecraft.player.displayClientMessage(net.minecraft.network.chat.Component.literal("§a[SlotDebug] OK (no desync)"), true); // actionbar
         } else {
-            client.player.sendMessage(net.minecraft.text.Text.literal("§c[SlotDebug] DESYNC! " + sb), false); // chat
+            minecraft.player.displayClientMessage(net.minecraft.network.chat.Component.literal("§c[SlotDebug] DESYNC! " + sb), false); // chat
         }
     }
 
@@ -648,3 +647,4 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
     }
 
 }
+

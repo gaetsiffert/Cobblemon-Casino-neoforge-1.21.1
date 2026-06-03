@@ -12,34 +12,33 @@ import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.sound.ModSounds;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.andrespr.casinorocket.util.TextUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.FireworkExplosionComponent;
-import net.minecraft.component.type.FireworksComponent;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.FireworkRocketEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.component.Fireworks;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.List;
 
 public class GachaMachinesUtils {
 
@@ -58,55 +57,55 @@ public class GachaMachinesUtils {
     private static final Map<UUID, Long> CLEAN_CONFIRMATION = new HashMap<>();
 
     // === EXECUTED WHEN A COIN IS DEPOSITED ===
-    public static ActionResult handleUse(World world, BlockPos pos, PlayerEntity player, String coinKey) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public static InteractionResult handleUse(Level world, BlockPos pos, Player player, String coinKey) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        final long currentTick = world.getTime();
+        final long currentTick = world.getGameTime();
         final long machineKey = pos.asLong();
 
         PLAYER_COOLDOWNS.object2LongEntrySet().removeIf(e -> currentTick > e.getLongValue());
         UUID currentUser = LAST_PLAYER_USED.get(pos);
 
-        if (currentUser != null && !currentUser.equals(player.getUuid()) || PENDING_PREMIER_BONUS.contains(machineKey)) {
+        if (currentUser != null && !currentUser.equals(player.getUUID()) || PENDING_PREMIER_BONUS.contains(machineKey)) {
             CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_another_occupied", true);
-            return ActionResult.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        LAST_MACHINE_USED.put(player.getUuid(), pos);
+        LAST_MACHINE_USED.put(player.getUUID(), pos);
 
-        long playerCooldownEnd = PLAYER_COOLDOWNS.getLong(player.getUuid());
+        long playerCooldownEnd = PLAYER_COOLDOWNS.getLong(player.getUUID());
         if (currentTick < playerCooldownEnd) {
-            BlockPos lastUsed = LAST_MACHINE_USED.get(player.getUuid());
+            BlockPos lastUsed = LAST_MACHINE_USED.get(player.getUUID());
             if (lastUsed != null && lastUsed.equals(pos)) {
                 CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_occupied", true);
             } else {
                 CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_another_occupied", true);
             }
-            return ActionResult.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        player.getMainHandStack().decrement(1);
+        player.getMainHandItem().shrink(1);
 
-        PLAYER_COOLDOWNS.put(player.getUuid(), currentTick + DELAY_TICKS);
+        PLAYER_COOLDOWNS.put(player.getUUID(), currentTick + DELAY_TICKS);
         LAST_COIN_USED.put(pos, coinKey);
-        LAST_PLAYER_USED.put(pos, player.getUuid());
+        LAST_PLAYER_USED.put(pos, player.getUUID());
 
-        world.playSound(null, pos, ModSounds.INSERTING_COIN, SoundCategory.BLOCKS, 1.0F, 1.0F);
-        world.scheduleBlockTick(pos, world.getBlockState(pos).getBlock(), DELAY_TICKS);
+        world.playSound(null, pos, ModSounds.INSERTING_COIN, SoundSource.BLOCKS, 1.0F, 1.0F);
+        world.scheduleTick(pos, world.getBlockState(pos).getBlock(), DELAY_TICKS);
         CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_coin_inserted", false);
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     // === EXECUTED AFTER THE DELAY, TO GIVE THE PRIZE ===
-    public static void finishDispense(ServerWorld world, BlockPos pos, Direction facing) {
+    public static void finishDispense(ServerLevel world, BlockPos pos, Direction facing) {
         final long key = pos.asLong();
-        final long currentTick = world.getTime();
+        final long currentTick = world.getGameTime();
 
         // === CHECKING BONUS TICK ===
         if (PENDING_PREMIER_BONUS.remove(key)) {
             UUID userId = PENDING_PREMIER_USER.remove(key);
-            PlayerEntity user = userId != null ? world.getPlayerByUuid(userId) : null;
+            Player user = userId != null ? world.getPlayerByUUID(userId) : null;
             if (user == null) return;
 
             boolean pokemon = world.getBlockState(pos).getBlock() instanceof PokemonGachaMachineBlock;
@@ -119,7 +118,7 @@ public class GachaMachinesUtils {
 
         // === REGULAR PRIZE ===
         UUID uuid = LAST_PLAYER_USED.get(pos);
-        PlayerEntity user = uuid != null ? world.getPlayerByUuid(uuid) : null;
+        Player user = uuid != null ? world.getPlayerByUUID(uuid) : null;
 
         BlockState state = world.getBlockState(pos);
         boolean pokemon = state.getBlock() instanceof PokemonGachaMachineBlock;
@@ -133,11 +132,11 @@ public class GachaMachinesUtils {
         ItemStack reward = getRewardForRarity(rarity, pokemon);
 
         if (rarity.equalsIgnoreCase("legendary") && user != null) {
-            GachaDataStorage data = GachaDataStorage.get(requireServer(user.getWorld()));
-            Map<String, Integer> playerMap = data.pityTracker.get(user.getUuid());
+            GachaDataStorage data = GachaDataStorage.get(requireServer(user.level()));
+            Map<String, Integer> playerMap = data.pityTracker.get(user.getUUID());
             if (playerMap != null) {
                 playerMap.put(coinKey, 0);
-                data.markDirty();
+                data.setDirty();
                 CasinoRocket.LOGGER.debug("[GachaMachines-Pity] {} pity reset for {}", coinKey, user.getName().getString());
             }
         }
@@ -151,17 +150,17 @@ public class GachaMachinesUtils {
 
         if (user != null) {
             GachaDataStorage data = GachaDataStorage.get(world.getServer());
-            GachaStats stats = data.playerStats.computeIfAbsent(user.getUuid(),
+            GachaStats stats = data.playerStats.computeIfAbsent(user.getUUID(),
                     k -> new GachaStats(user.getName().getString()));
             stats.setPlayerName(user.getName().getString());
             stats.recordUse(coinKey, rarity);
-            data.markDirty();
+            data.setDirty();
 
             var config = CasinoRocket.CONFIG.gachaMachines.premier_bonus;
             if (config.enable && stats.getTotalCoinsUsed() % config.coinsToBonus == 0) {
                 PENDING_PREMIER_BONUS.add(key);
-                PENDING_PREMIER_USER.put(key, user.getUuid());
-                world.scheduleBlockTick(pos, world.getBlockState(pos).getBlock(), 30);
+                PENDING_PREMIER_USER.put(key, user.getUUID());
+                world.scheduleTick(pos, world.getBlockState(pos).getBlock(), 30);
                 scheduledBonus = true;
             }
         }
@@ -177,22 +176,22 @@ public class GachaMachinesUtils {
             int rarityDelay = getRarityDelayTicks(rarity);
             if (scheduledBonus && rarityDelay < 60) rarityDelay = 60;
             long nextAvailable = currentTick + rarityDelay;
-            PLAYER_COOLDOWNS.put(user.getUuid(), nextAvailable);
-            LAST_MACHINE_USED.put(user.getUuid(), pos);
+            PLAYER_COOLDOWNS.put(user.getUUID(), nextAvailable);
+            LAST_MACHINE_USED.put(user.getUUID(), pos);
         }
 
     }
 
     // ===== APPLY PITY TO BASE PROBS =====
-    public static Map<String, Double> applyPity(Map<String, Double> probs, String coinKey, PlayerEntity player) {
+    public static Map<String, Double> applyPity(Map<String, Double> probs, String coinKey, Player player) {
         if (!CasinoRocket.CONFIG.gachaMachines.pity.enable) return probs;
         if (player == null) return probs;
 
-        GachaDataStorage data = GachaDataStorage.get(requireServer(player.getWorld()));
+        GachaDataStorage data = GachaDataStorage.get(requireServer(player.level()));
         var pityData = getPityData(coinKey);
         if (pityData == null || pityData.usesToMax <= 0 || pityData.maxLegendaryChance <= 0) return probs;
 
-        UUID id = player.getUuid();
+        UUID id = player.getUUID();
         Map<String, Integer> playerMap = data.pityTracker.computeIfAbsent(id, k -> new HashMap<>());
         int uses = playerMap.getOrDefault(coinKey, 0) + 1;
         playerMap.put(coinKey, uses);
@@ -216,13 +215,13 @@ public class GachaMachinesUtils {
 
         CasinoRocket.LOGGER.debug("[GachaMachines-Pity] {} used {} {} times → legendary {}%", player.getName().getString(), coinKey, uses, newLegendary * 100);
 
-        data.markDirty();
+        data.setDirty();
 
         return adjusted;
     }
 
     // ===== PICK RARITY =====
-    public static String pickWeightedRarity(Random random, Map<String, Double> probs) {
+    public static String pickWeightedRarity(RandomSource random, Map<String, Double> probs) {
         double r = random.nextDouble();
         double cumulative = 0.0;
         for (var e : probs.entrySet()) {
@@ -269,7 +268,7 @@ public class GachaMachinesUtils {
     }
 
     // Used to give the premier ball bonus prize
-    private static void givePremierBonus(ServerWorld world, BlockPos pos, Direction facing, PlayerEntity user, boolean pokemon) {
+    private static void givePremierBonus(ServerLevel world, BlockPos pos, Direction facing, Player user, boolean pokemon) {
         String bonusKey = "bonus";
         ItemStack bonus = getRewardForRarity(bonusKey, pokemon);
 
@@ -278,10 +277,10 @@ public class GachaMachinesUtils {
         dropFromFront(world, pos, facing, bonus);
 
         GachaDataStorage data = GachaDataStorage.get(world.getServer());
-        GachaStats stats = data.playerStats.computeIfAbsent(user.getUuid(),
+        GachaStats stats = data.playerStats.computeIfAbsent(user.getUUID(),
                 k -> new GachaStats(user.getName().getString()));
         stats.recordBonus();
-        data.markDirty();
+        data.setDirty();
 
         CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_bonus_prize", true);
     }
@@ -289,8 +288,8 @@ public class GachaMachinesUtils {
     // ===== VISUAL AND AUDIO EFFECTS =====
 
     // SOUND: Picked rarity -> Play special sound
-    public static void playRaritySound(World world, BlockPos pos, String rarity) {
-        if (world.isClient) return;
+    public static void playRaritySound(Level world, BlockPos pos, String rarity) {
+        if (world.isClientSide) return;
 
         SoundEvent sound = switch (rarity.toLowerCase(LOCALE)) {
             case "common" -> ModSounds.COMMON_PRIZE;
@@ -307,13 +306,13 @@ public class GachaMachinesUtils {
             return;
         }
 
-        world.playSound(null, pos, sound, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        world.playSound(null, pos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
 
     }
 
     // Particles: Picked rarity -> Spawn special particles
-    public static void spawnRarityParticles(ServerWorld world, BlockPos pos, String rarity) {
-        ParticleEffect particle = switch (rarity.toLowerCase(LOCALE)) {
+    public static void spawnRarityParticles(ServerLevel world, BlockPos pos, String rarity) {
+        ParticleOptions particle = switch (rarity.toLowerCase(LOCALE)) {
             case "common" -> ParticleTypes.END_ROD;
             case "uncommon" -> ParticleTypes.HAPPY_VILLAGER;
             case "rare" -> ParticleTypes.FIREWORK;
@@ -328,26 +327,26 @@ public class GachaMachinesUtils {
             return;
         }
 
-        world.spawnParticles(particle, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
+        world.sendParticles(particle, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
                 20, 0.3, 0.3, 0.3, 0.02);
     }
 
     // Fireworks: Picked rarity -> Spawn special firework (Only for ultrarare/legendary)
-    public static void spawnFireworkByRarity(ServerWorld world, BlockPos pos, String rarity) {
+    public static void spawnFireworkByRarity(ServerLevel world, BlockPos pos, String rarity) {
         int flight = 0;
         boolean trail = true;
         boolean twinkle = true;
         int color;
-        FireworkExplosionComponent.Type shape;
+        FireworkExplosion.Shape shape;
 
         switch (rarity.toLowerCase(LOCALE)) {
             case "ultrarare" -> {
                 color = 0x8000FF; // PURPLE
-                shape = FireworkExplosionComponent.Type.SMALL_BALL;
+                shape = FireworkExplosion.Shape.SMALL_BALL;
             }
             case "legendary" -> {
                 color = 0xFF0000; // RED
-                shape = FireworkExplosionComponent.Type.STAR;
+                shape = FireworkExplosion.Shape.STAR;
             }
             default -> {
                 return;
@@ -356,45 +355,45 @@ public class GachaMachinesUtils {
 
         IntArrayList colors = new IntArrayList(new int[]{color});
 
-        FireworkExplosionComponent explosion = new FireworkExplosionComponent(
+        FireworkExplosion explosion = new FireworkExplosion(
                 shape, colors, new IntArrayList(), trail, twinkle);
 
-        FireworksComponent fwComponent = new FireworksComponent(flight, List.of(explosion));
+        Fireworks fwComponent = new Fireworks(flight, List.of(explosion));
 
         ItemStack rocket = new ItemStack(Items.FIREWORK_ROCKET);
-        rocket.set(DataComponentTypes.FIREWORKS, fwComponent);
+        rocket.set(DataComponents.FIREWORKS, fwComponent);
 
         FireworkRocketEntity entity = new FireworkRocketEntity(
                 world, pos.getX() + 0.5, pos.getY() + 2.0, pos.getZ() + 0.5, rocket);
 
-        world.spawnEntity(entity);
+        world.addFreshEntity(entity);
     }
 
     // Feedback: Notification of item gotten & pity update (If active)
-    public static void giveUserFeedback(Map<String, Double> probs, String coinKey, ItemStack reward, PlayerEntity user) {
+    public static void giveUserFeedback(Map<String, Double> probs, String coinKey, ItemStack reward, Player user) {
 
         if (user == null) return;
-        CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_reward", true, reward.getName());
+        CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_reward", true, reward.getHoverName());
 
         if ((coinKey.equals("gold") || coinKey.equals("diamond")) && CasinoRocket.CONFIG.gachaMachines.pity.pityUpdateMessages) {
 
-            GachaDataStorage data = GachaDataStorage.get(requireServer(user.getWorld()));
-            Map<String, Integer> playerMap = data.pityTracker.get(user.getUuid());
+            GachaDataStorage data = GachaDataStorage.get(requireServer(user.level()));
+            Map<String, Integer> playerMap = data.pityTracker.get(user.getUUID());
             double pityChance = getCurrentLegendaryChance(coinKey, user, probs);
             int maxUses = getMaxUses(coinKey);
 
-            MutableText coinName = Objects.requireNonNull(getCoinStack(coinKey)).getName().copy();
+            MutableComponent coinName = Objects.requireNonNull(getCoinStack(coinKey)).getHoverName().copy();
             String formattedChance = String.format("%.2f", pityChance * 100.0);
 
             if (playerMap != null && playerMap.getOrDefault(coinKey, 0) == 0) {
                 CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_pity_reset", false,
-                        coinName.formatted(Formatting.GOLD), Text.literal(formattedChance).formatted(Formatting.YELLOW));
+                        coinName.withStyle(ChatFormatting.GOLD), Component.literal(formattedChance).withStyle(ChatFormatting.YELLOW));
             } else if (playerMap != null && playerMap.getOrDefault(coinKey, 0) >= maxUses) {
                 CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_pity_max", false,
-                        coinName.formatted(Formatting.GOLD), Text.literal(formattedChance).formatted(Formatting.YELLOW));
+                        coinName.withStyle(ChatFormatting.GOLD), Component.literal(formattedChance).withStyle(ChatFormatting.YELLOW));
             } else {
                 CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_pity_update", false,
-                        coinName.formatted(Formatting.GOLD), Text.literal(formattedChance).formatted(Formatting.YELLOW));
+                        coinName.withStyle(ChatFormatting.GOLD), Component.literal(formattedChance).withStyle(ChatFormatting.YELLOW));
             }
 
         }
@@ -404,10 +403,10 @@ public class GachaMachinesUtils {
     // ===== GETTERS =====
 
     public static String getCoinKey(ItemStack stack) {
-        if (stack.isOf(ModItems.COPPER_COIN)) return "copper";
-        if (stack.isOf(ModItems.IRON_COIN)) return "iron";
-        if (stack.isOf(ModItems.GOLD_COIN)) return "gold";
-        if (stack.isOf(ModItems.DIAMOND_COIN)) return "diamond";
+        if (stack.is(ModItems.COPPER_COIN)) return "copper";
+        if (stack.is(ModItems.IRON_COIN)) return "iron";
+        if (stack.is(ModItems.GOLD_COIN)) return "gold";
+        if (stack.is(ModItems.DIAMOND_COIN)) return "diamond";
         return null;
     }
 
@@ -430,9 +429,9 @@ public class GachaMachinesUtils {
         };
     }
 
-    public static double getCurrentLegendaryChance(String coinKey, PlayerEntity player, Map<String, Double> baseProbs) {
-        GachaDataStorage data = GachaDataStorage.get(requireServer(player.getWorld()));
-        Map<String, Integer> playerMap = data.pityTracker.get(player.getUuid());
+    public static double getCurrentLegendaryChance(String coinKey, Player player, Map<String, Double> baseProbs) {
+        GachaDataStorage data = GachaDataStorage.get(requireServer(player.level()));
+        Map<String, Integer> playerMap = data.pityTracker.get(player.getUUID());
         if (playerMap == null) return baseProbs.getOrDefault("legendary", 0.0);
 
         int uses = playerMap.getOrDefault(coinKey, 0);
@@ -461,32 +460,32 @@ public class GachaMachinesUtils {
     }
 
     // === EVENT GACHAPON ===
-    public static ActionResult handleEventUse(World world, BlockPos pos, PlayerEntity player) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public static InteractionResult handleEventUse(Level world, BlockPos pos, Player player) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        final long currentTick = world.getTime();
+        final long currentTick = world.getGameTime();
 
         PLAYER_COOLDOWNS.object2LongEntrySet().removeIf(e -> currentTick > e.getLongValue());
 
-        long playerCooldownEnd = PLAYER_COOLDOWNS.getLong(player.getUuid());
+        long playerCooldownEnd = PLAYER_COOLDOWNS.getLong(player.getUUID());
         if (currentTick < playerCooldownEnd) {
             CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_occupied", true);
-            return ActionResult.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        PLAYER_COOLDOWNS.put(player.getUuid(), currentTick + DELAY_TICKS);
-        LAST_PLAYER_USED.put(pos, player.getUuid());
+        PLAYER_COOLDOWNS.put(player.getUUID(), currentTick + DELAY_TICKS);
+        LAST_PLAYER_USED.put(pos, player.getUUID());
 
-        world.playSound(null, pos, ModSounds.INSERTING_COIN, SoundCategory.BLOCKS, 1.0F, 1.0F);
-        world.scheduleBlockTick(pos, world.getBlockState(pos).getBlock(), DELAY_TICKS);
+        world.playSound(null, pos, ModSounds.INSERTING_COIN, SoundSource.BLOCKS, 1.0F, 1.0F);
+        world.scheduleTick(pos, world.getBlockState(pos).getBlock(), DELAY_TICKS);
         CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_coin_inserted", false);
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
-    public static void finishEventDispense(ServerWorld world, BlockPos pos, Direction facing) {
+    public static void finishEventDispense(ServerLevel world, BlockPos pos, Direction facing) {
         UUID uuid = LAST_PLAYER_USED.remove(pos);
-        PlayerEntity user = uuid != null ? world.getPlayerByUuid(uuid) : null;
+        Player user = uuid != null ? world.getPlayerByUUID(uuid) : null;
 
         if (user == null) return;
 
@@ -505,55 +504,55 @@ public class GachaMachinesUtils {
         spawnFireworkByRarity(world, pos, "rare");
         dropFromFront(world, pos, facing, reward);
 
-        CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_reward", true, reward.getName());
+        CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_reward", true, reward.getHoverName());
 
-        long nextAvailable = world.getTime() + getRarityDelayTicks("rare");
-        PLAYER_COOLDOWNS.put(user.getUuid(), nextAvailable);
+        long nextAvailable = world.getGameTime() + getRarityDelayTicks("rare");
+        PLAYER_COOLDOWNS.put(user.getUUID(), nextAvailable);
     }
 
     // === PLUSHIES ===
-    public static ActionResult handlePlushiesUse(World world, BlockPos pos, PlayerEntity player) {
-        if (world.isClient) return ActionResult.SUCCESS;
+    public static InteractionResult handlePlushiesUse(Level world, BlockPos pos, Player player) {
+        if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        final long currentTick = world.getTime();
+        final long currentTick = world.getGameTime();
 
         PLAYER_COOLDOWNS.object2LongEntrySet().removeIf(e -> currentTick > e.getLongValue());
 
         UUID currentUser = LAST_PLAYER_USED.get(pos);
-        if (currentUser != null && !currentUser.equals(player.getUuid())) {
+        if (currentUser != null && !currentUser.equals(player.getUUID())) {
             CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_another_occupied", true);
-            return ActionResult.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        LAST_MACHINE_USED.put(player.getUuid(), pos);
+        LAST_MACHINE_USED.put(player.getUUID(), pos);
 
-        long playerCooldownEnd = PLAYER_COOLDOWNS.getLong(player.getUuid());
+        long playerCooldownEnd = PLAYER_COOLDOWNS.getLong(player.getUUID());
         if (currentTick < playerCooldownEnd) {
-            BlockPos lastUsed = LAST_MACHINE_USED.get(player.getUuid());
+            BlockPos lastUsed = LAST_MACHINE_USED.get(player.getUUID());
             if (lastUsed != null && lastUsed.equals(pos)) {
                 CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_occupied", true);
             } else {
                 CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_another_occupied", true);
             }
-            return ActionResult.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        PLAYER_COOLDOWNS.put(player.getUuid(), currentTick + DELAY_TICKS);
-        LAST_PLAYER_USED.put(pos, player.getUuid());
+        PLAYER_COOLDOWNS.put(player.getUUID(), currentTick + DELAY_TICKS);
+        LAST_PLAYER_USED.put(pos, player.getUUID());
 
-        world.playSound(null, pos, ModSounds.INSERTING_COIN, SoundCategory.BLOCKS, 1.0F, 1.0F);
-        world.scheduleBlockTick(pos, world.getBlockState(pos).getBlock(), DELAY_TICKS);
+        world.playSound(null, pos, ModSounds.INSERTING_COIN, SoundSource.BLOCKS, 1.0F, 1.0F);
+        world.scheduleTick(pos, world.getBlockState(pos).getBlock(), DELAY_TICKS);
         CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_coin_inserted", false);
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
-    public static void finishPlushiesDispense(ServerWorld world, BlockPos pos, Direction facing) {
+    public static void finishPlushiesDispense(ServerLevel world, BlockPos pos, Direction facing) {
 
-        final long currentTick = world.getTime();
+        final long currentTick = world.getGameTime();
 
         UUID uuid = LAST_PLAYER_USED.remove(pos);
-        PlayerEntity user = uuid != null ? world.getPlayerByUuid(uuid) : null;
+        Player user = uuid != null ? world.getPlayerByUUID(uuid) : null;
         if (user == null) return;
 
         ItemStack reward = PlushiesGachaponUtils.pickPlushie(world.getRandom());
@@ -568,42 +567,42 @@ public class GachaMachinesUtils {
         spawnFireworkByRarity(world, pos, "rare");
         dropFromFront(world, pos, facing, reward);
 
-        CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_reward", true, reward.getName());
+        CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.gacha_machines_reward", true, reward.getHoverName());
 
         long nextAvailable = currentTick + getRarityDelayTicks("rare");
-        PLAYER_COOLDOWNS.put(user.getUuid(), nextAvailable);
-        LAST_MACHINE_USED.put(user.getUuid(), pos);
+        PLAYER_COOLDOWNS.put(user.getUUID(), nextAvailable);
+        LAST_MACHINE_USED.put(user.getUUID(), pos);
 
     }
 
     // ===== HELPERS =====
 
-    public static void dropFromFront(World world, BlockPos pos, Direction facing, ItemStack stack) {
-        if (world.isClient) return;
-        double x = pos.getX() + 0.5 + facing.getOffsetX() * 0.7;
+    public static void dropFromFront(Level world, BlockPos pos, Direction facing, ItemStack stack) {
+        if (world.isClientSide) return;
+        double x = pos.getX() + 0.5 + facing.getStepX() * 0.7;
         double y = pos.getY() + 0.7;
-        double z = pos.getZ() + 0.5 + facing.getOffsetZ() * 0.7;
+        double z = pos.getZ() + 0.5 + facing.getStepZ() * 0.7;
 
         ItemEntity entity = new ItemEntity(world, x, y, z, stack.copy());
         double speed = 0.15;
-        entity.setVelocity(facing.getOffsetX() * speed, 0.1, facing.getOffsetZ() * speed);
-        world.spawnEntity(entity);
+        entity.setDeltaMovement(facing.getStepX() * speed, 0.1, facing.getStepZ() * speed);
+        world.addFreshEntity(entity);
     }
 
-    private static MinecraftServer requireServer(World world) {
+    private static MinecraftServer requireServer(Level world) {
         return Objects.requireNonNull(world.getServer(), "[CasinoRocket] Server not found!");
     }
 
     // ===== STATS / COMMAND HELPERS =====
 
-    public static Text getPlayerStatsText(Object targetOrName, MinecraftServer server) {
+    public static Component getPlayerStatsText(Object targetOrName, MinecraftServer server) {
         GachaDataStorage data = GachaDataStorage.get(server);
         GachaStats stats = null;
         String playerName = null;
 
         // === Resolve player or name ===
-        if (targetOrName instanceof ServerPlayerEntity player) {
-            stats = data.playerStats.get(player.getUuid());
+        if (targetOrName instanceof ServerPlayer player) {
+            stats = data.playerStats.get(player.getUUID());
             playerName = (stats != null && stats.getPlayerName() != null)
                     ? stats.getPlayerName()
                     : player.getName().getString();
@@ -618,19 +617,19 @@ public class GachaMachinesUtils {
         }
 
         if (stats == null || playerName == null) {
-            return Text.literal("No recorded stats for player.").formatted(Formatting.GRAY);
+            return Component.literal("No recorded stats for player.").withStyle(ChatFormatting.GRAY);
         }
 
         // === Build formatted text ===
-        MutableText text = Text.literal("\n")
-                .append(Text.literal("Gacha Machine Stats for ").formatted(Formatting.BOLD))
-                .append(Text.literal(playerName).formatted(Formatting.GOLD, Formatting.BOLD))
-                .append(Text.literal(":\n").formatted(Formatting.BOLD))
-                .append(Text.literal("Total Coins Used: ").formatted(Formatting.YELLOW))
-                .append(Text.literal(stats.getTotalCoinsUsed() + "\n\n").formatted(Formatting.YELLOW));
+        MutableComponent text = Component.literal("\n")
+                .append(Component.literal("Gacha Machine Stats for ").withStyle(ChatFormatting.BOLD))
+                .append(Component.literal(playerName).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                .append(Component.literal(":\n").withStyle(ChatFormatting.BOLD))
+                .append(Component.literal("Total Coins Used: ").withStyle(ChatFormatting.YELLOW))
+                .append(Component.literal(stats.getTotalCoinsUsed() + "\n\n").withStyle(ChatFormatting.YELLOW));
 
         // === Coins Used by Type ===
-        text.append(Text.literal("Coins Inserted:\n").formatted(Formatting.YELLOW));
+        text.append(Component.literal("Coins Inserted:\n").withStyle(ChatFormatting.YELLOW));
 
         Map<String, Integer> coins = new LinkedHashMap<>();
         coins.put("Copper", stats.copperUsed);
@@ -644,17 +643,17 @@ public class GachaMachinesUtils {
             String coin = e.getKey();
             int count = e.getValue();
 
-            text.append(Text.literal("• ").formatted(Formatting.YELLOW))
-                    .append(Text.literal(coin + ": ").formatted(TextUtils.coinColor(coin)))
-                    .append(Text.literal(String.valueOf(count)).formatted(Formatting.YELLOW));
+            text.append(Component.literal("• ").withStyle(ChatFormatting.YELLOW))
+                    .append(Component.literal(coin + ": ").withStyle(TextUtils.coinColor(coin)))
+                    .append(Component.literal(String.valueOf(count)).withStyle(ChatFormatting.YELLOW));
 
             if (++coinIndex < coinSize) {
-                text.append(Text.literal("\n"));
+                text.append(Component.literal("\n"));
             }
         }
 
         // === Rarity Stats ===
-        text.append(Text.literal("\n\nGachapon Rarity Obtained:\n").formatted(Formatting.YELLOW));
+        text.append(Component.literal("\n\nGachapon Rarity Obtained:\n").withStyle(ChatFormatting.YELLOW));
 
         var entries = stats.getRarityCounts().entrySet();
         int index = 0;
@@ -664,19 +663,19 @@ public class GachaMachinesUtils {
             String rarity = e.getKey();
             int count = e.getValue();
 
-            text.append(Text.literal("• ").formatted(Formatting.YELLOW))
-                    .append(Text.literal(capitalize(rarity) + ": ").formatted(TextUtils.rarityColor(rarity)))
-                    .append(Text.literal(String.valueOf(count)).formatted(Formatting.YELLOW));
+            text.append(Component.literal("• ").withStyle(ChatFormatting.YELLOW))
+                    .append(Component.literal(capitalize(rarity) + ": ").withStyle(TextUtils.rarityColor(rarity)))
+                    .append(Component.literal(String.valueOf(count)).withStyle(ChatFormatting.YELLOW));
 
             if (++index < size) {
-                text.append(Text.literal("\n"));
+                text.append(Component.literal("\n"));
             }
         }
 
         return text;
     }
 
-    public static Text getLeaderboardText(MinecraftServer server, String category, String key) {
+    public static Component getLeaderboardText(MinecraftServer server, String category, String key) {
         GachaDataStorage data = GachaDataStorage.get(server);
         data.playerStats.values().removeIf(Objects::isNull);
 
@@ -686,7 +685,7 @@ public class GachaMachinesUtils {
 
         // === Type validation ===
         if (!isRarity && !isCoin) {
-            return Text.literal("Invalid leaderboard type. Use 'rarity' or 'coins'.").formatted(Formatting.RED);
+            return Component.literal("Invalid leaderboard type. Use 'rarity' or 'coins'.").withStyle(ChatFormatting.RED);
         }
 
         // === Dynamic sort ===
@@ -701,16 +700,16 @@ public class GachaMachinesUtils {
                 .toList();
 
         if (sorted.isEmpty()) {
-            return Text.literal("No entries for " + category + " '" + key + "'.").formatted(Formatting.GRAY);
+            return Component.literal("No entries for " + category + " '" + key + "'.").withStyle(ChatFormatting.GRAY);
         }
 
         // === Head ===
-        Formatting titleColor = isRarity ? TextUtils.rarityColor(input) : TextUtils.coinColor(input);
+        ChatFormatting titleColor = isRarity ? TextUtils.rarityColor(input) : TextUtils.coinColor(input);
         String titleLabel = (isRarity ? "Gacha Wins (" : "Coins Used (") + key.toUpperCase(Locale.ROOT) + ")";
 
-        MutableText out = Text.literal("\n")
-                .append(Text.literal("Top 10 - " + titleLabel).formatted(titleColor, Formatting.BOLD))
-                .append(Text.literal("\n"));
+        MutableComponent out = Component.literal("\n")
+                .append(Component.literal("Top 10 - " + titleLabel).withStyle(titleColor, ChatFormatting.BOLD))
+                .append(Component.literal("\n"));
 
         // === Body ===
         int rank = 1;
@@ -721,37 +720,37 @@ public class GachaMachinesUtils {
 
             int count = isRarity ? stats.getRarityCount(input) : stats.getCoinCount(input);
 
-            out.append(Text.literal(rank + ". ").formatted(Formatting.YELLOW))
-                    .append(Text.literal(name).formatted(TextUtils.rankColors(rank)))
-                    .append(Text.literal(" - ").formatted(Formatting.GRAY))
-                    .append(Text.literal(String.valueOf(count)).formatted(Formatting.YELLOW));
+            out.append(Component.literal(rank + ". ").withStyle(ChatFormatting.YELLOW))
+                    .append(Component.literal(name).withStyle(TextUtils.rankColors(rank)))
+                    .append(Component.literal(" - ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(String.valueOf(count)).withStyle(ChatFormatting.YELLOW));
 
             if (rank++ < sorted.size()) {
-                out.append(Text.literal("\n"));
+                out.append(Component.literal("\n"));
             }
         }
 
         return out;
     }
 
-    public static Text clearAllGachaData(MinecraftServer server, boolean confirm, @Nullable ServerPlayerEntity sender) {
-        UUID id = sender != null ? sender.getUuid() : UUID.randomUUID();
-        long now = server.getOverworld().getTime();
+    public static Component clearAllGachaData(MinecraftServer server, boolean confirm, @Nullable ServerPlayer sender) {
+        UUID id = sender != null ? sender.getUUID() : UUID.randomUUID();
+        long now = server.overworld().getGameTime();
         long window = 20 * 30;
 
         if (!confirm) {
             CLEAN_CONFIRMATION.put(id, now);
-            return Text.literal("⚠ Are you sure you want to delete ALL Gacha data?\n")
-                    .append(Text.literal("Type again within 30 seconds:\n").formatted(Formatting.GRAY))
-                    .append(Text.literal("'/casinorocket gachapon machines cleandata confirm'").formatted(Formatting.RED, Formatting.BOLD));
+            return Component.literal("⚠ Are you sure you want to delete ALL Gacha data?\n")
+                    .append(Component.literal("Type again within 30 seconds:\n").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal("'/casinorocket gachapon machines cleandata confirm'").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
         }
 
         Long lastRequest = CLEAN_CONFIRMATION.get(id);
         if (lastRequest == null) {
-            return Text.literal("You must run '/casinorocket gachapon machines cleandata' first.").formatted(Formatting.RED);
+            return Component.literal("You must run '/casinorocket gachapon machines cleandata' first.").withStyle(ChatFormatting.RED);
         }
         if (now - lastRequest > window) {
-            return Text.literal("Confirmation expired. Type again '/casinorocket gachapon machines cleandata'").formatted(Formatting.GRAY);
+            return Component.literal("Confirmation expired. Type again '/casinorocket gachapon machines cleandata'").withStyle(ChatFormatting.GRAY);
         }
 
         CLEAN_CONFIRMATION.remove(id);
@@ -762,18 +761,18 @@ public class GachaMachinesUtils {
 
         data.playerStats.clear();
         data.pityTracker.clear();
-        data.markDirty();
+        data.setDirty();
 
         CasinoRocket.LOGGER.warn("[CasinoRocket] Cleared Gacha data: {} player stats, {} pity entries removed.", playerCount, pityCount);
 
-        return Text.literal("All Gacha data cleared successfully.\n")
-                .append(Text.literal(playerCount + " player stats and " + pityCount + " pity entries removed.").formatted(Formatting.GRAY));
+        return Component.literal("All Gacha data cleared successfully.\n")
+                .append(Component.literal(playerCount + " player stats and " + pityCount + " pity entries removed.").withStyle(ChatFormatting.GRAY));
     }
 
-    public static Text getMachineRatesText(@Nullable ServerPlayerEntity player, String coinKey, boolean includePity) {
+    public static Component getMachineRatesText(@Nullable ServerPlayer player, String coinKey, boolean includePity) {
         Map<String, Double> base = CasinoRocket.CONFIG.gachaMachines.normalizedProbabilities(coinKey);
         if (base == null || base.isEmpty()) {
-            return Text.literal("No rates available for coin '" + coinKey + "'.").formatted(Formatting.RED);
+            return Component.literal("No rates available for coin '" + coinKey + "'.").withStyle(ChatFormatting.RED);
         }
 
         Map<String, Double> rates = new LinkedHashMap<>(base);
@@ -782,36 +781,36 @@ public class GachaMachinesUtils {
             rates = previewPityAdjusted(base, coinKey, player);
         }
 
-        MutableText result = Text.literal("");
+        MutableComponent result = Component.literal("");
         String title = includePity
                 ? "Rates with Pity (" + coinKey.toUpperCase(Locale.ROOT) + ")"
                 : "Base Rates (" + coinKey.toUpperCase(Locale.ROOT) + ")";
-        result.append(Text.literal(title).formatted(Formatting.UNDERLINE)).append("\n");
+        result.append(Component.literal(title).withStyle(ChatFormatting.UNDERLINE)).append("\n");
 
         boolean first = true;
         for (var e : rates.entrySet()) {
-            if (!first) result.append(Text.literal(", "));
+            if (!first) result.append(Component.literal(", "));
             first = false;
 
             String rarity = capitalize(e.getKey());
             double percentage = e.getValue() * 100.0;
             double rounded = Math.round(percentage * 100.0) / 100.0;
 
-            Formatting color = TextUtils.percentagesColor(rounded);
+            ChatFormatting color = TextUtils.percentagesColor(rounded);
 
-            result.append(Text.literal(rarity + ": ")
-                    .append(Text.literal(String.format("%.2f%%", rounded)).formatted(color)));
+            result.append(Component.literal(rarity + ": ")
+                    .append(Component.literal(String.format("%.2f%%", rounded)).withStyle(color)));
         }
 
         return result;
     }
 
-    public static Map<String, Double> previewPityAdjusted(Map<String, Double> probs, String coinKey, ServerPlayerEntity player) {
+    public static Map<String, Double> previewPityAdjusted(Map<String, Double> probs, String coinKey, ServerPlayer player) {
         GachaMachinesConfig.PityConfig.CoinPity pityData = getPityData(coinKey);
         if (pityData == null || !CasinoRocket.CONFIG.gachaMachines.pity.enable || player == null) return probs;
 
-        GachaDataStorage data = GachaDataStorage.get(requireServer(player.getWorld()));
-        int uses = data.pityTracker.getOrDefault(player.getUuid(), Map.of()).getOrDefault(coinKey, 0);
+        GachaDataStorage data = GachaDataStorage.get(requireServer(player.level()));
+        int uses = data.pityTracker.getOrDefault(player.getUUID(), Map.of()).getOrDefault(coinKey, 0);
 
         double baseLegendary = probs.getOrDefault("legendary", 0.0);
         double t = Math.min(1.0, (double) uses / pityData.usesToMax);
@@ -851,3 +850,4 @@ public class GachaMachinesUtils {
     }
 
 }
+

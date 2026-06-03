@@ -1,23 +1,24 @@
 package net.andrespr.casinorocket.util;
 
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.npc.Villager;
 
 public class IdleYawData {
 
     private static final String KEY = "casinorocket.IdleYaw";
 
-    public static float get(VillagerEntity v) {
-        NbtCompound nbt = ((IEntityDataSaver) v).getPersistentData();
-        return nbt.contains(KEY) ? nbt.getFloat(KEY) : v.getYaw();
+    public static float get(Villager v) {
+        CompoundTag nbt = v.getPersistentData();
+        return nbt.contains(KEY) ? nbt.getFloat(KEY) : v.getYRot();
     }
 
-    public static void set(VillagerEntity v, float yaw) {
-        ((IEntityDataSaver) v).getPersistentData().putFloat(KEY, yaw);
+    public static void set(Villager v, float yaw) {
+        v.getPersistentData().putFloat(KEY, yaw);
     }
 
-    public static boolean has(VillagerEntity v) {
-        return ((IEntityDataSaver) v).getPersistentData().contains(KEY);
+    public static boolean has(Villager v) {
+        return v.getPersistentData().contains(KEY);
     }
 
 }
+

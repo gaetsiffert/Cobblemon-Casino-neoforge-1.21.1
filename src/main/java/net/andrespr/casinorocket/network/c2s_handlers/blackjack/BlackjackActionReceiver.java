@@ -1,5 +1,7 @@
 package net.andrespr.casinorocket.network.c2s_handlers.blackjack;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
@@ -9,24 +11,24 @@ import net.andrespr.casinorocket.network.c2s.blackjack.BlackjackActionC2SPayload
 import net.andrespr.casinorocket.network.s2c.sender.BlackjackStateSender;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.block.entity.BlockEntity;
+import net.andrespr.casinorocket.network.CasinoRocketPackets;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public final class BlackjackActionReceiver {
 
     private BlackjackActionReceiver() {}
 
-    public static void handle(BlackjackActionC2SPayload payload, ServerPlayNetworking.Context ctx) {
+    public static void handle(BlackjackActionC2SPayload payload, IPayloadContext ctx) {
 
-        ServerPlayerEntity player = ctx.player();
+        ServerPlayer player = (ServerPlayer) ctx.player();
         MinecraftServer server = player.getServer();
         if (server == null) return;
 
-        if (!(player.currentScreenHandler instanceof IMachineBoundHandler bound)) return;
+        if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
 
         if (!payload.pos().equals(bound.getMachinePos())) return;
         if (!payload.machineKey().equals(bound.getMachineKey())) return;
@@ -36,12 +38,12 @@ public final class BlackjackActionReceiver {
             return;
         }
 
-        World world = player.getWorld();
+        Level world = player.level();
         BlockPos pos = payload.pos();
 
         int chunkX = pos.getX() >> 4;
         int chunkZ = pos.getZ() >> 4;
-        if (!world.getChunkManager().isChunkLoaded(chunkX, chunkZ)) return;
+        if (!world.getChunkSource().hasChunk(chunkX, chunkZ)) return;
 
         BlockEntity be = world.getBlockEntity(pos);
         if (!(be instanceof BlackjackTableEntity table)) return;
@@ -58,8 +60,10 @@ public final class BlackjackActionReceiver {
         controller.handleAction(player, action);
 
         PlayerBlackjackData storage = PlayerBlackjackData.get(server);
-        BlackjackStateSender.send(player, table.getPos(), storage, controller);
+        BlackjackStateSender.send(player, table.getBlockPos(), storage, controller);
 
     }
 
 }
+
+

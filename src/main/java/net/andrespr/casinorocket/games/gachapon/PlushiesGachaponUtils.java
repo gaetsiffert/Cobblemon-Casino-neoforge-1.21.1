@@ -3,15 +3,14 @@ package net.andrespr.casinorocket.games.gachapon;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.config.gachapon.PlushiesGachaponConfig;
 import net.andrespr.casinorocket.util.TextUtils;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.random.Random;
-
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,8 +41,8 @@ public final class PlushiesGachaponUtils {
         for (PlushiesGachaponConfig.GachaEntry entry : plushies) {
             if (entry == null || entry.itemId == null || entry.itemId.isBlank()) continue;
 
-            Identifier id = Identifier.of(entry.itemId);
-            if (!Registries.ITEM.containsId(id)) {
+            ResourceLocation id = ResourceLocation.parse(entry.itemId);
+            if (!BuiltInRegistries.ITEM.containsKey(id)) {
                 if (WARNED_ITEMS.add(entry.itemId)) {
                     CasinoRocket.LOGGER.warn("[PlushiesGachapon] Invalid item '{}'", entry.itemId);
                 }
@@ -53,7 +52,7 @@ public final class PlushiesGachaponUtils {
             int weight = Math.max(0, entry.weight);
             if (weight <= 0) continue;
 
-            Item item = Registries.ITEM.get(id);
+            Item item = BuiltInRegistries.ITEM.get(id);
             ENTRIES.add(new CachedEntry(item, weight));
             TOTAL_WEIGHT += weight;
         }
@@ -75,7 +74,7 @@ public final class PlushiesGachaponUtils {
 
     }
 
-    public static ItemStack pickPlushie(Random random) {
+    public static ItemStack pickPlushie(RandomSource random) {
 
         if (ENTRIES.isEmpty() || TOTAL_WEIGHT <= 0) return ItemStack.EMPTY;
 
@@ -89,17 +88,17 @@ public final class PlushiesGachaponUtils {
 
     }
 
-    public static Text getRates() {
+    public static Component getRates() {
 
         if (ENTRIES.isEmpty()) {
-            return Text.literal("Plushies list has no valid items.").formatted(Formatting.RED);
+            return Component.literal("Plushies list has no valid items.").withStyle(ChatFormatting.RED);
         }
         if (TOTAL_WEIGHT <= 0) {
-            return Text.literal("Plushies total weight is 0.").formatted(Formatting.RED);
+            return Component.literal("Plushies total weight is 0.").withStyle(ChatFormatting.RED);
         }
 
-        MutableText result = Text.literal("")
-                .append(Text.literal("Rates:").formatted(Formatting.UNDERLINE))
+        MutableComponent result = Component.literal("")
+                .append(Component.literal("Rates:").withStyle(ChatFormatting.UNDERLINE))
                 .append("\n");
 
         List<CachedEntry> sorted = new ArrayList<>(ENTRIES);
@@ -107,18 +106,18 @@ public final class PlushiesGachaponUtils {
 
         boolean first = true;
         for (CachedEntry e : sorted) {
-            if (!first) result.append(Text.literal(", "));
+            if (!first) result.append(Component.literal(", "));
             first = false;
 
             ItemStack stack = new ItemStack(e.item());
-            String name = stack.getName().getString();
+            String name = stack.getHoverName().getString();
 
             double pct = (e.weight() * 100.0) / TOTAL_WEIGHT;
             double rounded = Math.round(pct * 100.0) / 100.0;
 
-            Formatting color = TextUtils.percentagesColor(rounded);
+            ChatFormatting color = TextUtils.percentagesColor(rounded);
 
-            result.append(Text.literal(name + ": ").append(Text.literal(String.format("%.2f%%", rounded)).formatted(color)));
+            result.append(Component.literal(name + ": ").append(Component.literal(String.format("%.2f%%", rounded)).withStyle(color)));
         }
 
         return result;
@@ -133,3 +132,4 @@ public final class PlushiesGachaponUtils {
     }
 
 }
+

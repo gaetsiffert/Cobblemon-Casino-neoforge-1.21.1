@@ -5,27 +5,36 @@ import net.andrespr.casinorocket.block.ModBlocks;
 import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.block.entity.custom.ChipTableEntity;
 import net.andrespr.casinorocket.block.entity.custom.SlotMachineEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 public class ModBlockEntities {
+    private static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITY_TYPES =
+            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, CasinoRocket.MOD_ID);
 
-    public static final BlockEntityType<SlotMachineEntity> SLOT_MACHINE_BE =
-            Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(CasinoRocket.MOD_ID, "slot_machine_be"),
-                    BlockEntityType.Builder.create(SlotMachineEntity::new, ModBlocks.SLOT_MACHINE).build(null));
+    public static BlockEntityType<SlotMachineEntity> SLOT_MACHINE_BE;
+    public static BlockEntityType<BlackjackTableEntity> BLACKJACK_TABLE_BE;
+    public static BlockEntityType<ChipTableEntity> CHIP_TABLE_BE;
 
-    public static final BlockEntityType<BlackjackTableEntity> BLACKJACK_TABLE_BE =
-            Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(CasinoRocket.MOD_ID, "blackjack_table_be"),
-                    BlockEntityType.Builder.create(BlackjackTableEntity::new, ModBlocks.BLACKJACK_TABLE).build(null));
-
-    public static final BlockEntityType<ChipTableEntity> CHIP_TABLE_BE =
-            Registry.register(Registries.BLOCK_ENTITY_TYPE, Identifier.of(CasinoRocket.MOD_ID, "chip_table_be"),
-                    BlockEntityType.Builder.create(ChipTableEntity::new, ModBlocks.CHIP_TABLE).build(null));
-
-    public static void registerBlockEntities() {
-        CasinoRocket.LOGGER.info("Registering Block Entities for " + CasinoRocket.MOD_ID);
+    static {
+        register("slot_machine_be", () -> SLOT_MACHINE_BE =
+                BlockEntityType.Builder.of(SlotMachineEntity::new, ModBlocks.SLOT_MACHINE).build(null));
+        register("blackjack_table_be", () -> BLACKJACK_TABLE_BE =
+                BlockEntityType.Builder.of(BlackjackTableEntity::new, ModBlocks.BLACKJACK_TABLE).build(null));
+        register("chip_table_be", () -> CHIP_TABLE_BE =
+                BlockEntityType.Builder.of(ChipTableEntity::new, ModBlocks.CHIP_TABLE).build(null));
     }
 
+    private static <T extends BlockEntityType<?>> void register(String name, Supplier<T> supplier) {
+        BLOCK_ENTITY_TYPES.register(name, supplier);
+    }
+
+    public static void registerBlockEntities(IEventBus eventBus) {
+        BLOCK_ENTITY_TYPES.register(eventBus);
+        CasinoRocket.LOGGER.info("Registering Block Entities for " + CasinoRocket.MOD_ID);
+    }
 }

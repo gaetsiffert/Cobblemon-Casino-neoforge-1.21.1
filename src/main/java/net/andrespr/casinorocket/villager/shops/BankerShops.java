@@ -3,18 +3,18 @@ package net.andrespr.casinorocket.villager.shops;
 import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.item.custom.BillItem;
 import net.andrespr.casinorocket.villager.VillagerTradeHelper;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.item.Item;
 
 public final class BankerShops implements IShop {
 
     @Override
     public VillagerTradeHelper.ShopData build() {
 
-        NbtList shops = new NbtList();
+        ListTag shops = new ListTag();
 
         // ===== IN CASH MONEY =====
-        NbtList billOffers = new NbtList();
+        ListTag billOffers = new ListTag();
         for (Item bill : ModItems.ALL_BILL_ITEMS) VillagerTradeHelper.makeInCashOffer(billOffers, (BillItem) bill);
         shops.add(VillagerTradeHelper.makeShopCompound("Bills", billOffers));
 
@@ -28,3 +28,4 @@ public final class BankerShops implements IShop {
     }
 
 }
+

@@ -3,14 +3,14 @@ package net.andrespr.casinorocket.games.gachapon;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.config.gachapon.ItemGachaponConfig;
 import net.andrespr.casinorocket.util.TextUtils;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -33,15 +33,15 @@ public class GachaponUtils {
             int totalWeight = 0;
 
             for (ItemGachaponConfig.GachaEntry entry : entries) {
-                Identifier id = Identifier.of(entry.itemId);
-                if (!Registries.ITEM.containsId(id)) {
+                ResourceLocation id = ResourceLocation.parse(entry.itemId);
+                if (!BuiltInRegistries.ITEM.containsKey(id)) {
                     if (WARNED_ITEMS.add(entry.itemId)) {
                         CasinoRocket.LOGGER.warn("[Gachapon] Invalid item in pool '{}': '{}'", poolKey, entry.itemId);
                     }
                     continue;
                 }
 
-                Item item = Registries.ITEM.get(id);
+                Item item = BuiltInRegistries.ITEM.get(id);
                 int count = Math.max(1, entry.count);
                 int weight = Math.max(0, entry.weight);
 
@@ -66,7 +66,7 @@ public class GachaponUtils {
         CasinoRocket.LOGGER.info("[Gachapon] Cache built with '{}' pools.", CACHE.size());
     }
 
-    public static ItemStack pickItemReward(Random random, String poolKey) {
+    public static ItemStack pickItemReward(RandomSource random, String poolKey) {
         CachedPool pool = CACHE.get(poolKey);
         if (pool == null || pool.entries().isEmpty()) return ItemStack.EMPTY;
 
@@ -83,19 +83,19 @@ public class GachaponUtils {
         return new ItemStack(entry.item(), entry.count());
     }
 
-    public static Text getPoolPercentages(String poolKey) {
+    public static Component getPoolPercentages(String poolKey) {
         CachedPool pool = CACHE.get(poolKey);
         if (pool == null || pool.entries().isEmpty()) {
-            return Text.literal("Pool '" + poolKey + "' has no valid items.").formatted(Formatting.RED);
+            return Component.literal("Pool '" + poolKey + "' has no valid items.").withStyle(ChatFormatting.RED);
         }
 
         int totalWeight = pool.totalWeight();
         if (totalWeight <= 0) {
-            return Text.literal("Pool '" + poolKey + "' has total weight 0.").formatted(Formatting.RED);
+            return Component.literal("Pool '" + poolKey + "' has total weight 0.").withStyle(ChatFormatting.RED);
         }
 
-        MutableText result = Text.literal("")
-                .append(Text.literal("Rates:").formatted(Formatting.UNDERLINE)).append("\n");
+        MutableComponent result = Component.literal("")
+                .append(Component.literal("Rates:").withStyle(ChatFormatting.UNDERLINE)).append("\n");
 
         List<CachedEntry> sorted = new ArrayList<>(pool.entries());
         sorted.sort((a, b) -> Integer.compare(b.weight(), a.weight()));
@@ -103,19 +103,19 @@ public class GachaponUtils {
         boolean first = true;
 
         for (CachedEntry entry : sorted) {
-            if (!first) result.append(Text.literal(", "));
+            if (!first) result.append(Component.literal(", "));
             first = false;
 
             ItemStack stack = new ItemStack(entry.item());
-            String name = stack.getName().getString();
+            String name = stack.getHoverName().getString();
 
             double percentage = (entry.weight() * 100.0) / totalWeight;
             double rounded = Math.round(percentage * 100.0) / 100.0;
 
-            Formatting color = TextUtils.percentagesColor(rounded);
+            ChatFormatting color = TextUtils.percentagesColor(rounded);
 
-            result.append(Text.literal(name + ": ")
-                    .append(Text.literal(String.format("%.2f%%", rounded)).formatted(color)));
+            result.append(Component.literal(name + ": ")
+                    .append(Component.literal(String.format("%.2f%%", rounded)).withStyle(color)));
         }
 
         return result;
@@ -131,3 +131,4 @@ public class GachaponUtils {
     }
 
 }
+

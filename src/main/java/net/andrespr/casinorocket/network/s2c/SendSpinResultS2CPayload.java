@@ -4,23 +4,22 @@ import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.games.slot.SlotLineResult;
 import net.andrespr.casinorocket.games.slot.SlotSpinResult;
 import net.andrespr.casinorocket.games.slot.SlotSymbol;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import java.util.ArrayList;
 import java.util.List;
 
 public record SendSpinResultS2CPayload(long newBalance, long totalWin, int modeUsed,
                                        int stop1, int stop2, int stop3, int[] matrix,
-                                       List<LineWin> wins) implements CustomPayload {
+                                       List<LineWin> wins) implements CustomPacketPayload {
 
-    public static final Identifier ID_RAW = Identifier.of(CasinoRocket.MOD_ID, "spin_result");
-    public static final Id<SendSpinResultS2CPayload> ID = new Id<>(ID_RAW);
+    public static final ResourceLocation ID_RAW = ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "spin_result");
+    public static final Type<SendSpinResultS2CPayload> ID = new Type<>(ID_RAW);
 
-    public static final PacketCodec<RegistryByteBuf, SendSpinResultS2CPayload> CODEC =
-            PacketCodec.of(SendSpinResultS2CPayload::write, SendSpinResultS2CPayload::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SendSpinResultS2CPayload> CODEC =
+            StreamCodec.ofMember(SendSpinResultS2CPayload::write, SendSpinResultS2CPayload::read);
 
     public record LineWin(int symbolOrdinal, int count, int multiplier, long winAmount, int lineIndex) { }
 
@@ -43,7 +42,7 @@ public record SendSpinResultS2CPayload(long newBalance, long totalWin, int modeU
         return new SendSpinResultS2CPayload(newBalance, result.totalWin(), modeUsed, stop1, stop2, stop3, flat, wins);
     }
 
-    private static void write(SendSpinResultS2CPayload payload, RegistryByteBuf buf) {
+    private static void write(SendSpinResultS2CPayload payload, RegistryFriendlyByteBuf buf) {
         buf.writeLong(payload.newBalance());
         buf.writeLong(payload.totalWin());
         buf.writeInt(payload.modeUsed());
@@ -68,7 +67,7 @@ public record SendSpinResultS2CPayload(long newBalance, long totalWin, int modeU
         }
     }
 
-    private static SendSpinResultS2CPayload read(RegistryByteBuf buf) {
+    private static SendSpinResultS2CPayload read(RegistryFriendlyByteBuf buf) {
         long newBalance = buf.readLong();
         long totalWin = buf.readLong();
         int modeUsed = buf.readInt();
@@ -98,8 +97,9 @@ public record SendSpinResultS2CPayload(long newBalance, long totalWin, int modeU
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
 }
+

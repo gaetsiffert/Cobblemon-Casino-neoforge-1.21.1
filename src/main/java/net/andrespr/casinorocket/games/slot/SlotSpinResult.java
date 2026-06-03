@@ -7,3 +7,4 @@ public record SlotSpinResult(
         long totalWin,
         List<SlotLineResult> lines
 ) { }
+

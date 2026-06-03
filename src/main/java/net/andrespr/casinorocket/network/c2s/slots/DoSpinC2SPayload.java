@@ -1,22 +1,23 @@
 package net.andrespr.casinorocket.network.c2s.slots;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
-public record DoSpinC2SPayload() implements CustomPayload {
+public record DoSpinC2SPayload() implements CustomPacketPayload {
 
-    public static final Identifier ID_RAW = Identifier.of(CasinoRocket.MOD_ID, "do_spin");
-    public static final Id<DoSpinC2SPayload> ID = new Id<>(ID_RAW);
+    public static final ResourceLocation ID_RAW = ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "do_spin");
+    public static final Type<DoSpinC2SPayload> ID = new Type<>(ID_RAW);
 
-    public static final PacketCodec<RegistryByteBuf, DoSpinC2SPayload> CODEC =
-            PacketCodec.unit(new DoSpinC2SPayload());
+    public static final StreamCodec<RegistryFriendlyByteBuf, DoSpinC2SPayload> CODEC =
+            StreamCodec.unit(new DoSpinC2SPayload());
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
 }
+

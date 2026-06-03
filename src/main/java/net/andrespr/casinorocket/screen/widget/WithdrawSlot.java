@@ -1,29 +1,31 @@
 package net.andrespr.casinorocket.screen.widget;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class WithdrawSlot extends Slot {
 
-    public WithdrawSlot(Inventory inventory, int index, int x, int y) {
+    public WithdrawSlot(Container inventory, int index, int x, int y) {
         super(inventory, index, x, y);
     }
 
     @Override
-    public boolean canInsert(ItemStack stack) {
+    public boolean mayPlace(ItemStack stack) {
         return false;
     }
 
     @Override
-    public boolean canTakeItems(PlayerEntity player) {
+    public boolean mayPickup(Player player) {
         return false;
     }
 
     @Override
-    public int getMaxItemCount() {
+    public int getMaxStackSize() {
         return 64;
     }
 
 }
+
+

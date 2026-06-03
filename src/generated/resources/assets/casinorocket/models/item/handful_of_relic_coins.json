@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "casinorocket:item/handful_of_relic_coins"
+  }
+}

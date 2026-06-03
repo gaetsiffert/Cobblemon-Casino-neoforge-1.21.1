@@ -1,28 +1,31 @@
 package net.andrespr.casinorocket.screen.custom.chip_table;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.neoforged.neoforge.client.extensions.IMenuProviderExtension;
 
-public class WalletScreenFactory implements ExtendedScreenHandlerFactory<BlockPos> {
+public class WalletScreenFactory implements MenuProvider, IMenuProviderExtension {
 
     @Override
-    public BlockPos getScreenOpeningData(ServerPlayerEntity player) {
-        return BlockPos.ORIGIN;
+    public Component getDisplayName() {
+        return Component.translatable("gui.casinorocket.wallet");
     }
 
     @Override
-    public Text getDisplayName() {
-        return Text.translatable("gui.casinorocket.wallet");
+    public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
+        return new ChipTableScreenHandler(syncId, inventory, BlockPos.ZERO);
     }
 
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inventory, PlayerEntity player) {
-        return new ChipTableScreenHandler(syncId, inventory, BlockPos.ORIGIN);
+    public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
+        BlockPos.STREAM_CODEC.encode(buffer, BlockPos.ZERO);
     }
 
 }
+
+

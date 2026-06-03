@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top_right",
+  "textures": {
+    "bottom": "casinorocket:block/gold_door_bottom",
+    "top": "casinorocket:block/gold_door_top"
+  }
+}

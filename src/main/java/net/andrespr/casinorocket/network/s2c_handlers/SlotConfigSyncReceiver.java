@@ -4,27 +4,25 @@ import net.andrespr.casinorocket.games.slot.SlotClientSynced;
 import net.andrespr.casinorocket.games.slot.SlotReels;
 import net.andrespr.casinorocket.games.slot.SlotSymbol;
 import net.andrespr.casinorocket.network.s2c.SlotConfigSyncS2CPayload;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public final class SlotConfigSyncReceiver {
 
     public static volatile long LAST_HASH = -1;
 
-    public static void register() {
-        ClientPlayNetworking.registerGlobalReceiver(SlotConfigSyncS2CPayload.ID, (payload, ctx) -> {
-            MinecraftClient client = MinecraftClient.getInstance();
-            client.execute(() -> {
-                SlotSymbol[] symbols = SlotSymbol.values();
+    public static void handle(SlotConfigSyncS2CPayload payload, IPayloadContext context) {
+        Minecraft client = Minecraft.getInstance();
+        client.execute(() -> {
+            SlotSymbol[] symbols = SlotSymbol.values();
 
-                SlotSymbol[] r1 = fromOrdinals(payload.reel1(), symbols);
-                SlotSymbol[] r2 = fromOrdinals(payload.reel2(), symbols);
-                SlotSymbol[] r3 = fromOrdinals(payload.reel3(), symbols);
+            SlotSymbol[] r1 = fromOrdinals(payload.reel1(), symbols);
+            SlotSymbol[] r2 = fromOrdinals(payload.reel2(), symbols);
+            SlotSymbol[] r3 = fromOrdinals(payload.reel3(), symbols);
 
-                SlotReels.applySyncedStrips(payload.reelSize(), r1, r2, r3);
-                SlotClientSynced.apply(payload.debug(), payload.useMoney(), payload.betValues(), payload.mode1(), payload.mode2(), payload.mode3());
-                LAST_HASH = payload.hash();
-            });
+            SlotReels.applySyncedStrips(payload.reelSize(), r1, r2, r3);
+            SlotClientSynced.apply(payload.debug(), payload.useMoney(), payload.betValues(), payload.mode1(), payload.mode2(), payload.mode3());
+            LAST_HASH = payload.hash();
         });
     }
 
@@ -33,5 +31,4 @@ public final class SlotConfigSyncReceiver {
         for (int i = 0; i < ords.length; i++) out[i] = symbols[ords[i]];
         return out;
     }
-
 }

@@ -4,19 +4,18 @@ import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
 import net.andrespr.casinorocket.network.s2c.sender.MachineBalanceSender;
 import net.andrespr.casinorocket.util.MoneyCalculator;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import java.util.UUID;
 
 public final class BlackjackWithdrawLogic {
 
     private BlackjackWithdrawLogic() {}
 
-    public static void handle(ServerPlayerEntity player, MinecraftServer server) {
+    public static void handle(ServerPlayer player, MinecraftServer server) {
         PlayerBlackjackData storage = PlayerBlackjackData.get(server);
-        UUID uuid = player.getUuid();
+        UUID uuid = player.getUUID();
 
         long balance = storage.getBalance(uuid);
         if (balance <= 0) return;
@@ -24,8 +23,8 @@ public final class BlackjackWithdrawLogic {
         var stacks = MoneyCalculator.calculateChipWithdraw(balance);
 
         for (ItemStack stack : stacks) {
-            if (!player.getInventory().insertStack(stack)) {
-                player.dropItem(stack, false);
+            if (!player.getInventory().add(stack)) {
+                player.drop(stack, false);
             }
         }
 
@@ -36,3 +35,4 @@ public final class BlackjackWithdrawLogic {
     }
 
 }
+

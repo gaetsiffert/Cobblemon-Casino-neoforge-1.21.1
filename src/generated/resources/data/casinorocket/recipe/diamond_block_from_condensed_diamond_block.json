@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "casinorocket:condensed_diamond_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "minecraft:diamond_block"
+  }
+}

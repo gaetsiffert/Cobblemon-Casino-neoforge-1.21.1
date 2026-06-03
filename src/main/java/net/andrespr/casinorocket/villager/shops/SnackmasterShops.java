@@ -1,18 +1,17 @@
 package net.andrespr.casinorocket.villager.shops;
 
 import net.andrespr.casinorocket.villager.VillagerTradeHelper;
-import net.minecraft.nbt.NbtList;
-
+import net.minecraft.nbt.ListTag;
 import java.util.List;
 
 public final class SnackmasterShops implements IShop {
 
     @Override
     public VillagerTradeHelper.ShopData build() {
-        NbtList shops = new NbtList();
+        ListTag shops = new ListTag();
 
         // ===== CURRIES =====
-        NbtList curryOffers = new NbtList();
+        ListTag curryOffers = new ListTag();
         List<String> curries = List.of(
                 "salty_boiled_egg_curry", // Normal
                 "drought_katsu_curry", // Fire
@@ -37,7 +36,7 @@ public final class SnackmasterShops implements IShop {
         shops.add(VillagerTradeHelper.makeShopCompound("Curries", curryOffers));
 
         // ===== INGREDIENTS =====
-        NbtList ingredientOffers = new NbtList();
+        ListTag ingredientOffers = new ListTag();
         ingredientOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:red_bean","500"));
         ingredientOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:blue_bean","500"));
         ingredientOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:orange_bean","500"));
@@ -50,7 +49,7 @@ public final class SnackmasterShops implements IShop {
         shops.add(VillagerTradeHelper.makeShopCompound("Ingredients", ingredientOffers));
 
         // ===== SPECIAL FOOD =====
-        NbtList specialFoodOffers = new NbtList();
+        ListTag specialFoodOffers = new ListTag();
         specialFoodOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:dubious_food", "5000"));
         specialFoodOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:candied_razz_berry", "10000"));
         specialFoodOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:candied_pinap_berry", "10000"));
@@ -71,3 +70,4 @@ public final class SnackmasterShops implements IShop {
     }
 
 }
+

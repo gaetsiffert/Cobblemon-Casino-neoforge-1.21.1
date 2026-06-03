@@ -103,3 +103,4 @@ public class GeneralConfig implements ConfigData {
     }
 
 }
+

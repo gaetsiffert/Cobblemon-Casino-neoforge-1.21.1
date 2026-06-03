@@ -8,3 +8,4 @@ public enum BlackjackAction {
     FINISH,
     DOUBLE_OR_NOTHING
 }
+

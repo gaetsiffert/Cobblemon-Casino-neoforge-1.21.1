@@ -1,22 +1,23 @@
 package net.andrespr.casinorocket.datagen;
 
+import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.ModBlocks;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
+import net.minecraft.tags.BlockTags;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import java.util.concurrent.CompletableFuture;
 
-public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
+public class ModBlockTagProvider extends BlockTagsProvider {
 
-    public ModBlockTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
-        super(output, registriesFuture);
+    public ModBlockTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture, ExistingFileHelper existingFileHelper) {
+        super(output, registriesFuture, CasinoRocket.MOD_ID, existingFileHelper);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
-        getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
+    protected void addTags(HolderLookup.Provider wrapperLookup) {
+        tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 // ADDING GOLD BLOCKS
                 .add(ModBlocks.CUT_GOLD_BLOCK)
                 .add(ModBlocks.CUT_GOLD_STAIRS)
@@ -55,7 +56,7 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocks.CHARGED_DIAMOND_BLOCK)
                 .add(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
 
-        getOrCreateTagBuilder(BlockTags.NEEDS_IRON_TOOL)
+        tag(BlockTags.NEEDS_IRON_TOOL)
                 // ADDING GOLD BLOCKS
                 .add(ModBlocks.CUT_GOLD_BLOCK)
                 .add(ModBlocks.CUT_GOLD_STAIRS)
@@ -94,7 +95,7 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocks.CHARGED_DIAMOND_BLOCK)
                 .add(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
 
-        getOrCreateTagBuilder(BlockTags.WALLS)
+        tag(BlockTags.WALLS)
                 .add(ModBlocks.GOLD_BRICK_WALL)
                 .add(ModBlocks.GOLD_TILE_WALL)
                 .add(ModBlocks.DIAMOND_BRICK_WALL)
@@ -102,3 +103,5 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     }
 
 }
+
+

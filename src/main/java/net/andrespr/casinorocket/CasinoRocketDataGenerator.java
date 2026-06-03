@@ -1,20 +1,36 @@
 package net.andrespr.casinorocket;
 
 import net.andrespr.casinorocket.datagen.*;
-import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import java.util.List;
+import java.util.Set;
 
-public class CasinoRocketDataGenerator implements DataGeneratorEntrypoint {
+public final class CasinoRocketDataGenerator {
 
-	@Override
-	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-        FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-        pack.addProvider(ModBlockTagProvider::new);
-        pack.addProvider(ModItemTagProvider::new);
-        pack.addProvider(ModLootTableProvider::new);
-        pack.addProvider(ModModelProvider::new);
-        pack.addProvider(ModRecipeProvider::new);
-        pack.addProvider(ModPoiTagProvider::new);
-	}
+    private CasinoRocketDataGenerator() {}
+
+    public static void gatherData(GatherDataEvent event) {
+        if (event.includeServer()) {
+            event.addProvider(new ModRecipeProvider(event.getGenerator().getPackOutput(), event.getLookupProvider()));
+            event.addProvider(new LootTableProvider(
+                    event.getGenerator().getPackOutput(),
+                    Set.of(),
+                    List.of(new LootTableProvider.SubProviderEntry(ModLootTableProvider::new, LootContextParamSets.BLOCK)),
+                    event.getLookupProvider()
+            ));
+            event.createBlockAndItemTags(
+                    (output, lookupProvider) -> new ModBlockTagProvider(output, lookupProvider, event.getExistingFileHelper()),
+                    (output, lookupProvider, blockTags) -> new ModItemTagProvider(output, lookupProvider, blockTags, event.getExistingFileHelper())
+            );
+            event.addProvider(new ModPoiTagProvider(event.getGenerator().getPackOutput(), event.getLookupProvider(), event.getExistingFileHelper()));
+        }
+
+        if (event.includeClient()) {
+            event.addProvider(new ModModelProvider(event.getGenerator().getPackOutput(), event.getExistingFileHelper()));
+        }
+    }
 
 }
+

@@ -6,3 +6,4 @@ public enum BlackjackPhase {
     DEALER_TURN,
     RESULT_PENDING
 }
+

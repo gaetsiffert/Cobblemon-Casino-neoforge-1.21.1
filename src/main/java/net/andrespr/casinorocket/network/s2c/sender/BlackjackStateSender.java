@@ -3,24 +3,23 @@ package net.andrespr.casinorocket.network.s2c.sender;
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
 import net.andrespr.casinorocket.games.blackjack.*;
 import net.andrespr.casinorocket.network.s2c.SendBlackjackStateS2CPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.util.math.BlockPos;
-
+import net.andrespr.casinorocket.network.CasinoRocketPackets;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import java.util.List;
 
 public final class BlackjackStateSender {
 
     private BlackjackStateSender() {}
 
-    public static void send(ServerPlayerEntity player, BlockPos pos, PlayerBlackjackData storage, BlackjackGameController controller) {
+    public static void send(ServerPlayer player, BlockPos pos, PlayerBlackjackData storage, BlackjackGameController controller) {
 
         BlackjackRound round = controller.getRound();
         BlackjackHand playerHand = round.getPlayerHand();
         BlackjackHand dealerHand = round.getDealerHand();
 
-        long balance = storage.getBalance(player.getUuid());
-        int betIndex = storage.getBetIndex(player.getUuid());
+        long balance = storage.getBalance(player.getUUID());
+        int betIndex = storage.getBetIndex(player.getUUID());
 
         // === CARDS ===
         int[] playerCards = toCardIds(playerHand.cards());
@@ -55,7 +54,7 @@ public final class BlackjackStateSender {
                         canPlay, canHit, canStand, canDoubleDown, canFinish, canDoubleOrNothing
                 );
 
-        ServerPlayNetworking.send(player, payload);
+        CasinoRocketPackets.sendToPlayer(player, payload);
     }
 
     // ===== HELPERS =====
@@ -83,3 +82,4 @@ public final class BlackjackStateSender {
     }
 
 }
+

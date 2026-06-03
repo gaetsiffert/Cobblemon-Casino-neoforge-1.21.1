@@ -1,65 +1,101 @@
 package net.andrespr.casinorocket.sound;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.minecraft.block.jukebox.JukeboxSong;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.JukeboxSong;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Consumer;
 
 public class ModSounds {
+    private static final DeferredRegister<SoundEvent> SOUND_EVENTS =
+            DeferredRegister.create(Registries.SOUND_EVENT, CasinoRocket.MOD_ID);
 
     // === SOUND EFFECTS ===
     // GACHA MACHINE
-    public static final SoundEvent INSERTING_COIN = registerSoundEvent("inserting_coin");
+    public static SoundEvent INSERTING_COIN;
     // PRIZES
-    public static final SoundEvent COMMON_PRIZE = registerSoundEvent("common_prize");
-    public static final SoundEvent UNCOMMON_PRIZE = registerSoundEvent("uncommon_prize");
-    public static final SoundEvent RARE_PRIZE = registerSoundEvent("rare_prize");
-    public static final SoundEvent ULTRARARE_PRIZE = registerSoundEvent("ultrarare_prize");
-    public static final SoundEvent LEGENDARY_PRIZE = registerSoundEvent("legendary_prize");
-    public static final SoundEvent BONUS_PRIZE = registerSoundEvent("bonus_prize");
-    public static final SoundEvent OPEN_PRIZE = registerSoundEvent("open_prize");
+    public static SoundEvent COMMON_PRIZE;
+    public static SoundEvent UNCOMMON_PRIZE;
+    public static SoundEvent RARE_PRIZE;
+    public static SoundEvent ULTRARARE_PRIZE;
+    public static SoundEvent LEGENDARY_PRIZE;
+    public static SoundEvent BONUS_PRIZE;
+    public static SoundEvent OPEN_PRIZE;
     // SLOT MACHINE
-    public static final SoundEvent REELS_SPINNING = registerSoundEvent("reels_spinning");
-    public static final SoundEvent JACKPOT = registerSoundEvent("jackpot");
+    public static SoundEvent REELS_SPINNING;
+    public static SoundEvent JACKPOT;
     // WALLET
-    public static final SoundEvent WALLET = registerSoundEvent("wallet");
-    public static final SoundEvent WALLET2 = registerSoundEvent("wallet2");
+    public static SoundEvent WALLET;
+    public static SoundEvent WALLET2;
     // BLACKJACK
-    public static final SoundEvent WIN = registerSoundEvent("win");
-    public static final SoundEvent DRAW = registerSoundEvent("draw");
-    public static final SoundEvent LOSE = registerSoundEvent("lose");
-    public static final SoundEvent CARD = registerSoundEvent("card");
+    public static SoundEvent WIN;
+    public static SoundEvent DRAW;
+    public static SoundEvent LOSE;
+    public static SoundEvent CARD;
     // BUTTON
-    public static final SoundEvent BUTTON = registerSoundEvent("button");
+    public static SoundEvent BUTTON;
 
     // === MUSIC DISCS ===
     // First Generation Remasters
-    public static final SoundEvent FIRERED_GC = registerSoundEvent("firered_gc");
-    public static final RegistryKey<JukeboxSong> FIRERED_GC_KEY = of("firered_gc");
+    public static SoundEvent FIRERED_GC;
+    public static final ResourceKey<JukeboxSong> FIRERED_GC_KEY = of("firered_gc");
     // Second Generation Remasters
-    public static final SoundEvent HEARTGOLD_GC = registerSoundEvent("heartgold_gc");
-    public static final RegistryKey<JukeboxSong> HEARTGOLD_GC_KEY = of("heartgold_gc");
+    public static SoundEvent HEARTGOLD_GC;
+    public static final ResourceKey<JukeboxSong> HEARTGOLD_GC_KEY = of("heartgold_gc");
     // Third Generation
-    public static final SoundEvent EMERALD_GC = registerSoundEvent("emerald_gc");
-    public static final RegistryKey<JukeboxSong> EMERALD_GC_KEY = of("emerald_gc");
+    public static SoundEvent EMERALD_GC;
+    public static final ResourceKey<JukeboxSong> EMERALD_GC_KEY = of("emerald_gc");
     // First Generation
-    public static final SoundEvent PLATINUM_GC = registerSoundEvent("platinum_gc");
-    public static final RegistryKey<JukeboxSong> PLATINUM_GC_KEY = of("platinum_gc");
+    public static SoundEvent PLATINUM_GC;
+    public static final ResourceKey<JukeboxSong> PLATINUM_GC_KEY = of("platinum_gc");
 
-    private static RegistryKey<JukeboxSong> of(String name) {
-        return RegistryKey.of(RegistryKeys.JUKEBOX_SONG, Identifier.of(CasinoRocket.MOD_ID, name));
-    }
-    private static SoundEvent registerSoundEvent(String name) {
-        return Registry.register(Registries.SOUND_EVENT, Identifier.of(CasinoRocket.MOD_ID, name),
-                SoundEvent.of(Identifier.of(CasinoRocket.MOD_ID, name)));
+    static {
+        registerSoundEvent("inserting_coin", sound -> INSERTING_COIN = sound);
+        registerSoundEvent("common_prize", sound -> COMMON_PRIZE = sound);
+        registerSoundEvent("uncommon_prize", sound -> UNCOMMON_PRIZE = sound);
+        registerSoundEvent("rare_prize", sound -> RARE_PRIZE = sound);
+        registerSoundEvent("ultrarare_prize", sound -> ULTRARARE_PRIZE = sound);
+        registerSoundEvent("legendary_prize", sound -> LEGENDARY_PRIZE = sound);
+        registerSoundEvent("bonus_prize", sound -> BONUS_PRIZE = sound);
+        registerSoundEvent("open_prize", sound -> OPEN_PRIZE = sound);
+        registerSoundEvent("reels_spinning", sound -> REELS_SPINNING = sound);
+        registerSoundEvent("jackpot", sound -> JACKPOT = sound);
+        registerSoundEvent("wallet", sound -> WALLET = sound);
+        registerSoundEvent("wallet2", sound -> WALLET2 = sound);
+        registerSoundEvent("win", sound -> WIN = sound);
+        registerSoundEvent("draw", sound -> DRAW = sound);
+        registerSoundEvent("lose", sound -> LOSE = sound);
+        registerSoundEvent("card", sound -> CARD = sound);
+        registerSoundEvent("button", sound -> BUTTON = sound);
+        registerSoundEvent("firered_gc", sound -> FIRERED_GC = sound);
+        registerSoundEvent("heartgold_gc", sound -> HEARTGOLD_GC = sound);
+        registerSoundEvent("emerald_gc", sound -> EMERALD_GC = sound);
+        registerSoundEvent("platinum_gc", sound -> PLATINUM_GC = sound);
     }
 
-    public static void registerSounds() {
+    private static ResourceKey<JukeboxSong> of(String name) {
+        return ResourceKey.create(Registries.JUKEBOX_SONG, id(name));
+    }
+
+    private static void registerSoundEvent(String name, Consumer<SoundEvent> assignment) {
+        SOUND_EVENTS.register(name, () -> {
+            SoundEvent sound = SoundEvent.createVariableRangeEvent(id(name));
+            assignment.accept(sound);
+            return sound;
+        });
+    }
+
+    public static void registerSounds(IEventBus eventBus) {
+        SOUND_EVENTS.register(eventBus);
         CasinoRocket.LOGGER.info("Registering Mod Sounds for " + CasinoRocket.MOD_ID);
     }
 
+    private static ResourceLocation id(String name) {
+        return ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, name);
+    }
 }

@@ -8,23 +8,23 @@ import net.andrespr.casinorocket.games.gachapon.GachaponUtils;
 import net.andrespr.casinorocket.games.gachapon.PlushiesGachaponUtils;
 import net.andrespr.casinorocket.games.gachapon.PokemonGachaponUtils;
 import net.andrespr.casinorocket.util.CommandUtils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public final class GachaponCommands {
 
-    public static LiteralArgumentBuilder<ServerCommandSource> buildSubcommand() {
-        return CommandManager.literal("gachapon")
-                .then(CommandManager.literal("rates")
-                        .then(CommandManager.literal("item")
-                                .then(CommandManager.argument("pool", StringArgumentType.string())
+    public static LiteralArgumentBuilder<CommandSourceStack> buildSubcommand() {
+        return Commands.literal("gachapon")
+                .then(Commands.literal("rates")
+                        .then(Commands.literal("item")
+                                .then(Commands.argument("pool", StringArgumentType.string())
                                         .suggests((context, builder) -> {
                                             GachaponUtils.getPools().forEach(builder::suggest);
                                             return builder.buildFuture();
@@ -32,8 +32,8 @@ public final class GachaponCommands {
                                         .executes(GachaponCommands::executeRatesForItem)
                                 )
                         )
-                        .then(CommandManager.literal("pokemon")
-                                .then(CommandManager.argument("pool", StringArgumentType.string())
+                        .then(Commands.literal("pokemon")
+                                .then(Commands.argument("pool", StringArgumentType.string())
                                         .suggests((context, builder) -> {
                                             PokemonGachaponUtils.getPools().forEach(builder::suggest);
                                             return builder.buildFuture();
@@ -41,12 +41,12 @@ public final class GachaponCommands {
                                         .executes(GachaponCommands::executeRatesForPokemon)
                                 )
                         )
-                        .then(CommandManager.literal("plushies")
+                        .then(Commands.literal("plushies")
                                 .executes(GachaponCommands::executeRatesForPlushies)
                         )
-                        .then(CommandManager.literal("machine")
-                                .then(CommandManager.literal("base")
-                                        .then(CommandManager.argument("coin", StringArgumentType.string())
+                        .then(Commands.literal("machine")
+                                .then(Commands.literal("base")
+                                        .then(Commands.argument("coin", StringArgumentType.string())
                                                 .suggests((context, builder) -> {
                                                     GachaMachinesUtils.getCoinKeys().forEach(builder::suggest);
                                                     return builder.buildFuture();
@@ -54,10 +54,10 @@ public final class GachaponCommands {
                                                 .executes(ctx -> executeRatesForMachine(ctx, false))
                                         )
                                 )
-                                .then(CommandManager.literal("pity")
-                                        .then(CommandManager.argument("player", StringArgumentType.string())
+                                .then(Commands.literal("pity")
+                                        .then(Commands.argument("player", StringArgumentType.string())
                                                 .suggests(CommandUtils::suggestPlayerNames)
-                                                .then(CommandManager.argument("coin", StringArgumentType.string())
+                                                .then(Commands.argument("coin", StringArgumentType.string())
                                                         .suggests((context, builder) -> {
                                                             GachaMachinesUtils.getCoinKeys().forEach(builder::suggest);
                                                             return builder.buildFuture();
@@ -67,14 +67,14 @@ public final class GachaponCommands {
                                         )
                                 )
                         )
-                ).then(CommandManager.literal("stats")
-                        .then(CommandManager.argument("player", StringArgumentType.string())
+                ).then(Commands.literal("stats")
+                        .then(Commands.argument("player", StringArgumentType.string())
                                 .suggests(CommandUtils::suggestPlayerNames)
                                 .executes(GachaponCommands::executeForMachineStats)
                         )
-                ).then(CommandManager.literal("leaderboard")
-                        .then(CommandManager.literal("rarity")
-                                .then(CommandManager.argument("rarity", StringArgumentType.string())
+                ).then(Commands.literal("leaderboard")
+                        .then(Commands.literal("rarity")
+                                .then(Commands.argument("rarity", StringArgumentType.string())
                                         .suggests((context, builder) -> {
                                             GachaMachinesUtils.getRarityKeys().forEach(builder::suggest);
                                             return builder.buildFuture();
@@ -82,8 +82,8 @@ public final class GachaponCommands {
                                         .executes(ctx -> executeForLeaderboard(ctx, "rarity"))
                                 )
                         )
-                        .then(CommandManager.literal("coins")
-                                .then(CommandManager.argument("coin", StringArgumentType.string())
+                        .then(Commands.literal("coins")
+                                .then(Commands.argument("coin", StringArgumentType.string())
                                         .suggests((context, builder) -> {
                                             GachaMachinesUtils.getCoinKeys().forEach(builder::suggest);
                                             return builder.buildFuture();
@@ -91,45 +91,45 @@ public final class GachaponCommands {
                                         .executes(ctx -> executeForLeaderboard(ctx, "coins"))
                                 )
                         )
-                ).then(CommandManager.literal("cleandata")
-                        .requires(source -> source.hasPermissionLevel(2))
+                ).then(Commands.literal("cleandata")
+                        .requires(source -> source.hasPermission(2))
                         .executes(GachaponCommands::executeCleanData)
-                        .then(CommandManager.literal("confirm")
+                        .then(Commands.literal("confirm")
                                 .executes(GachaponCommands::confirmCleanData)
                         )
                 );
     }
 
-    private static int executeRatesForItem(CommandContext<ServerCommandSource> context) {
+    private static int executeRatesForItem(CommandContext<CommandSourceStack> context) {
         String poolKey = StringArgumentType.getString(context, "pool");
-        ServerPlayerEntity player = getPlayer(context);
+        ServerPlayer player = getPlayer(context);
         if (player == null) return 0;
-        player.sendMessage(GachaponUtils.getPoolPercentages(poolKey), false);
+        player.displayClientMessage(GachaponUtils.getPoolPercentages(poolKey), false);
         return 1;
     }
 
-    private static int executeRatesForPokemon(CommandContext<ServerCommandSource> context) {
+    private static int executeRatesForPokemon(CommandContext<CommandSourceStack> context) {
         String poolKey = StringArgumentType.getString(context, "pool");
-        ServerPlayerEntity player = getPlayer(context);
+        ServerPlayer player = getPlayer(context);
         if (player == null) return 0;
-        player.sendMessage(PokemonGachaponUtils.getPoolPercentages(poolKey), false);
+        player.displayClientMessage(PokemonGachaponUtils.getPoolPercentages(poolKey), false);
         return 1;
     }
 
-    private static int executeRatesForMachine(CommandContext<ServerCommandSource> context, boolean includePity) {
+    private static int executeRatesForMachine(CommandContext<CommandSourceStack> context, boolean includePity) {
         MinecraftServer server = context.getSource().getServer();
-        ServerPlayerEntity sender = getPlayer(context);
+        ServerPlayer sender = getPlayer(context);
         if (sender == null) return 0;
 
         String coinKey;
-        ServerPlayerEntity target = null;
+        ServerPlayer target = null;
         if (includePity) {
             String name = StringArgumentType.getString(context, "player");
             coinKey = StringArgumentType.getString(context, "coin");
-            target = server.getPlayerManager().getPlayer(name);
+            target = server.getPlayerList().getPlayerByName(name);
 
             if (target == null) {
-                sender.sendMessage(Text.literal("Player '" + name + "' is not online.").formatted(Formatting.RED), false);
+                sender.displayClientMessage(Component.literal("Player '" + name + "' is not online.").withStyle(ChatFormatting.RED), false);
                 return 0;
             }
 
@@ -137,62 +137,62 @@ public final class GachaponCommands {
             coinKey = StringArgumentType.getString(context, "coin");
         }
 
-        Text msg = GachaMachinesUtils.getMachineRatesText(target, coinKey, includePity);
-        sender.sendMessage(msg, false);
+        Component msg = GachaMachinesUtils.getMachineRatesText(target, coinKey, includePity);
+        sender.displayClientMessage(msg, false);
         return 1;
     }
 
-    private static int executeForMachineStats(CommandContext<ServerCommandSource> context) {
+    private static int executeForMachineStats(CommandContext<CommandSourceStack> context) {
         String name = StringArgumentType.getString(context, "player");
         MinecraftServer server = context.getSource().getServer();
-        ServerPlayerEntity sender = getPlayer(context);
+        ServerPlayer sender = getPlayer(context);
         if (sender == null) return 0;
 
-        ServerPlayerEntity target = server.getPlayerManager().getPlayer(name);
+        ServerPlayer target = server.getPlayerList().getPlayerByName(name);
 
-        Text statsText;
+        Component statsText;
         if (target != null) {
             statsText = GachaMachinesUtils.getPlayerStatsText(target, server);
         } else {
             statsText = GachaMachinesUtils.getPlayerStatsText(name, server);
         }
 
-        sender.sendMessage(statsText, false);
+        sender.displayClientMessage(statsText, false);
         return 1;
     }
 
-    private static int executeForLeaderboard(CommandContext<ServerCommandSource> context, String category) {
+    private static int executeForLeaderboard(CommandContext<CommandSourceStack> context, String category) {
         String key = StringArgumentType.getString(context, category.equals("rarity") ? "rarity" : "coin");
-        ServerPlayerEntity sender = getPlayer(context);
+        ServerPlayer sender = getPlayer(context);
         if (sender == null) return 0;
-        sender.sendMessage(GachaMachinesUtils.getLeaderboardText(context.getSource().getServer(), category, key), false);
+        sender.displayClientMessage(GachaMachinesUtils.getLeaderboardText(context.getSource().getServer(), category, key), false);
         return 1;
     }
 
-    private static int executeCleanData(CommandContext<ServerCommandSource> context) {
-        ServerPlayerEntity sender = getPlayer(context);
+    private static int executeCleanData(CommandContext<CommandSourceStack> context) {
+        ServerPlayer sender = getPlayer(context);
         if (sender == null) return 0;
-        Text response = GachaMachinesUtils.clearAllGachaData(Objects.requireNonNull(sender.getServer()), false, sender);
-        sender.sendMessage(response, false);
+        Component response = GachaMachinesUtils.clearAllGachaData(Objects.requireNonNull(sender.getServer()), false, sender);
+        sender.displayClientMessage(response, false);
         return 1;
     }
 
-    private static int confirmCleanData(CommandContext<ServerCommandSource> context) {
-        ServerPlayerEntity sender = getPlayer(context);
+    private static int confirmCleanData(CommandContext<CommandSourceStack> context) {
+        ServerPlayer sender = getPlayer(context);
         if (sender == null) return 0;
-        Text response = GachaMachinesUtils.clearAllGachaData(Objects.requireNonNull(sender.getServer()), true, sender);
-        sender.sendMessage(response, false);
+        Component response = GachaMachinesUtils.clearAllGachaData(Objects.requireNonNull(sender.getServer()), true, sender);
+        sender.displayClientMessage(response, false);
         return 1;
     }
 
-    private static int executeRatesForPlushies(CommandContext<ServerCommandSource> context) {
-        ServerPlayerEntity player = getPlayer(context);
+    private static int executeRatesForPlushies(CommandContext<CommandSourceStack> context) {
+        ServerPlayer player = getPlayer(context);
         if (player == null) return 0;
-        player.sendMessage(PlushiesGachaponUtils.getRates(), false);
+        player.displayClientMessage(PlushiesGachaponUtils.getRates(), false);
         return 1;
     }
 
-    private static @Nullable ServerPlayerEntity getPlayer(CommandContext<ServerCommandSource> context) {
+    private static @Nullable ServerPlayer getPlayer(CommandContext<CommandSourceStack> context) {
         try {
             return context.getSource().getPlayer();
         } catch (Exception e) {
@@ -201,3 +201,4 @@ public final class GachaponCommands {
     }
 
 }
+

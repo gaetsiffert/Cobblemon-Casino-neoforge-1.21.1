@@ -1,27 +1,28 @@
 package net.andrespr.casinorocket.screen.opening;
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 
 public record BlackjackTableOpenData(BlockPos pos, String machineKey, long balance, int betIndex) {
 
-    public static final PacketCodec<RegistryByteBuf, BlackjackTableOpenData> CODEC =
-            PacketCodec.of(BlackjackTableOpenData::write, BlackjackTableOpenData::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, BlackjackTableOpenData> CODEC =
+            StreamCodec.ofMember(BlackjackTableOpenData::write, BlackjackTableOpenData::read);
 
-    private static void write(BlackjackTableOpenData data, RegistryByteBuf buf) {
+    private static void write(BlackjackTableOpenData data, RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(data.pos());
-        buf.writeString(data.machineKey());
+        buf.writeUtf(data.machineKey());
         buf.writeLong(data.balance());
         buf.writeInt(data.betIndex());
     }
 
-    private static BlackjackTableOpenData read(RegistryByteBuf buf) {
+    private static BlackjackTableOpenData read(RegistryFriendlyByteBuf buf) {
         BlockPos pos = buf.readBlockPos();
-        String machineKey = buf.readString();
+        String machineKey = buf.readUtf();
         long balance = buf.readLong();
         int betIndex = buf.readInt();
         return new BlackjackTableOpenData(pos, machineKey, balance, betIndex);
     }
 
 }
+

@@ -1,57 +1,101 @@
 package net.andrespr.casinorocket.datagen;
 
 import net.andrespr.casinorocket.block.ModBlocks;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import java.util.List;
+import java.util.Set;
 
-import java.util.concurrent.CompletableFuture;
+public class ModLootTableProvider extends BlockLootSubProvider {
 
-public class ModLootTableProvider extends FabricBlockLootTableProvider {
+    private static final List<Block> KNOWN_BLOCKS = List.of(
+            ModBlocks.CUT_GOLD_BLOCK,
+            ModBlocks.CUT_GOLD_STAIRS,
+            ModBlocks.CUT_GOLD_SLAB,
+            ModBlocks.GOLD_BRICKS,
+            ModBlocks.GOLD_BRICK_STAIRS,
+            ModBlocks.GOLD_BRICK_SLAB,
+            ModBlocks.GOLD_BRICK_WALL,
+            ModBlocks.GOLD_TILES,
+            ModBlocks.GOLD_TILE_STAIRS,
+            ModBlocks.GOLD_TILE_SLAB,
+            ModBlocks.GOLD_TILE_WALL,
+            ModBlocks.CHISELED_GOLD_BLOCK,
+            ModBlocks.GOLD_PILLAR,
+            ModBlocks.HEAVY_GOLD_PILLAR,
+            ModBlocks.GOLD_DOOR,
+            ModBlocks.GOLD_TRAPDOOR,
+            ModBlocks.CUT_DIAMOND_BLOCK,
+            ModBlocks.CUT_DIAMOND_STAIRS,
+            ModBlocks.CUT_DIAMOND_SLAB,
+            ModBlocks.DIAMOND_BRICKS,
+            ModBlocks.DIAMOND_BRICK_STAIRS,
+            ModBlocks.DIAMOND_BRICK_SLAB,
+            ModBlocks.DIAMOND_BRICK_WALL,
+            ModBlocks.DIAMOND_TILES,
+            ModBlocks.DIAMOND_TILE_STAIRS,
+            ModBlocks.DIAMOND_TILE_SLAB,
+            ModBlocks.DIAMOND_TILE_WALL,
+            ModBlocks.CHISELED_DIAMOND_BLOCK,
+            ModBlocks.DIAMOND_PILLAR,
+            ModBlocks.HEAVY_DIAMOND_PILLAR,
+            ModBlocks.DIAMOND_DOOR,
+            ModBlocks.DIAMOND_TRAPDOOR,
+            ModBlocks.CONDENSED_DIAMOND_BLOCK,
+            ModBlocks.CHARGED_DIAMOND_BLOCK,
+            ModBlocks.HYPERCHARGED_DIAMOND_BLOCK
+    );
 
-    public ModLootTableProvider(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
-        super(dataOutput, registryLookup);
+    public ModLootTableProvider(HolderLookup.Provider registries) {
+        super(Set.<Item>of(), FeatureFlags.DEFAULT_FLAGS, registries);
     }
 
     @Override
     public void generate() {
         // ADDING DROPS FOR GOLD BLOCKS
-        addDrop(ModBlocks.CUT_GOLD_BLOCK);
-        addDrop(ModBlocks.CUT_GOLD_STAIRS);
-        addDrop(ModBlocks.CUT_GOLD_SLAB, slabDrops(ModBlocks.CUT_GOLD_SLAB));
-        addDrop(ModBlocks.GOLD_BRICKS);
-        addDrop(ModBlocks.GOLD_BRICK_STAIRS);
-        addDrop(ModBlocks.GOLD_BRICK_SLAB, slabDrops(ModBlocks.GOLD_BRICK_SLAB));
-        addDrop(ModBlocks.GOLD_BRICK_WALL);
-        addDrop(ModBlocks.GOLD_TILES);
-        addDrop(ModBlocks.GOLD_TILE_STAIRS);
-        addDrop(ModBlocks.GOLD_TILE_SLAB, slabDrops(ModBlocks.GOLD_TILE_SLAB));
-        addDrop(ModBlocks.GOLD_TILE_WALL);
-        addDrop(ModBlocks.CHISELED_GOLD_BLOCK);
-        addDrop(ModBlocks.GOLD_PILLAR);
-        addDrop(ModBlocks.HEAVY_GOLD_PILLAR);
-        addDrop(ModBlocks.GOLD_DOOR, doorDrops(ModBlocks.GOLD_DOOR));
-        addDrop(ModBlocks.GOLD_TRAPDOOR);
+        dropSelf(ModBlocks.CUT_GOLD_BLOCK);
+        dropSelf(ModBlocks.CUT_GOLD_STAIRS);
+        add(ModBlocks.CUT_GOLD_SLAB, createSlabItemTable(ModBlocks.CUT_GOLD_SLAB));
+        dropSelf(ModBlocks.GOLD_BRICKS);
+        dropSelf(ModBlocks.GOLD_BRICK_STAIRS);
+        add(ModBlocks.GOLD_BRICK_SLAB, createSlabItemTable(ModBlocks.GOLD_BRICK_SLAB));
+        dropSelf(ModBlocks.GOLD_BRICK_WALL);
+        dropSelf(ModBlocks.GOLD_TILES);
+        dropSelf(ModBlocks.GOLD_TILE_STAIRS);
+        add(ModBlocks.GOLD_TILE_SLAB, createSlabItemTable(ModBlocks.GOLD_TILE_SLAB));
+        dropSelf(ModBlocks.GOLD_TILE_WALL);
+        dropSelf(ModBlocks.CHISELED_GOLD_BLOCK);
+        dropSelf(ModBlocks.GOLD_PILLAR);
+        dropSelf(ModBlocks.HEAVY_GOLD_PILLAR);
+        add(ModBlocks.GOLD_DOOR, createDoorTable(ModBlocks.GOLD_DOOR));
+        dropSelf(ModBlocks.GOLD_TRAPDOOR);
         // ADDING DROPS FOR DIAMOND BLOCKS
-        addDrop(ModBlocks.CUT_DIAMOND_BLOCK);
-        addDrop(ModBlocks.CUT_DIAMOND_STAIRS);
-        addDrop(ModBlocks.CUT_DIAMOND_SLAB, slabDrops(ModBlocks.CUT_DIAMOND_SLAB));
-        addDrop(ModBlocks.DIAMOND_BRICKS);
-        addDrop(ModBlocks.DIAMOND_BRICK_STAIRS);
-        addDrop(ModBlocks.DIAMOND_BRICK_SLAB, slabDrops(ModBlocks.DIAMOND_BRICK_SLAB));
-        addDrop(ModBlocks.DIAMOND_BRICK_WALL);
-        addDrop(ModBlocks.DIAMOND_TILES);
-        addDrop(ModBlocks.DIAMOND_TILE_STAIRS);
-        addDrop(ModBlocks.DIAMOND_TILE_SLAB, slabDrops(ModBlocks.DIAMOND_TILE_SLAB));
-        addDrop(ModBlocks.DIAMOND_TILE_WALL);
-        addDrop(ModBlocks.CHISELED_DIAMOND_BLOCK);
-        addDrop(ModBlocks.DIAMOND_PILLAR);
-        addDrop(ModBlocks.HEAVY_DIAMOND_PILLAR);
-        addDrop(ModBlocks.DIAMOND_DOOR, doorDrops(ModBlocks.DIAMOND_DOOR));
-        addDrop(ModBlocks.DIAMOND_TRAPDOOR);
-        addDrop(ModBlocks.CONDENSED_DIAMOND_BLOCK);
-        addDrop(ModBlocks.CHARGED_DIAMOND_BLOCK);
-        addDrop(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
+        dropSelf(ModBlocks.CUT_DIAMOND_BLOCK);
+        dropSelf(ModBlocks.CUT_DIAMOND_STAIRS);
+        add(ModBlocks.CUT_DIAMOND_SLAB, createSlabItemTable(ModBlocks.CUT_DIAMOND_SLAB));
+        dropSelf(ModBlocks.DIAMOND_BRICKS);
+        dropSelf(ModBlocks.DIAMOND_BRICK_STAIRS);
+        add(ModBlocks.DIAMOND_BRICK_SLAB, createSlabItemTable(ModBlocks.DIAMOND_BRICK_SLAB));
+        dropSelf(ModBlocks.DIAMOND_BRICK_WALL);
+        dropSelf(ModBlocks.DIAMOND_TILES);
+        dropSelf(ModBlocks.DIAMOND_TILE_STAIRS);
+        add(ModBlocks.DIAMOND_TILE_SLAB, createSlabItemTable(ModBlocks.DIAMOND_TILE_SLAB));
+        dropSelf(ModBlocks.DIAMOND_TILE_WALL);
+        dropSelf(ModBlocks.CHISELED_DIAMOND_BLOCK);
+        dropSelf(ModBlocks.DIAMOND_PILLAR);
+        dropSelf(ModBlocks.HEAVY_DIAMOND_PILLAR);
+        add(ModBlocks.DIAMOND_DOOR, createDoorTable(ModBlocks.DIAMOND_DOOR));
+        dropSelf(ModBlocks.DIAMOND_TRAPDOOR);
+        dropSelf(ModBlocks.CONDENSED_DIAMOND_BLOCK);
+        dropSelf(ModBlocks.CHARGED_DIAMOND_BLOCK);
+        dropSelf(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
     }
 
+    @Override
+    protected Iterable<Block> getKnownBlocks() {
+        return KNOWN_BLOCKS;
+    }
 }

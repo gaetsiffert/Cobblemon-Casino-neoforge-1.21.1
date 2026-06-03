@@ -1,15 +1,15 @@
 package net.andrespr.casinorocket.network;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
-public record SuitSyncPayload(int entityId, int suitValue) implements CustomPayload {
+public record SuitSyncPayload(int entityId, int suitValue) implements CustomPacketPayload {
 
-    public static final Id<SuitSyncPayload> ID = new Id<>(Identifier.of("casinorocket", "sync_suit"));
+    public static final Type<SuitSyncPayload> ID = new Type<>(ResourceLocation.fromNamespaceAndPath("casinorocket", "sync_suit"));
 
-    public static final PacketCodec<PacketByteBuf, SuitSyncPayload> CODEC = PacketCodec.of(
+    public static final StreamCodec<FriendlyByteBuf, SuitSyncPayload> CODEC = StreamCodec.ofMember(
             (payload, buf) -> { // Encoder
                 buf.writeInt(payload.entityId());
                 buf.writeInt(payload.suitValue());
@@ -18,8 +18,9 @@ public record SuitSyncPayload(int entityId, int suitValue) implements CustomPayl
     );
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 
 }
+

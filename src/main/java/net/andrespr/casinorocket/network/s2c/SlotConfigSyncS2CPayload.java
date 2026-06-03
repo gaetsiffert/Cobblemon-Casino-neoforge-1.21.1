@@ -2,23 +2,22 @@ package net.andrespr.casinorocket.network.s2c;
 
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.games.slot.SlotSymbol;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import java.util.Arrays;
 
 public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reelSize, int[] reel1, int[] reel2, int[] reel3,
-                                       int[] betValues, int mode1, int mode2, int mode3, long hash) implements CustomPayload {
+                                       int[] betValues, int mode1, int mode2, int mode3, long hash) implements CustomPacketPayload {
 
-    public static final Identifier ID_RAW = Identifier.of(CasinoRocket.MOD_ID, "slot_cfg_sync");
-    public static final Id<SlotConfigSyncS2CPayload> ID = new Id<>(ID_RAW);
+    public static final ResourceLocation ID_RAW = ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "slot_cfg_sync");
+    public static final Type<SlotConfigSyncS2CPayload> ID = new Type<>(ID_RAW);
 
-    public static final PacketCodec<RegistryByteBuf, SlotConfigSyncS2CPayload> CODEC =
-            PacketCodec.of(SlotConfigSyncS2CPayload::write, SlotConfigSyncS2CPayload::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SlotConfigSyncS2CPayload> CODEC =
+            StreamCodec.ofMember(SlotConfigSyncS2CPayload::write, SlotConfigSyncS2CPayload::read);
 
-    private static void write(SlotConfigSyncS2CPayload p, RegistryByteBuf buf) {
+    private static void write(SlotConfigSyncS2CPayload p, RegistryFriendlyByteBuf buf) {
         buf.writeBoolean(p.debug());
         buf.writeBoolean(p.useMoney());
         buf.writeInt(p.reelSize());
@@ -36,7 +35,7 @@ public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reel
         buf.writeLong(p.hash());
     }
 
-    private static SlotConfigSyncS2CPayload read(RegistryByteBuf buf) {
+    private static SlotConfigSyncS2CPayload read(RegistryFriendlyByteBuf buf) {
         boolean debug = buf.readBoolean();
         boolean useMoney = buf.readBoolean();
         int reelSize = buf.readInt();
@@ -56,12 +55,12 @@ public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reel
         return new SlotConfigSyncS2CPayload(debug, useMoney, reelSize, r1, r2, r3, betValues, mode1, mode2, mode3, hash);
     }
 
-    private static void writeIntArray(RegistryByteBuf buf, int[] arr) {
+    private static void writeIntArray(RegistryFriendlyByteBuf buf, int[] arr) {
         buf.writeInt(arr.length);
         for (int v : arr) buf.writeInt(v);
     }
 
-    private static int[] readIntArray(RegistryByteBuf buf) {
+    private static int[] readIntArray(RegistryFriendlyByteBuf buf) {
         int len = buf.readInt();
         int[] arr = new int[len];
         for (int i = 0; i < len; i++) arr[i] = buf.readInt();
@@ -69,7 +68,7 @@ public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reel
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() { return ID; }
+    public Type<? extends CustomPacketPayload> type() { return ID; }
 
     // ===== Helpers to build from server state =====
     public static SlotConfigSyncS2CPayload fromServer() {
@@ -111,3 +110,4 @@ public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reel
     }
 
 }
+

@@ -247,3 +247,4 @@ public class GachaMachinesConfig implements ConfigData {
     }
 
 }
+

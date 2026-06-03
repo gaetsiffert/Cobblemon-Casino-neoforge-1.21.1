@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "casinorocket:block/gold_tiles",
+    "side": "casinorocket:block/gold_tiles",
+    "top": "casinorocket:block/gold_tiles"
+  }
+}

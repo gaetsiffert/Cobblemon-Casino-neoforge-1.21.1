@@ -1,25 +1,27 @@
 package net.andrespr.casinorocket.network.c2s_handlers.common;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.block.entity.custom.SlotMachineEntity;
 import net.andrespr.casinorocket.network.c2s.common.ReturnToMachineScreenC2SPayload;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.andrespr.casinorocket.network.CasinoRocketPackets;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class ReturnToMachineScreenReceiver {
 
-    public static void handle(ReturnToMachineScreenC2SPayload payload, ServerPlayNetworking.Context ctx) {
+    public static void handle(ReturnToMachineScreenC2SPayload payload, IPayloadContext ctx) {
 
-        ServerPlayerEntity player = ctx.player();
-        World world = player.getWorld();
+        ServerPlayer player = (ServerPlayer) ctx.player();
+        Level world = player.level();
 
-        if (!(player.currentScreenHandler instanceof IMachineBoundHandler bound)) return;
+        if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
         if (!payload.pos().equals(bound.getMachinePos())) return;
         if (!payload.machineKey().equals(bound.getMachineKey())) return;
 
@@ -27,7 +29,7 @@ public class ReturnToMachineScreenReceiver {
 
         int chunkX = pos.getX() >> 4;
         int chunkZ = pos.getZ() >> 4;
-        if (!world.getChunkManager().isChunkLoaded(chunkX, chunkZ)) return;
+        if (!world.getChunkSource().hasChunk(chunkX, chunkZ)) return;
 
         BlockEntity be = world.getBlockEntity(pos);
         if (be == null) return;
@@ -43,7 +45,7 @@ public class ReturnToMachineScreenReceiver {
                 }
                 if (!slot.tryLock(player)) return;
 
-                player.openHandledScreen(slot);
+                player.openMenu(slot);
             }
 
             case "blackjack" -> {
@@ -55,7 +57,7 @@ public class ReturnToMachineScreenReceiver {
                 }
                 if (!table.tryLock(player)) return;
 
-                player.openHandledScreen(table);
+                player.openMenu(table);
             }
 
             default -> CasinoRocket.LOGGER.warn("[ReturnToMachine] Unknown machineKey={} from {}",
@@ -66,3 +68,5 @@ public class ReturnToMachineScreenReceiver {
     }
 
 }
+
+

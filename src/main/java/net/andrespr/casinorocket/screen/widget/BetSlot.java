@@ -2,18 +2,18 @@ package net.andrespr.casinorocket.screen.widget;
 
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.item.ModItems;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class BetSlot extends Slot {
 
-    public BetSlot(Inventory inventory, int index, int x, int y) {
+    public BetSlot(Container inventory, int index, int x, int y) {
         super(inventory, index, x, y);
     }
 
     @Override
-    public boolean canInsert(ItemStack stack) {
+    public boolean mayPlace(ItemStack stack) {
         boolean isChipItem = ModItems.ALL_CHIP_ITEMS.contains(stack.getItem());
         boolean isBillItem = ModItems.ALL_BILL_ITEMS.contains(stack.getItem());
 
@@ -33,8 +33,9 @@ public class BetSlot extends Slot {
     }
 
     @Override
-    public int getMaxItemCount() {
+    public int getMaxStackSize() {
         return 64;
     }
 
 }
+

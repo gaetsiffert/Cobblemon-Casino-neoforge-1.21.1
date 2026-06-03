@@ -1,7 +1,7 @@
 package net.andrespr.casinorocket.screen.opening;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Window;
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
 public final class MouseRestore {
@@ -14,20 +14,20 @@ public final class MouseRestore {
 
     private MouseRestore() {}
 
-    public static void capture(MinecraftClient client) {
+    public static void capture(Minecraft client) {
         if (client == null) return;
-        x = client.mouse.getX();
-        y = client.mouse.getY();
+        x = client.mouseHandler.xpos();
+        y = client.mouseHandler.ypos();
         pending = true;
 
         applyAttemptsRemaining = 3;
     }
 
     public static void capture() {
-        capture(MinecraftClient.getInstance());
+        capture(Minecraft.getInstance());
     }
 
-    public static boolean applyIfPending(MinecraftClient client) {
+    public static boolean applyIfPending(Minecraft client) {
         if (!pending || client == null) return false;
 
         if (applyAttemptsRemaining <= 0) {
@@ -38,7 +38,7 @@ public final class MouseRestore {
         applyAttemptsRemaining--;
 
         Window w = client.getWindow();
-        long handle = w.getHandle();
+        long handle = w.getWindow();
 
         if (handle == 0L) return false;
 
@@ -54,3 +54,4 @@ public final class MouseRestore {
     }
 
 }
+

@@ -1,9 +1,8 @@
 package net.andrespr.casinorocket.util;
 
-import net.minecraft.util.Formatting;
-
 import java.text.NumberFormat;
 import java.util.Locale;
+import net.minecraft.ChatFormatting;
 
 public class TextUtils {
 
@@ -125,45 +124,45 @@ public class TextUtils {
         return nf.format(number);
     }
 
-    public static Formatting percentagesColor(double percentage) {
+    public static ChatFormatting percentagesColor(double percentage) {
         if (percentage >= 5.01) {
-            return Formatting.GREEN;
+            return ChatFormatting.GREEN;
         } else if (percentage >= 1.01) {
-            return Formatting.YELLOW;
+            return ChatFormatting.YELLOW;
         } else if (percentage >= 0.10) {
-            return Formatting.RED;
+            return ChatFormatting.RED;
         } else {
-            return Formatting.DARK_RED;
+            return ChatFormatting.DARK_RED;
         }
     }
 
-    public static Formatting rarityColor(String rarity) {
+    public static ChatFormatting rarityColor(String rarity) {
         return switch (rarity.toLowerCase(Locale.ROOT)) {
-            case "common", "bonus" -> Formatting.WHITE;
-            case "uncommon" -> Formatting.BLUE;
-            case "rare" -> Formatting.GOLD;
-            case "ultrarare" -> Formatting.LIGHT_PURPLE;
-            case "legendary" -> Formatting.RED;
-            default -> Formatting.GRAY;
+            case "common", "bonus" -> ChatFormatting.WHITE;
+            case "uncommon" -> ChatFormatting.BLUE;
+            case "rare" -> ChatFormatting.GOLD;
+            case "ultrarare" -> ChatFormatting.LIGHT_PURPLE;
+            case "legendary" -> ChatFormatting.RED;
+            default -> ChatFormatting.GRAY;
         };
     }
 
-    public static Formatting coinColor(String rarity) {
+    public static ChatFormatting coinColor(String rarity) {
         return switch (rarity.toLowerCase(Locale.ROOT)) {
-            case "copper" -> Formatting.RED;
-            case "iron" -> Formatting.WHITE;
-            case "gold" -> Formatting.GOLD;
-            case "diamond" -> Formatting.AQUA;
-            default -> Formatting.GRAY;
+            case "copper" -> ChatFormatting.RED;
+            case "iron" -> ChatFormatting.WHITE;
+            case "gold" -> ChatFormatting.GOLD;
+            case "diamond" -> ChatFormatting.AQUA;
+            default -> ChatFormatting.GRAY;
         };
     }
 
-    public static Formatting rankColors(int rank) {
+    public static ChatFormatting rankColors(int rank) {
         return switch (rank) {
-            case 1 -> Formatting.GOLD;
-            case 2 -> Formatting.AQUA;
-            case 3 -> Formatting.GREEN;
-            default -> Formatting.WHITE;
+            case 1 -> ChatFormatting.GOLD;
+            case 2 -> ChatFormatting.AQUA;
+            case 3 -> ChatFormatting.GREEN;
+            default -> ChatFormatting.WHITE;
         };
     }
 
@@ -173,3 +172,4 @@ public class TextUtils {
     }
 
 }
+

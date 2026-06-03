@@ -3,13 +3,13 @@ package net.andrespr.casinorocket.screen.custom.slot;
 import net.andrespr.casinorocket.screen.ModScreenHandlers;
 import net.andrespr.casinorocket.screen.opening.SlotMachineOpenData;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 
-public class SlotMachineMenuScreenHandler extends ScreenHandler implements IMachineBoundHandler {
+public class SlotMachineMenuScreenHandler extends AbstractContainerMenu implements IMachineBoundHandler {
 
     private final BlockPos pos;
     private final String machineKey;
@@ -17,7 +17,7 @@ public class SlotMachineMenuScreenHandler extends ScreenHandler implements IMach
     private final int initialBetBase;
     private final int initialLinesMode;
 
-    public SlotMachineMenuScreenHandler(int syncId, PlayerInventory inv, SlotMachineOpenData data) {
+    public SlotMachineMenuScreenHandler(int syncId, Inventory inv, SlotMachineOpenData data) {
         super(ModScreenHandlers.SLOT_MACHINE_MENU_SCREEN_HANDLER, syncId);
         this.pos = data.pos();
         this.machineKey = data.machineKey();
@@ -26,7 +26,7 @@ public class SlotMachineMenuScreenHandler extends ScreenHandler implements IMach
         this.initialLinesMode = data.linesMode();
     }
 
-    public SlotMachineMenuScreenHandler(int syncId, PlayerInventory inv, BlockPos pos,
+    public SlotMachineMenuScreenHandler(int syncId, Inventory inv, BlockPos pos,
                                         String machineKey, long balance, int betBase, int linesMode) {
         super(ModScreenHandlers.SLOT_MACHINE_MENU_SCREEN_HANDLER, syncId);
         this.pos = pos;
@@ -37,12 +37,12 @@ public class SlotMachineMenuScreenHandler extends ScreenHandler implements IMach
     }
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int slot) {
+    public ItemStack quickMoveStack(Player player, int slot) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
+    public boolean stillValid(Player player) {
         return true;
     }
 
@@ -58,3 +58,4 @@ public class SlotMachineMenuScreenHandler extends ScreenHandler implements IMach
     }
 
 }
+

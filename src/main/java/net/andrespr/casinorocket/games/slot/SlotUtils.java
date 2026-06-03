@@ -3,18 +3,17 @@ package net.andrespr.casinorocket.games.slot;
 import com.mojang.authlib.GameProfile;
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
 import net.andrespr.casinorocket.util.TextUtils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-
+import net.minecraft.server.level.ServerPlayer;
 import java.util.*;
 import java.util.function.ToLongFunction;
 
 public class SlotUtils {
 
-    public static Text getLeaderboardText(MinecraftServer server, String key) {
+    public static Component getLeaderboardText(MinecraftServer server, String key) {
         PlayerSlotMachineData data = PlayerSlotMachineData.get(server);
 
         String k = key.toLowerCase(Locale.ROOT);
@@ -27,7 +26,7 @@ public class SlotUtils {
         };
 
         if (valueFn == null) {
-            return Text.literal("Invalid key.").formatted(Formatting.RED);
+            return Component.literal("Invalid key.").withStyle(ChatFormatting.RED);
         }
 
         List<Map.Entry<UUID, Long>> rows = new ArrayList<>();
@@ -44,7 +43,7 @@ public class SlotUtils {
         }
 
         if (rows.isEmpty()) {
-            return Text.literal("No leaderboard entries yet.").formatted(Formatting.GRAY);
+            return Component.literal("No leaderboard entries yet.").withStyle(ChatFormatting.GRAY);
         }
 
         Comparator<Map.Entry<UUID, Long>> cmp = Comparator.comparingLong(Map.Entry::getValue);
@@ -61,16 +60,16 @@ public class SlotUtils {
             default -> "Slots Leaderboard";
         };
 
-        Formatting titleColor = switch (k) {
-            case "highest_win" -> Formatting.GOLD;
-            case "total_win" -> Formatting.GREEN;
-            case "total_lost" -> Formatting.RED;
-            default -> Formatting.YELLOW;
+        ChatFormatting titleColor = switch (k) {
+            case "highest_win" -> ChatFormatting.GOLD;
+            case "total_win" -> ChatFormatting.GREEN;
+            case "total_lost" -> ChatFormatting.RED;
+            default -> ChatFormatting.YELLOW;
         };
 
-        MutableText out = Text.literal("\n")
-                .append(Text.literal("Top 10 - " + titleLabel).formatted(titleColor, Formatting.BOLD))
-                .append(Text.literal("\n"));
+        MutableComponent out = Component.literal("\n")
+                .append(Component.literal("Top 10 - " + titleLabel).withStyle(titleColor, ChatFormatting.BOLD))
+                .append(Component.literal("\n"));
 
         for (int i = 0; i < top.size(); i++) {
             int rank = i + 1;
@@ -79,24 +78,24 @@ public class SlotUtils {
 
             String name = resolveName(server, id);
 
-            out.append(Text.literal(rank + ". ").formatted(Formatting.YELLOW))
-                    .append(Text.literal(name).formatted(TextUtils.rankColors(rank)))
-                    .append(Text.literal(" - ").formatted(Formatting.GRAY))
-                    .append(Text.literal(formatSignedMoney(value)).formatted(Formatting.YELLOW));
+            out.append(Component.literal(rank + ". ").withStyle(ChatFormatting.YELLOW))
+                    .append(Component.literal(name).withStyle(TextUtils.rankColors(rank)))
+                    .append(Component.literal(" - ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(formatSignedMoney(value)).withStyle(ChatFormatting.YELLOW));
 
-            if (rank < top.size()) out.append(Text.literal("\n"));
+            if (rank < top.size()) out.append(Component.literal("\n"));
         }
 
         return out;
     }
 
     private static String resolveName(MinecraftServer server, UUID id) {
-        ServerPlayerEntity p = server.getPlayerManager().getPlayer(id);
+        ServerPlayer p = server.getPlayerList().getPlayer(id);
         if (p != null) return p.getName().getString();
 
-        var cache = server.getUserCache();
+        var cache = server.getProfileCache();
         if (cache != null) {
-            Optional<GameProfile> profile = cache.getByUuid(id);
+            Optional<GameProfile> profile = cache.get(id);
             if (profile.isPresent() && profile.get().getName() != null) {
                 return profile.get().getName();
             }
@@ -116,3 +115,4 @@ public class SlotUtils {
     }
 
 }
+

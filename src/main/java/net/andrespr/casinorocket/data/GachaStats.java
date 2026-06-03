@@ -1,10 +1,9 @@
 package net.andrespr.casinorocket.data;
 
-import net.minecraft.nbt.NbtCompound;
-
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import net.minecraft.nbt.CompoundTag;
 
 public class GachaStats {
 
@@ -50,8 +49,8 @@ public class GachaStats {
     }
 
     // === SAVE TO NBT ===
-    public NbtCompound toNbt() {
-        NbtCompound nbt = new NbtCompound();
+    public CompoundTag toNbt() {
+        CompoundTag nbt = new CompoundTag();
         nbt.putString("playerName", playerName);
         nbt.putInt("totalCoinsUsed", totalCoinsUsed);
         nbt.putInt("copperUsed", copperUsed);
@@ -68,7 +67,7 @@ public class GachaStats {
     }
 
     // === LOAD FROM NBT ===
-    public static GachaStats fromNbt(NbtCompound nbt) {
+    public static GachaStats fromNbt(CompoundTag nbt) {
         String name = nbt.getString("playerName");
         GachaStats stats = new GachaStats(name);
         stats.totalCoinsUsed = nbt.getInt("totalCoinsUsed");
@@ -131,3 +130,4 @@ public class GachaStats {
     }
 
 }
+

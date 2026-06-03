@@ -6,3 +6,4 @@ public interface IShop {
     VillagerTradeHelper.ShopData build();
     String getName();
 }
+

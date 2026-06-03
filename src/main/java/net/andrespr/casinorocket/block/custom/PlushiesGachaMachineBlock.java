@@ -4,177 +4,178 @@ import com.mojang.serialization.MapCodec;
 import net.andrespr.casinorocket.games.gachapon.GachaMachinesUtils;
 import net.andrespr.casinorocket.games.gachapon.PlushiesGachaponUtils;
 import net.andrespr.casinorocket.item.ModItems;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.enums.DoubleBlockHalf;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class PlushiesGachaMachineBlock extends Block {
 
-    public static final MapCodec<PlushiesGachaMachineBlock> CODEC = createCodec(PlushiesGachaMachineBlock::new);
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    public static final EnumProperty<DoubleBlockHalf> HALF = Properties.DOUBLE_BLOCK_HALF;
+    public static final MapCodec<PlushiesGachaMachineBlock> CODEC = simpleCodec(PlushiesGachaMachineBlock::new);
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
-    private static final VoxelShape MIDDLE_PART = Block.createCuboidShape(4,0,1,12,16,15);
-    private static final VoxelShape LEFT_MIDDLE_PART = Block.createCuboidShape(12,0,2,14,16,14);
-    private static final VoxelShape LEFT_PART = Block.createCuboidShape(14,0,4,15,16,12);
-    private static final VoxelShape RIGHT_MIDDLE_PART = Block.createCuboidShape(2,0,2,4,16,14);
-    private static final VoxelShape RIGHT_PART = Block.createCuboidShape(1,0,4,2,16,12);
+    private static final VoxelShape MIDDLE_PART = Block.box(4,0,1,12,16,15);
+    private static final VoxelShape LEFT_MIDDLE_PART = Block.box(12,0,2,14,16,14);
+    private static final VoxelShape LEFT_PART = Block.box(14,0,4,15,16,12);
+    private static final VoxelShape RIGHT_MIDDLE_PART = Block.box(2,0,2,4,16,14);
+    private static final VoxelShape RIGHT_PART = Block.box(1,0,4,2,16,12);
 
-    private static final VoxelShape UP_MIDDLE_PART = Block.createCuboidShape(0.5,0,0.5,15.5,1,15.5);
-    private static final VoxelShape UP_LOWER_PART = Block.createCuboidShape(0,1,0,16,15,16);
-    private static final VoxelShape UP_UPPER_PART = Block.createCuboidShape(0.5,15,0.5,15.5,16,15.5);
+    private static final VoxelShape UP_MIDDLE_PART = Block.box(0.5,0,0.5,15.5,1,15.5);
+    private static final VoxelShape UP_LOWER_PART = Block.box(0,1,0,16,15,16);
+    private static final VoxelShape UP_UPPER_PART = Block.box(0.5,15,0.5,15.5,16,15.5);
 
-    private static final VoxelShape LOWER_SHAPE = VoxelShapes.union(MIDDLE_PART, LEFT_MIDDLE_PART, LEFT_PART, RIGHT_MIDDLE_PART, RIGHT_PART);
-    private static final VoxelShape UPPER_SHAPE = VoxelShapes.union(UP_UPPER_PART, UP_MIDDLE_PART, UP_LOWER_PART);
+    private static final VoxelShape LOWER_SHAPE = Shapes.or(MIDDLE_PART, LEFT_MIDDLE_PART, LEFT_PART, RIGHT_MIDDLE_PART, RIGHT_PART);
+    private static final VoxelShape UPPER_SHAPE = Shapes.or(UP_UPPER_PART, UP_MIDDLE_PART, UP_LOWER_PART);
 
-    public PlushiesGachaMachineBlock(Settings settings) {
+    public PlushiesGachaMachineBlock(Properties settings) {
         super(settings);
-        this.setDefaultState(this.stateManager.getDefaultState()
-                .with(FACING, Direction.NORTH)
-                .with(HALF, DoubleBlockHalf.LOWER));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(FACING, Direction.NORTH)
+                .setValue(HALF, DoubleBlockHalf.LOWER));
     }
 
     @Override
-    protected MapCodec<? extends Block> getCodec() {
+    protected MapCodec<? extends Block> codec() {
         return CODEC;
     }
 
     // === INTERACTION ===
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos,
-                              PlayerEntity player, BlockHitResult hit) {
-        if (state.get(HALF) == DoubleBlockHalf.UPPER) {
-            BlockPos lowerPos = pos.down();
+    public InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos,
+                              Player player, BlockHitResult hit) {
+        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            BlockPos lowerPos = pos.below();
             BlockState lowerState = world.getBlockState(lowerPos);
 
-            if (lowerState.isOf(this)) {
-                return this.onUse(lowerState, world, lowerPos, player, hit);
+            if (lowerState.is(this)) {
+                return this.useWithoutItem(lowerState, world, lowerPos, player, hit);
             }
 
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
 
-        if (world.isClient) return ActionResult.SUCCESS;
+        if (world.isClientSide) return InteractionResult.SUCCESS;
 
-        ItemStack stack = player.getMainHandStack();
+        ItemStack stack = player.getMainHandItem();
 
-        if (!stack.isOf(ModItems.PRIMOGEM)) {
-            player.sendMessage(Text.literal("This machine only accepts Primogems!").formatted(Formatting.RED), true);
-            return ActionResult.FAIL;
+        if (!stack.is(ModItems.PRIMOGEM)) {
+            player.displayClientMessage(Component.literal("This machine only accepts Primogems!").withStyle(ChatFormatting.RED), true);
+            return InteractionResult.FAIL;
         }
 
         if (!PlushiesGachaponUtils.hasRewards()) {
-            player.sendMessage(Text.literal("There're no plushies at the moment.").formatted(Formatting.RED), true);
-            return ActionResult.FAIL;
+            player.displayClientMessage(Component.literal("There're no plushies at the moment.").withStyle(ChatFormatting.RED), true);
+            return InteractionResult.FAIL;
         }
 
-        stack.decrement(1);
+        stack.shrink(1);
         return GachaMachinesUtils.handlePlushiesUse(world, pos, player);
 
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        Direction facing = state.get(FACING);
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        Direction facing = state.getValue(FACING);
         GachaMachinesUtils.finishPlushiesDispense(world, pos, facing);
     }
 
     // === SHAPE ===
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return state.get(HALF) == DoubleBlockHalf.LOWER ? LOWER_SHAPE : UPPER_SHAPE;
+    protected VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        return state.getValue(HALF) == DoubleBlockHalf.LOWER ? LOWER_SHAPE : UPPER_SHAPE;
     }
 
     // === PLACEMENT ===
     @Override
-    public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockPos pos = ctx.getBlockPos();
-        World world = ctx.getWorld();
-        if (pos.getY() < world.getTopY() - 1 && world.getBlockState(pos.up()).canReplace(ctx)) {
-            return this.getDefaultState()
-                    .with(FACING, ctx.getHorizontalPlayerFacing().getOpposite())
-                    .with(HALF, DoubleBlockHalf.LOWER);
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockPos pos = ctx.getClickedPos();
+        Level world = ctx.getLevel();
+        if (pos.getY() < world.getMaxBuildHeight() - 1 && world.getBlockState(pos.above()).canBeReplaced(ctx)) {
+            return this.defaultBlockState()
+                    .setValue(FACING, ctx.getHorizontalDirection().getOpposite())
+                    .setValue(HALF, DoubleBlockHalf.LOWER);
         }
         return null;
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        world.setBlockState(pos.up(), state.with(HALF, DoubleBlockHalf.UPPER), Block.NOTIFY_ALL);
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        world.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), Block.UPDATE_ALL);
     }
 
     // === BREAK ===
     @Override
-    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        DoubleBlockHalf half = state.get(HALF);
-        BlockPos otherPos = half == DoubleBlockHalf.LOWER ? pos.up() : pos.down();
+    public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
+        DoubleBlockHalf half = state.getValue(HALF);
+        BlockPos otherPos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
         BlockState otherState = world.getBlockState(otherPos);
 
-        if (otherState.isOf(this) && otherState.get(HALF) != half) {
-            world.breakBlock(otherPos, !player.isCreative());
+        if (otherState.is(this) && otherState.getValue(HALF) != half) {
+            world.destroyBlock(otherPos, !player.isCreative());
         }
 
-        return super.onBreak(world, pos, state, player);
+        return super.playerWillDestroy(world, pos, state, player);
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState,
-                                                   WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        DoubleBlockHalf half = state.get(HALF);
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
+                                                   LevelAccessor world, BlockPos pos, BlockPos neighborPos) {
+        DoubleBlockHalf half = state.getValue(HALF);
         if (direction.getAxis() == Direction.Axis.Y) {
-            if (half == DoubleBlockHalf.LOWER && direction == Direction.UP && (!neighborState.isOf(this)
-                    || neighborState.get(HALF) != DoubleBlockHalf.UPPER)) {
-                return Blocks.AIR.getDefaultState();
+            if (half == DoubleBlockHalf.LOWER && direction == Direction.UP && (!neighborState.is(this)
+                    || neighborState.getValue(HALF) != DoubleBlockHalf.UPPER)) {
+                return Blocks.AIR.defaultBlockState();
             }
-            if (half == DoubleBlockHalf.UPPER && direction == Direction.DOWN && (!neighborState.isOf(this)
-                    || neighborState.get(HALF) != DoubleBlockHalf.LOWER)) {
-                return Blocks.AIR.getDefaultState();
+            if (half == DoubleBlockHalf.UPPER && direction == Direction.DOWN && (!neighborState.is(this)
+                    || neighborState.getValue(HALF) != DoubleBlockHalf.LOWER)) {
+                return Blocks.AIR.defaultBlockState();
             }
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, world, pos, neighborPos);
     }
 
     // === FACING ===
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
     // === PROPERTIES ===
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, HALF);
     }
 
 }
+

@@ -4,10 +4,10 @@ import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.config.gachapon.PokemonGachaponConfig;
 import net.andrespr.casinorocket.util.CobblemonUtils;
 import net.andrespr.casinorocket.util.TextUtils;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.RandomSource;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -60,7 +60,7 @@ public class PokemonGachaponUtils {
         CasinoRocket.LOGGER.info("[Pokémon Gachapon] Cache built with '{}' pools.", CACHE.size());
     }
 
-    public static CachedEntry pickPokemonReward(Random random, String poolKey) {
+    public static CachedEntry pickPokemonReward(RandomSource random, String poolKey) {
         CachedPool pool = CACHE.get(poolKey);
         if (pool == null || pool.entries().isEmpty()) return null;
 
@@ -76,17 +76,17 @@ public class PokemonGachaponUtils {
         return pool.entries().get(index);
     }
 
-    public static Text getPoolPercentages(String poolKey) {
+    public static Component getPoolPercentages(String poolKey) {
         CachedPool pool = CACHE.get(poolKey);
         if (pool == null || pool.entries().isEmpty())
-            return Text.literal("Pool '" + poolKey + "' has no valid Pokémon.").formatted(Formatting.RED);
+            return Component.literal("Pool '" + poolKey + "' has no valid Pokémon.").withStyle(ChatFormatting.RED);
 
         int totalWeight = pool.totalWeight();
         if (totalWeight <= 0)
-            return Text.literal("Pool '" + poolKey + "' has total weight 0.").formatted(Formatting.RED);
+            return Component.literal("Pool '" + poolKey + "' has total weight 0.").withStyle(ChatFormatting.RED);
 
-        MutableText result = Text.literal("")
-                .append(Text.literal("Rates:").formatted(Formatting.UNDERLINE)).append("\n");
+        MutableComponent result = Component.literal("")
+                .append(Component.literal("Rates:").withStyle(ChatFormatting.UNDERLINE)).append("\n");
 
         List<CachedEntry> sorted = new ArrayList<>(pool.entries());
         sorted.sort((a, b) -> Integer.compare(b.weight(), a.weight()));
@@ -94,7 +94,7 @@ public class PokemonGachaponUtils {
         boolean first = true;
 
         for (CachedEntry entry : sorted) {
-            if (!first) result.append(Text.literal(", "));
+            if (!first) result.append(Component.literal(", "));
             first = false;
 
             String cleanId = CobblemonUtils.getRawId(entry.pokemonId());
@@ -103,9 +103,9 @@ public class PokemonGachaponUtils {
             double percentage = (entry.weight() * 100.0) / totalWeight;
             double rounded = Math.round(percentage * 100.0) / 100.0;
 
-            Formatting color = TextUtils.percentagesColor(rounded);
+            ChatFormatting color = TextUtils.percentagesColor(rounded);
 
-            result.append(Text.literal(name + ": ").append(Text.literal(String.format("%.2f%%", rounded)).formatted(color)));
+            result.append(Component.literal(name + ": ").append(Component.literal(String.format("%.2f%%", rounded)).withStyle(color)));
         }
 
         return result;
@@ -121,3 +121,4 @@ public class PokemonGachaponUtils {
     }
 
 }
+

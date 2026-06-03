@@ -4,11 +4,10 @@ import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.item.custom.BillItem;
 import net.andrespr.casinorocket.item.custom.ChipItem;
 import net.andrespr.casinorocket.util.MoneyCalculator;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.registry.Registries;
-
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.item.Item;
 import java.util.List;
 
 public class VillagerTradeHelper {
@@ -16,24 +15,24 @@ public class VillagerTradeHelper {
     // ===== BASE STRUCTURE - SHOP DATA =====
 
     public static class ShopData {
-        public final NbtList shops;
+        public final ListTag shops;
         public final String profession;
         public final int suitId;
-        public NbtCompound offersNbt;
+        public CompoundTag offersNbt;
         public final String jobBlockId;
 
-        public ShopData(NbtList shops, String profession, int suitId) {
+        public ShopData(ListTag shops, String profession, int suitId) {
             this(shops, profession, suitId, null);
         }
 
-        public ShopData(NbtList shops, String profession, int suitId, String jobBlockId) {
+        public ShopData(ListTag shops, String profession, int suitId, String jobBlockId) {
             this.shops = shops;
             this.profession = profession;
             this.suitId = suitId;
             this.jobBlockId = jobBlockId;
         }
 
-        public ShopData withOffers(NbtCompound offers) {
+        public ShopData withOffers(CompoundTag offers) {
             this.offersNbt = offers;
             return this;
         }
@@ -41,16 +40,16 @@ public class VillagerTradeHelper {
 
     // ===== COBBLEDOLLARS TRADES =====
 
-    public static NbtCompound makeShopCompound(String category, NbtList offers) {
-        NbtCompound shop = new NbtCompound();
+    public static CompoundTag makeShopCompound(String category, ListTag offers) {
+        CompoundTag shop = new CompoundTag();
         shop.putString("Category", category);
         shop.put("Offers", offers);
         return shop;
     }
 
-    public static NbtCompound makeOffer(String itemId, String price) {
-        NbtCompound offer = new NbtCompound();
-        NbtCompound item = new NbtCompound();
+    public static CompoundTag makeOffer(String itemId, String price) {
+        CompoundTag offer = new CompoundTag();
+        CompoundTag item = new CompoundTag();
         item.putString("id", itemId);
         item.putByte("Count", (byte) 1);
         item.putInt("count", 1);
@@ -61,22 +60,22 @@ public class VillagerTradeHelper {
 
     // ===== VANILLA TRADES =====
 
-    public static NbtCompound makeVanillaShopCompound(NbtList trades) {
-        NbtCompound offers = new NbtCompound();
+    public static CompoundTag makeVanillaShopCompound(ListTag trades) {
+        CompoundTag offers = new CompoundTag();
         offers.put("Recipes", trades);
         return offers;
     }
 
-    public static NbtCompound makeVanillaOffer(String buyItem, int buyCount, String sellItem, int sellCount) {
-        NbtCompound trade = new NbtCompound();
+    public static CompoundTag makeVanillaOffer(String buyItem, int buyCount, String sellItem, int sellCount) {
+        CompoundTag trade = new CompoundTag();
 
-        NbtCompound buy = new NbtCompound();
+        CompoundTag buy = new CompoundTag();
         buy.putString("id", buyItem);
         buy.putByte("Count", (byte) buyCount);
         buy.putInt("count", buyCount);
         trade.put("buy", buy);
 
-        NbtCompound sell = new NbtCompound();
+        CompoundTag sell = new CompoundTag();
         sell.putString("id", sellItem);
         sell.putByte("Count", (byte) sellCount);
         sell.putInt("count", sellCount);
@@ -96,51 +95,51 @@ public class VillagerTradeHelper {
 
     // ===== SPECIFIC TRADES =====
 
-    public static void makeMoneyToChipOffer(NbtList trades, ChipItem chip) {
-        String chipId = Registries.ITEM.getId(chip).toString();
+    public static void makeMoneyToChipOffer(ListTag trades, ChipItem chip) {
+        String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
         String value = String.valueOf(chip.getValue());
         trades.add(makeOffer(chipId, value));
     }
 
-    public static void makeItemToChipOffer(NbtList trades, ChipItem chip) {
-        String chipId = Registries.ITEM.getId(chip).toString();
+    public static void makeItemToChipOffer(ListTag trades, ChipItem chip) {
+        String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
         MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(chip.getItem(), chip.getValue());
         trades.add(makeVanillaOffer(itemResult.item(), Math.toIntExact(itemResult.amount()), chipId, 1));
     }
 
-    public static void makeChipToMoneyOffer(NbtList trades, ChipItem chip) {
-        String chipId = Registries.ITEM.getId(chip).toString();
+    public static void makeChipToMoneyOffer(ListTag trades, ChipItem chip) {
+        String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
         MoneyCalculator.MoneyResult result = MoneyCalculator.calculateDenomination(chip.getValue());
-        String billId = Registries.ITEM.getId(result.billType()).toString();
+        String billId = BuiltInRegistries.ITEM.getKey(result.billType()).toString();
         trades.add(makeVanillaOffer(chipId, 1, billId, result.amount()));
     }
 
-    public static void makeChipToItemOffer(NbtList trades, ChipItem chip) {
-        String chipId = Registries.ITEM.getId(chip).toString();
+    public static void makeChipToItemOffer(ListTag trades, ChipItem chip) {
+        String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
         MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(chip.getItem(), chip.getValue());
         trades.add(makeVanillaOffer(chipId, 1, itemResult.item(), Math.toIntExact(itemResult.amount())));
     }
 
-    public static void makeInCashOffer(NbtList trades, BillItem bill) {
-        String billId = Registries.ITEM.getId(bill).toString();
+    public static void makeInCashOffer(ListTag trades, BillItem bill) {
+        String billId = BuiltInRegistries.ITEM.getKey(bill).toString();
         String value = String.valueOf(bill.getValue());
         trades.add(makeOffer(billId,value));
     }
 
-    public static void makeListOffer(NbtList trades, List<String> entries, String modID, String price) {
+    public static void makeListOffer(ListTag trades, List<String> entries, String modID, String price) {
         for (String entry : entries) {
             trades.add(makeOffer(modID + ":" + entry, price));
         }
     }
 
-    public static void makeCoinOffer(NbtList trades, Item coin) {
-        String coinId = Registries.ITEM.getId(coin).toString();
+    public static void makeCoinOffer(ListTag trades, Item coin) {
+        String coinId = BuiltInRegistries.ITEM.getKey(coin).toString();
         String coinPrice = CasinoRocket.CONFIG.gachaMachines.getCoinPrice(coinId);
         trades.add(makeOffer(coinId, coinPrice));
     }
 
-    public static void makeGachaponOffer(NbtList trades, Item gachapon) {
-        String gachaponId = Registries.ITEM.getId(gachapon).toString();
+    public static void makeGachaponOffer(ListTag trades, Item gachapon) {
+        String gachaponId = BuiltInRegistries.ITEM.getKey(gachapon).toString();
         boolean isGachaponEnable = CasinoRocket.CONFIG.gachaMachines.getGachaponEnable(gachaponId);
         if (isGachaponEnable) {
             String gachaponPrice = CasinoRocket.CONFIG.gachaMachines.getGachaponPrice(gachaponId);
@@ -149,3 +148,4 @@ public class VillagerTradeHelper {
     }
 
 }
+

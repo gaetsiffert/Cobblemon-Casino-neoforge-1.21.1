@@ -27,3 +27,4 @@ public final class BlackjackRules {
     public static final int DEFAULT_BET_INDEX = 0;
 
 }
+

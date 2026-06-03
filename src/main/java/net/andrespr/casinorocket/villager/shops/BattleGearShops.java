@@ -1,8 +1,7 @@
 package net.andrespr.casinorocket.villager.shops;
 
 import net.andrespr.casinorocket.villager.VillagerTradeHelper;
-import net.minecraft.nbt.NbtList;
-
+import net.minecraft.nbt.ListTag;
 import java.util.List;
 
 public final class BattleGearShops implements IShop {
@@ -10,10 +9,10 @@ public final class BattleGearShops implements IShop {
     @Override
     public VillagerTradeHelper.ShopData build() {
 
-        NbtList shops = new NbtList();
+        ListTag shops = new ListTag();
 
         // ===== BATTLE ITEMS =====
-        NbtList battleOffers = new NbtList();
+        ListTag battleOffers = new ListTag();
         battleOffers.add(VillagerTradeHelper.makeOffer("cobblemon:sitrus_berry","500"));
         battleOffers.add(VillagerTradeHelper.makeOffer("cobblemon:muscle_band","2500"));
         battleOffers.add(VillagerTradeHelper.makeOffer("cobblemon:wise_glasses","2500"));
@@ -26,7 +25,7 @@ public final class BattleGearShops implements IShop {
         shops.add(VillagerTradeHelper.makeShopCompound("Battle Items", battleOffers));
 
         // ===== TYPE BOOST ITEMS =====
-        NbtList typeBoostOffers = new NbtList();
+        ListTag typeBoostOffers = new ListTag();
         List<String> typeBoostItems = List.of(
                 "silk_scarf",
                 "charcoal_stick",
@@ -60,3 +59,4 @@ public final class BattleGearShops implements IShop {
     }
 
 }
+

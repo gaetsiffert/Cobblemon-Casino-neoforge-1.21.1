@@ -344,3 +344,4 @@ public class PokemonGachaponConfig implements ConfigData {
     }
 
 }
+

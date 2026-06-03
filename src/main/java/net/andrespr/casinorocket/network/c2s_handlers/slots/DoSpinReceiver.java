@@ -1,5 +1,7 @@
 package net.andrespr.casinorocket.network.c2s_handlers.slots;
 
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
 import net.andrespr.casinorocket.games.slot.SlotMachineConstants;
@@ -9,26 +11,25 @@ import net.andrespr.casinorocket.network.c2s.slots.DoSpinC2SPayload;
 import net.andrespr.casinorocket.network.s2c.SendSpinResultS2CPayload;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineScreenHandler;
 import net.andrespr.casinorocket.util.MoneyCalculator;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.andrespr.casinorocket.network.CasinoRocketPackets;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-
+import net.minecraft.server.level.ServerPlayer;
 import java.util.UUID;
 
 public class DoSpinReceiver {
 
-    public static void handle(DoSpinC2SPayload payload, ServerPlayNetworking.Context context) {
+    public static void handle(DoSpinC2SPayload payload, IPayloadContext context) {
 
-        ServerPlayerEntity player = context.player();
+        ServerPlayer player = (ServerPlayer) context.player();
         MinecraftServer server = player.getServer();
         if (server == null) return;
 
-        if (!(player.currentScreenHandler instanceof SlotMachineScreenHandler)) {
+        if (!(player.containerMenu instanceof SlotMachineScreenHandler)) {
             return;
         }
 
         PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);
-        UUID uuid = player.getUuid();
+        UUID uuid = player.getUUID();
 
         long balance = storage.getBalance(uuid);
         int betBase = storage.getBetBase(uuid);
@@ -69,9 +70,11 @@ public class DoSpinReceiver {
             );
         }
 
-        ServerPlayNetworking.send(player,
+        CasinoRocketPackets.sendToPlayer(player,
                 SendSpinResultS2CPayload.from(newBalance, linesMode, stop1, stop2, stop3, spinResult)
         );
     }
 
 }
+
+

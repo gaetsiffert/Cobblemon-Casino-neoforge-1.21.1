@@ -2,11 +2,11 @@ package net.andrespr.casinorocket.network.s2c;
 
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.games.blackjack.BlackjackPhase;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 public record SendBlackjackStateS2CPayload(
 
@@ -39,23 +39,23 @@ public record SendBlackjackStateS2CPayload(
         boolean canFinish,
         boolean canDoubleOrNothing
 
-) implements CustomPayload {
+) implements CustomPacketPayload {
 
-    public static final Id<SendBlackjackStateS2CPayload> ID =
-            new Id<>(Identifier.of(CasinoRocket.MOD_ID, "blackjack_state"));
+    public static final Type<SendBlackjackStateS2CPayload> ID =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "blackjack_state"));
 
-    public static final PacketCodec<RegistryByteBuf, SendBlackjackStateS2CPayload> CODEC =
-            PacketCodec.of(SendBlackjackStateS2CPayload::write, SendBlackjackStateS2CPayload::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, SendBlackjackStateS2CPayload> CODEC =
+            StreamCodec.ofMember(SendBlackjackStateS2CPayload::write, SendBlackjackStateS2CPayload::read);
 
-    private static void write(SendBlackjackStateS2CPayload p, RegistryByteBuf buf) {
+    private static void write(SendBlackjackStateS2CPayload p, RegistryFriendlyByteBuf buf) {
         buf.writeBlockPos(p.pos());
-        buf.writeString(p.machineKey());
+        buf.writeUtf(p.machineKey());
 
         buf.writeLong(p.balance());
         buf.writeInt(p.betIndex());
         buf.writeLong(p.currentBet());
 
-        buf.writeEnumConstant(p.phase());
+        buf.writeEnum(p.phase());
         buf.writeLong(p.winPayout());
         buf.writeVarInt(p.resultSeq());
 
@@ -67,8 +67,8 @@ public record SendBlackjackStateS2CPayload(
         writeIntArray(buf, p.playerCards());
         writeIntArray(buf, p.dealerCards());
 
-        buf.writeString(p.playerValueText());
-        buf.writeString(p.dealerValueText());
+        buf.writeUtf(p.playerValueText());
+        buf.writeUtf(p.dealerValueText());
 
         buf.writeBoolean(p.canPlay());
         buf.writeBoolean(p.canHit());
@@ -78,15 +78,15 @@ public record SendBlackjackStateS2CPayload(
         buf.writeBoolean(p.canDoubleOrNothing());
     }
 
-    private static SendBlackjackStateS2CPayload read(RegistryByteBuf buf) {
+    private static SendBlackjackStateS2CPayload read(RegistryFriendlyByteBuf buf) {
         BlockPos pos = buf.readBlockPos();
-        String key = buf.readString();
+        String key = buf.readUtf();
 
         long balance = buf.readLong();
         int betIndex = buf.readInt();
         long currentBet = buf.readLong();
 
-        BlackjackPhase phase = buf.readEnumConstant(BlackjackPhase.class);
+        BlackjackPhase phase = buf.readEnum(BlackjackPhase.class);
         long winPayout = buf.readLong();
         int resultSeq = buf.readVarInt();
 
@@ -98,8 +98,8 @@ public record SendBlackjackStateS2CPayload(
         int[] playerCards = readIntArray(buf);
         int[] dealerCards = readIntArray(buf);
 
-        String playerText = buf.readString();
-        String dealerText = buf.readString();
+        String playerText = buf.readUtf();
+        String dealerText = buf.readUtf();
 
         boolean canPlay = buf.readBoolean();
         boolean canHit = buf.readBoolean();
@@ -119,12 +119,12 @@ public record SendBlackjackStateS2CPayload(
         );
     }
 
-    private static void writeIntArray(RegistryByteBuf buf, int[] arr) {
+    private static void writeIntArray(RegistryFriendlyByteBuf buf, int[] arr) {
         buf.writeVarInt(arr.length);
         for (int v : arr) buf.writeVarInt(v);
     }
 
-    private static int[] readIntArray(RegistryByteBuf buf) {
+    private static int[] readIntArray(RegistryFriendlyByteBuf buf) {
         int n = buf.readVarInt();
         int[] arr = new int[n];
         for (int i = 0; i < n; i++) arr[i] = buf.readVarInt();
@@ -132,6 +132,7 @@ public record SendBlackjackStateS2CPayload(
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() { return ID; }
+    public Type<? extends CustomPacketPayload> type() { return ID; }
 
 }
+

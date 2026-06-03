@@ -1,32 +1,33 @@
 package net.andrespr.casinorocket.network.c2s.common;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
-public record DoWithdrawC2SPayload(String machineKey, BlockPos pos) implements CustomPayload {
+public record DoWithdrawC2SPayload(String machineKey, BlockPos pos) implements CustomPacketPayload {
 
-    public static final Identifier ID_RAW = Identifier.of(CasinoRocket.MOD_ID, "do_withdraw");
-    public static final Id<DoWithdrawC2SPayload> ID = new Id<>(ID_RAW);
+    public static final ResourceLocation ID_RAW = ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "do_withdraw");
+    public static final Type<DoWithdrawC2SPayload> ID = new Type<>(ID_RAW);
 
-    public static final PacketCodec<RegistryByteBuf, DoWithdrawC2SPayload> CODEC =
-            PacketCodec.of(DoWithdrawC2SPayload::write, DoWithdrawC2SPayload::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, DoWithdrawC2SPayload> CODEC =
+            StreamCodec.ofMember(DoWithdrawC2SPayload::write, DoWithdrawC2SPayload::read);
 
-    private static void write(DoWithdrawC2SPayload p, RegistryByteBuf buf) {
-        buf.writeString(p.machineKey());
+    private static void write(DoWithdrawC2SPayload p, RegistryFriendlyByteBuf buf) {
+        buf.writeUtf(p.machineKey());
         buf.writeBlockPos(p.pos());
     }
 
-    private static DoWithdrawC2SPayload read(RegistryByteBuf buf) {
-        String key = buf.readString();
+    private static DoWithdrawC2SPayload read(RegistryFriendlyByteBuf buf) {
+        String key = buf.readUtf();
         BlockPos pos = buf.readBlockPos();
         return new DoWithdrawC2SPayload(key, pos);
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() { return ID; }
+    public Type<? extends CustomPacketPayload> type() { return ID; }
 
 }
+

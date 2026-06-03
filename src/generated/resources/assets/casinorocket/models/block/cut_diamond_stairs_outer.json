@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "casinorocket:block/cut_diamond_block",
+    "side": "casinorocket:block/cut_diamond_block",
+    "top": "casinorocket:block/cut_diamond_block"
+  }
+}

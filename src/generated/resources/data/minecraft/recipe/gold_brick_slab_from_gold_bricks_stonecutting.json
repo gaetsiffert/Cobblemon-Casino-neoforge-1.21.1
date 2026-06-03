@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "casinorocket:gold_bricks"
+  },
+  "result": {
+    "count": 2,
+    "id": "casinorocket:gold_brick_slab"
+  }
+}

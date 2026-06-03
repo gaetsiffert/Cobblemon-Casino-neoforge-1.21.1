@@ -43,3 +43,4 @@ public record BlackjackCard(BlackjackRank rank, BlackjackSuit suit) {
     }
 
 }
+

@@ -3,16 +3,16 @@ package net.andrespr.casinorocket.mixin;
 import net.andrespr.casinorocket.network.SuitSync;
 import net.andrespr.casinorocket.util.SuitData;
 import net.andrespr.casinorocket.villager.ModVillagers;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.village.VillagerData;
-import net.minecraft.village.VillagerProfession;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerData;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(VillagerEntity.class)
+@Mixin(Villager.class)
 public abstract class VillagerSetProfessionMixin {
 
     @Shadow
@@ -20,8 +20,8 @@ public abstract class VillagerSetProfessionMixin {
 
     @Inject(method = "setVillagerData", at = @At("HEAD"))
     private void casinorocket$onProfessionChange(VillagerData newData, CallbackInfo ci) {
-        VillagerEntity villager = (VillagerEntity) (Object) this;
-        if (villager.getWorld().isClient()) return;
+        Villager villager = (Villager) (Object) this;
+        if (villager.level().isClientSide()) return;
 
         VillagerProfession oldProfession = this.getVillagerData().getProfession();
         VillagerProfession newProfession = newData.getProfession();
@@ -33,7 +33,7 @@ public abstract class VillagerSetProfessionMixin {
         }
     }
 
-    private static void casinorocket$applySuit(VillagerEntity villager, int suit) {
+    private static void casinorocket$applySuit(Villager villager, int suit) {
         int current = SuitData.getSuit(villager);
         if (current == suit) return;
 
@@ -42,3 +42,4 @@ public abstract class VillagerSetProfessionMixin {
     }
 
 }
+

@@ -5,16 +5,16 @@ import net.andrespr.casinorocket.config.CasinoRocketConfig;
 import net.andrespr.casinorocket.config.GeneralConfig;
 import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.villager.VillagerTradeHelper;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 public final class ChipDealerShops implements IShop {
 
     @Override
     public VillagerTradeHelper.ShopData build() {
 
-        NbtList shops = new NbtList();
-        NbtList chipOffers = new NbtList();
+        ListTag shops = new ListTag();
+        ListTag chipOffers = new ListTag();
 
         if (CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive()) {
 
@@ -44,7 +44,7 @@ public final class ChipDealerShops implements IShop {
             VillagerTradeHelper.makeItemToChipOffer(chipOffers, ModItems.GOLD_CHIP);
             VillagerTradeHelper.makeItemToChipOffer(chipOffers, ModItems.DIAMOND_CHIP);
             VillagerTradeHelper.makeItemToChipOffer(chipOffers, ModItems.NETHERITE_CHIP);
-            NbtCompound offers = VillagerTradeHelper.makeVanillaShopCompound(chipOffers);
+            CompoundTag offers = VillagerTradeHelper.makeVanillaShopCompound(chipOffers);
 
             return new VillagerTradeHelper.ShopData(shops, "casinorocket:casino_worker", 2, "casinorocket:chip_table").withOffers(offers);
 
@@ -58,3 +58,4 @@ public final class ChipDealerShops implements IShop {
     }
 
 }
+

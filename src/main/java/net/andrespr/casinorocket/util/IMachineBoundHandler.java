@@ -1,6 +1,6 @@
 package net.andrespr.casinorocket.util;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public interface IMachineBoundHandler {
     BlockPos getMachinePos();
@@ -8,3 +8,4 @@ public interface IMachineBoundHandler {
         return "unknown";
     }
 }
+

@@ -3,17 +3,17 @@ package net.andrespr.casinorocket.villager.shops;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.villager.VillagerTradeHelper;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.ListTag;
 
 public final class GachaDealerShops implements IShop {
 
     @Override
     public VillagerTradeHelper.ShopData build() {
 
-        NbtList shops = new NbtList();
+        ListTag shops = new ListTag();
 
         // ===== COINS =====
-        NbtList coinOffers = new NbtList();
+        ListTag coinOffers = new ListTag();
         VillagerTradeHelper.makeCoinOffer(coinOffers, ModItems.COPPER_COIN);
         VillagerTradeHelper.makeCoinOffer(coinOffers, ModItems.IRON_COIN);
         VillagerTradeHelper.makeCoinOffer(coinOffers, ModItems.GOLD_COIN);
@@ -23,7 +23,7 @@ public final class GachaDealerShops implements IShop {
         shops.add(VillagerTradeHelper.makeShopCompound("Gacha Coins", coinOffers));
 
         if (CasinoRocket.CONFIG.gachaMachines.gacha_store.gachapon_store.enableItemGachaponStore) {
-            NbtList ItemGachaponOffers = new NbtList();
+            ListTag ItemGachaponOffers = new ListTag();
             VillagerTradeHelper.makeGachaponOffer(ItemGachaponOffers, ModItems.POKE_GACHAPON);
             VillagerTradeHelper.makeGachaponOffer(ItemGachaponOffers, ModItems.GREAT_GACHAPON);
             VillagerTradeHelper.makeGachaponOffer(ItemGachaponOffers, ModItems.ULTRA_GACHAPON);
@@ -33,7 +33,7 @@ public final class GachaDealerShops implements IShop {
             shops.add(VillagerTradeHelper.makeShopCompound("Item Gacha", ItemGachaponOffers));
         }
         if (CasinoRocket.CONFIG.gachaMachines.gacha_store.gachapon_store.enablePokemonGachaponStore) {
-            NbtList PokemonGachaponOffers = new NbtList();
+            ListTag PokemonGachaponOffers = new ListTag();
             VillagerTradeHelper.makeGachaponOffer(PokemonGachaponOffers, ModItems.POKEMON_POKE_GACHAPON);
             VillagerTradeHelper.makeGachaponOffer(PokemonGachaponOffers, ModItems.POKEMON_GREAT_GACHAPON);
             VillagerTradeHelper.makeGachaponOffer(PokemonGachaponOffers, ModItems.POKEMON_ULTRA_GACHAPON);
@@ -53,3 +53,4 @@ public final class GachaDealerShops implements IShop {
     }
 
 }
+

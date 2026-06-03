@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "casinorocket:gold_tiles"
+  },
+  "result": {
+    "count": 1,
+    "id": "casinorocket:gold_tile_stairs"
+  }
+}

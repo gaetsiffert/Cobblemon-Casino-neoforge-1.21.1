@@ -6,23 +6,24 @@ import net.andrespr.casinorocket.games.blackjack.BlackjackGameController;
 import net.andrespr.casinorocket.network.s2c.sender.BlackjackStateSender;
 import net.andrespr.casinorocket.screen.custom.blackjack.BlackjackTableScreenHandler;
 import net.andrespr.casinorocket.screen.opening.BlackjackTableOpenData;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.extensions.IMenuProviderExtension;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class BlackjackTableEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlackjackTableOpenData> {
+public class BlackjackTableEntity extends BlockEntity implements MenuProvider, IMenuProviderExtension {
 
     private UUID currentUser;
 
@@ -35,25 +36,25 @@ public class BlackjackTableEntity extends BlockEntity implements ExtendedScreenH
         return currentUser != null;
     }
 
-    public boolean isUsedBy(PlayerEntity player) {
-        return currentUser != null && currentUser.equals(player.getUuid());
+    public boolean isUsedBy(Player player) {
+        return currentUser != null && currentUser.equals(player.getUUID());
     }
 
-    public boolean tryLock(PlayerEntity player) {
-        UUID id = player.getUuid();
+    public boolean tryLock(Player player) {
+        UUID id = player.getUUID();
         if (currentUser == null) {
             currentUser = id;
-            markDirty();
+            setChanged();
             return true;
         }
         return currentUser.equals(id);
     }
 
-    public void unlock(PlayerEntity player) {
-        if (currentUser != null && currentUser.equals(player.getUuid())) {
-            controllers.remove(player.getUuid());
+    public void unlock(Player player) {
+        if (currentUser != null && currentUser.equals(player.getUUID())) {
+            controllers.remove(player.getUUID());
             currentUser = null;
-            markDirty();
+            setChanged();
         }
     }
 
@@ -61,38 +62,48 @@ public class BlackjackTableEntity extends BlockEntity implements ExtendedScreenH
         if (currentUser != null) {
             controllers.remove(currentUser);
             currentUser = null;
-            markDirty();
+            setChanged();
         }
     }
 
     // === DISPLAY NAME ===
     @Override
-    public Text getDisplayName() {
-        return Text.translatable("gui.casinorocket.blackjack_table");
+    public Component getDisplayName() {
+        return Component.translatable("gui.casinorocket.blackjack_table");
     }
 
     // === OPENING DATA ===
-    @Override
-    public BlackjackTableOpenData getScreenOpeningData(ServerPlayerEntity player) {
+    public BlackjackTableOpenData getScreenOpeningData(ServerPlayer player) {
         MinecraftServer server = Objects.requireNonNull(player.getServer());
         PlayerBlackjackData storage = PlayerBlackjackData.get(server);
-        UUID uuid = player.getUuid();
+        UUID uuid = player.getUUID();
 
         long balance = storage.getBalance(uuid);
         int index = storage.getBetIndex(uuid);
 
-        return new BlackjackTableOpenData(this.pos, "blackjack", balance, index);
+        return new BlackjackTableOpenData(this.worldPosition, "blackjack", balance, index);
     }
 
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+    public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
+        BlackjackTableOpenData data;
+        if (menu instanceof BlackjackTableScreenHandler handler) {
+            data = new BlackjackTableOpenData(this.worldPosition, handler.getMachineKey(), handler.getInitialBalance(), handler.getInitialBetIndex());
+        } else {
+            data = new BlackjackTableOpenData(this.worldPosition, "blackjack", 0L, 0);
+        }
+        BlackjackTableOpenData.CODEC.encode(buffer, data);
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         long balance = 0;
         int index = 0;
 
-        if (player instanceof ServerPlayerEntity sp) {
+        if (player instanceof ServerPlayer sp) {
             MinecraftServer server = Objects.requireNonNull(sp.getServer());
             PlayerBlackjackData storage = PlayerBlackjackData.get(server);
-            UUID uuid = sp.getUuid();
+            UUID uuid = sp.getUUID();
 
             balance = storage.getBalance(uuid);
             index = storage.getBetIndex(uuid);
@@ -100,25 +111,27 @@ public class BlackjackTableEntity extends BlockEntity implements ExtendedScreenH
             sendState(sp);
         }
 
-        return new BlackjackTableScreenHandler(syncId, inv, this.getPos(), "blackjack", balance, index);
+        return new BlackjackTableScreenHandler(syncId, inv, this.getBlockPos(), "blackjack", balance, index);
     }
 
     // === CONTROLLER ===
     private final Map<UUID, BlackjackGameController> controllers = new HashMap<>();
 
-    public BlackjackGameController getOrCreateController(ServerPlayerEntity player) {
-        return controllers.computeIfAbsent(player.getUuid(), id ->
+    public BlackjackGameController getOrCreateController(ServerPlayer player) {
+        return controllers.computeIfAbsent(player.getUUID(), id ->
                 new BlackjackGameController(id, PlayerBlackjackData.get(Objects.requireNonNull(player.getServer())))
         );
     }
 
     // === SEND STATE ===
-    public void sendState(ServerPlayerEntity player) {
+    public void sendState(ServerPlayer player) {
         MinecraftServer server = Objects.requireNonNull(player.getServer());
         PlayerBlackjackData storage = PlayerBlackjackData.get(server);
         BlackjackGameController controller = getOrCreateController(player);
 
-        BlackjackStateSender.send(player, this.getPos(), storage, controller);
+        BlackjackStateSender.send(player, this.getBlockPos(), storage, controller);
     }
 
 }
+
+

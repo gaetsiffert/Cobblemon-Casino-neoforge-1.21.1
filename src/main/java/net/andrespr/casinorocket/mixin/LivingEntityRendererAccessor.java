@@ -1,14 +1,15 @@
 package net.andrespr.casinorocket.mixin;
 
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.List;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
 
 @Mixin(LivingEntityRenderer.class)
 public interface LivingEntityRendererAccessor {
     @Accessor("features")
-    List<FeatureRenderer<?, ?>> casinorocket$getFeatures();
+    List<RenderLayer<?, ?>> casinorocket$getFeatures();
 }
+

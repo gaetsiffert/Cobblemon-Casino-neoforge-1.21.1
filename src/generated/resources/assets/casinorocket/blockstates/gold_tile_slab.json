@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "casinorocket:block/gold_tile_slab"
+    },
+    "type=double": {
+      "model": "casinorocket:block/gold_tiles"
+    },
+    "type=top": {
+      "model": "casinorocket:block/gold_tile_slab_top"
+    }
+  }
+}

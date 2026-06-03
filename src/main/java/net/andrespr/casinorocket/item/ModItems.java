@@ -4,144 +4,198 @@ import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.ModBlocks;
 import net.andrespr.casinorocket.item.custom.*;
 import net.andrespr.casinorocket.sound.ModSounds;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class ModItems {
+    private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CasinoRocket.MOD_ID);
 
     public static final List<Item> ALL_CHIP_ITEMS = new ArrayList<>();
-    public static final ChipItem BASIC_CHIP = registerChipItem("basic_chip");
-    public static final ChipItem RED_CHIP = registerChipItem("red_chip");
-    public static final ChipItem BLUE_CHIP = registerChipItem("blue_chip");
-    public static final ChipItem PURPLE_CHIP = registerChipItem("purple_chip");
-    public static final ChipItem COPPER_CHIP = registerChipItem("copper_chip");
-    public static final ChipItem IRON_CHIP = registerChipItem("iron_chip");
-    public static final ChipItem EMERALD_CHIP = registerChipItem("emerald_chip");
-    public static final ChipItem GOLD_CHIP = registerChipItem("gold_chip");
-    public static final ChipItem DIAMOND_CHIP = registerChipItem("diamond_chip");
-    public static final ChipItem NETHERITE_CHIP = registerChipItem("netherite_chip");
+    public static ChipItem BASIC_CHIP;
+    public static ChipItem RED_CHIP;
+    public static ChipItem BLUE_CHIP;
+    public static ChipItem PURPLE_CHIP;
+    public static ChipItem COPPER_CHIP;
+    public static ChipItem IRON_CHIP;
+    public static ChipItem EMERALD_CHIP;
+    public static ChipItem GOLD_CHIP;
+    public static ChipItem DIAMOND_CHIP;
+    public static ChipItem NETHERITE_CHIP;
 
-    public static final CoinItem COPPER_COIN = registerCustomItem("copper_coin", new CoinItem(new Item.Settings()));
-    public static final CoinItem IRON_COIN = registerCustomItem("iron_coin", new CoinItem(new Item.Settings()));
-    public static final CoinItem GOLD_COIN = registerCustomItem("gold_coin", new CoinItem(new Item.Settings()));
-    public static final CoinItem DIAMOND_COIN = registerCustomItem("diamond_coin", new CoinItem(new Item.Settings()));
-    public static final CoinItem EVENT_COIN = registerCustomItem("event_coin", new CoinItem(new Item.Settings()));
-    public static final CoinItem PRIMOGEM = registerCustomItem("primogem", new CoinItem(new Item.Settings()));
+    public static CoinItem COPPER_COIN;
+    public static CoinItem IRON_COIN;
+    public static CoinItem GOLD_COIN;
+    public static CoinItem DIAMOND_COIN;
+    public static CoinItem EVENT_COIN;
+    public static CoinItem PRIMOGEM;
 
     public static final List<Item> ALL_GACHAPON_ITEMS = new ArrayList<>();
-    public static final GachaponItem POKE_GACHAPON = registerCustomItem("poke_gachapon",
-            new GachaponItem(new Item.Settings(), "common"));
-    public static final GachaponItem GREAT_GACHAPON = registerCustomItem("great_gachapon",
-            new GachaponItem(new Item.Settings(), "uncommon"));
-    public static final GachaponItem ULTRA_GACHAPON = registerCustomItem("ultra_gachapon",
-            new GachaponItem(new Item.Settings(), "rare"));
-    public static final GachaponItem MASTER_GACHAPON = registerCustomItem("master_gachapon",
-            new GachaponItem(new Item.Settings(), "ultrarare"));
-    public static final GachaponItem CHERISH_GACHAPON = registerCustomItem("cherish_gachapon",
-            new GachaponItem(new Item.Settings(), "legendary"));
-    public static final GachaponItem PREMIER_GACHAPON = registerCustomItem("premier_gachapon",
-            new GachaponItem(new Item.Settings(), "bonus"));
-    public static final GachaponItem EVENT_GACHAPON = registerCustomItem("event_gachapon",
-            new GachaponItem(new Item.Settings(), "event"));
-    public static final PokemonGachaponItem POKEMON_POKE_GACHAPON = registerCustomItem("pokemon_poke_gachapon",
-            new PokemonGachaponItem(new Item.Settings(), "common"));
-    public static final PokemonGachaponItem POKEMON_GREAT_GACHAPON = registerCustomItem("pokemon_great_gachapon",
-            new PokemonGachaponItem(new Item.Settings(), "uncommon"));
-    public static final PokemonGachaponItem POKEMON_ULTRA_GACHAPON = registerCustomItem("pokemon_ultra_gachapon",
-            new PokemonGachaponItem(new Item.Settings(), "rare"));
-    public static final PokemonGachaponItem POKEMON_MASTER_GACHAPON = registerCustomItem("pokemon_master_gachapon",
-            new PokemonGachaponItem(new Item.Settings(), "ultrarare"));
-    public static final PokemonGachaponItem POKEMON_CHERISH_GACHAPON = registerCustomItem("pokemon_cherish_gachapon",
-            new PokemonGachaponItem(new Item.Settings(), "legendary"));
-    public static final PokemonGachaponItem POKEMON_PREMIER_GACHAPON = registerCustomItem("pokemon_premier_gachapon",
-            new PokemonGachaponItem(new Item.Settings(), "bonus"));
-    public static final PokemonGachaponItem POKEMON_EVENT_GACHAPON = registerCustomItem("pokemon_event_gachapon",
-            new PokemonGachaponItem(new Item.Settings(), "event"));
+    public static GachaponItem POKE_GACHAPON;
+    public static GachaponItem GREAT_GACHAPON;
+    public static GachaponItem ULTRA_GACHAPON;
+    public static GachaponItem MASTER_GACHAPON;
+    public static GachaponItem CHERISH_GACHAPON;
+    public static GachaponItem PREMIER_GACHAPON;
+    public static GachaponItem EVENT_GACHAPON;
+    public static PokemonGachaponItem POKEMON_POKE_GACHAPON;
+    public static PokemonGachaponItem POKEMON_GREAT_GACHAPON;
+    public static PokemonGachaponItem POKEMON_ULTRA_GACHAPON;
+    public static PokemonGachaponItem POKEMON_MASTER_GACHAPON;
+    public static PokemonGachaponItem POKEMON_CHERISH_GACHAPON;
+    public static PokemonGachaponItem POKEMON_PREMIER_GACHAPON;
+    public static PokemonGachaponItem POKEMON_EVENT_GACHAPON;
 
-    public static final PokemonPinItem LITWICK_PIN = registerCustomItem("litwick_pin",
-            new PokemonPinItem(new Item.Settings(), 5, 15, false));
-    public static final PokemonPinItem STARYU_PIN = registerCustomItem("staryu_pin",
-            new PokemonPinItem(new Item.Settings(), 5, 15, false));
-    public static final PokemonPinItem BELLSPROUT_PIN = registerCustomItem("bellsprout_pin",
-            new PokemonPinItem(new Item.Settings(), 5, 15, false));
-    public static final PokemonPinItem TYROGUE_PIN = registerCustomItem("tyrogue_pin",
-            new PokemonPinItem(new Item.Settings(), 10, 15, false));
-    public static final PokemonPinItem SCYTHER_PIN = registerCustomItem("scyther_pin",
-            new PokemonPinItem(new Item.Settings(), 10, 15, false));
-    public static final PokemonPinItem EEVEE_PIN = registerCustomItem("eevee_pin",
-            new PokemonPinItem(new Item.Settings(), 10, 21, false));
-    public static final PokemonPinItem DRATINI_PIN = registerCustomItem("dratini_pin",
-            new PokemonPinItem(new Item.Settings(), 10, 15, false));
-    public static final PokemonPinItem ROTOM_PIN = registerCustomItem("rotom_pin",
-            new PokemonPinItem(new Item.Settings(), 10, 21, false));
-    public static final PokemonPinItem DITTO_PIN = registerCustomItem("ditto_pin",
-            new PokemonPinItem(new Item.Settings(), 5, 31, false));
-    public static final PokemonPinItem PORYGON_PIN = registerCustomItem("porygon_pin",
-            new PokemonPinItem(new Item.Settings(), 10, 15, false));
+    public static PokemonPinItem LITWICK_PIN;
+    public static PokemonPinItem STARYU_PIN;
+    public static PokemonPinItem BELLSPROUT_PIN;
+    public static PokemonPinItem TYROGUE_PIN;
+    public static PokemonPinItem SCYTHER_PIN;
+    public static PokemonPinItem EEVEE_PIN;
+    public static PokemonPinItem DRATINI_PIN;
+    public static PokemonPinItem ROTOM_PIN;
+    public static PokemonPinItem DITTO_PIN;
+    public static PokemonPinItem PORYGON_PIN;
 
-    public static List<Item> ALL_BILL_ITEMS = new ArrayList<>();
-    public static final BillItem BILL_10 = registerCustomItem("bill_10", new BillItem(new Item.Settings(), 10));
-    public static final BillItem BILL_50 = registerCustomItem("bill_50", new BillItem(new Item.Settings(), 50));
-    public static final BillItem BILL_100 = registerCustomItem("bill_100", new BillItem(new Item.Settings(), 100));
-    public static final BillItem BILL_500 = registerCustomItem("bill_500", new BillItem(new Item.Settings(), 500));
-    public static final BillItem BILL_1K = registerCustomItem("bill_1k", new BillItem(new Item.Settings(), 1_000));
-    public static final BillItem BILL_5K = registerCustomItem("bill_5k", new BillItem(new Item.Settings(), 5_000));
-    public static final BillItem BILL_10K = registerCustomItem("bill_10k", new BillItem(new Item.Settings(), 10_000));
-    public static final BillItem BILL_25K = registerCustomItem("bill_25k", new BillItem(new Item.Settings(), 25_000));
-    public static final BillItem BILL_50K = registerCustomItem("bill_50k", new BillItem(new Item.Settings(), 50_000));
-    public static final BillItem BILL_100K = registerCustomItem("bill_100k", new BillItem(new Item.Settings(), 100_000));
-    public static final BillItem BILL_500K = registerCustomItem("bill_500k", new BillItem(new Item.Settings(), 500_000));
-    public static final BillItem BILL_1M = registerCustomItem("bill_1m", new BillItem(new Item.Settings(), 1_000_000));
-    public static final BillItem BILL_10M = registerCustomItem("bill_10m", new BillItem(new Item.Settings(), 10_000_000));
-    public static final BillItem BILL_100M = registerCustomItem("bill_100m", new BillItem(new Item.Settings(), 100_000_000));
+    public static final List<Item> ALL_BILL_ITEMS = new ArrayList<>();
+    public static BillItem BILL_10;
+    public static BillItem BILL_50;
+    public static BillItem BILL_100;
+    public static BillItem BILL_500;
+    public static BillItem BILL_1K;
+    public static BillItem BILL_5K;
+    public static BillItem BILL_10K;
+    public static BillItem BILL_25K;
+    public static BillItem BILL_50K;
+    public static BillItem BILL_100K;
+    public static BillItem BILL_500K;
+    public static BillItem BILL_1M;
+    public static BillItem BILL_10M;
+    public static BillItem BILL_100M;
 
-    public static final WalletItem WALLET = registerCustomItem("wallet", new WalletItem(new Item.Settings()));
+    public static WalletItem WALLET;
 
-    public static final Item DIAMOND_NUGGET = registerItem("diamond_nugget", new Item(new Item.Settings()));
-    public static final TooltipItem CHARGED_DIAMOND = registerItemWithTooltip("charged_diamond", new TooltipItem(new Item.Settings()));
-    public static final TooltipItem HYPERCHARGED_DIAMOND = registerItemWithTooltip("hypercharged_diamond", new TooltipItem(new Item.Settings()));
+    public static Item DIAMOND_NUGGET;
+    public static TooltipItem CHARGED_DIAMOND;
+    public static TooltipItem HYPERCHARGED_DIAMOND;
+    public static final Map<Item, Long> DIAMOND_VALUES = new LinkedHashMap<>();
 
-    public static final Map<Item, Long> DIAMOND_VALUES = Map.of(
-            Items.DIAMOND, 1L,
-            CHARGED_DIAMOND, 4L,
-            Items.DIAMOND_BLOCK, 9L,
-            HYPERCHARGED_DIAMOND, 16L,
-            ModBlocks.CONDENSED_DIAMOND_BLOCK.asItem(), 81L
-    );
+    public static TooltipItem HANDFUL_OF_RELIC_COINS;
+    public static TooltipItem STACK_OF_RELIC_COINS;
 
-    public static final TooltipItem HANDFUL_OF_RELIC_COINS = registerItemWithTooltip("handful_of_relic_coins", new TooltipItem(new Item.Settings()));
-    public static final TooltipItem STACK_OF_RELIC_COINS = registerItemWithTooltip("stack_of_relic_coins", new TooltipItem(new Item.Settings()));
+    public static Item FIRERED_GC_MUSIC_DISC;
+    public static Item HEARTGOLD_GC_MUSIC_DISC;
+    public static Item EMERALD_GC_MUSIC_DISC;
+    public static Item PLATINUM_GC_MUSIC_DISC;
 
-    public static final Item FIRERED_GC_MUSIC_DISC = registerItem("firered_gc_music_disc",
-            new Item(new Item.Settings().jukeboxPlayable(ModSounds.FIRERED_GC_KEY).maxCount(1)));
-    public static final Item HEARTGOLD_GC_MUSIC_DISC = registerItem("heartgold_gc_music_disc",
-            new Item(new Item.Settings().jukeboxPlayable(ModSounds.HEARTGOLD_GC_KEY).maxCount(1)));
-    public static final Item EMERALD_GC_MUSIC_DISC = registerItem("emerald_gc_music_disc",
-            new Item(new Item.Settings().jukeboxPlayable(ModSounds.EMERALD_GC_KEY).maxCount(1)));
-    public static final Item PLATINUM_GC_MUSIC_DISC = registerItem("platinum_gc_music_disc",
-            new Item(new Item.Settings().jukeboxPlayable(ModSounds.PLATINUM_GC_KEY).maxCount(1)));
+    static {
+        registerChipItem("basic_chip", item -> BASIC_CHIP = item);
+        registerChipItem("red_chip", item -> RED_CHIP = item);
+        registerChipItem("blue_chip", item -> BLUE_CHIP = item);
+        registerChipItem("purple_chip", item -> PURPLE_CHIP = item);
+        registerChipItem("copper_chip", item -> COPPER_CHIP = item);
+        registerChipItem("iron_chip", item -> IRON_CHIP = item);
+        registerChipItem("emerald_chip", item -> EMERALD_CHIP = item);
+        registerChipItem("gold_chip", item -> GOLD_CHIP = item);
+        registerChipItem("diamond_chip", item -> DIAMOND_CHIP = item);
+        registerChipItem("netherite_chip", item -> NETHERITE_CHIP = item);
 
-    private static Item registerItem(String name, Item item) {
-        return Registry.register(Registries.ITEM, Identifier.of(CasinoRocket.MOD_ID, name), item);
+        registerCustomItem("copper_coin", () -> COPPER_COIN = new CoinItem(new Item.Properties()));
+        registerCustomItem("iron_coin", () -> IRON_COIN = new CoinItem(new Item.Properties()));
+        registerCustomItem("gold_coin", () -> GOLD_COIN = new CoinItem(new Item.Properties()));
+        registerCustomItem("diamond_coin", () -> DIAMOND_COIN = new CoinItem(new Item.Properties()));
+        registerCustomItem("event_coin", () -> EVENT_COIN = new CoinItem(new Item.Properties()));
+        registerCustomItem("primogem", () -> PRIMOGEM = new CoinItem(new Item.Properties()));
+
+        registerCustomItem("poke_gachapon", () -> POKE_GACHAPON = new GachaponItem(new Item.Properties(), "common"));
+        registerCustomItem("great_gachapon", () -> GREAT_GACHAPON = new GachaponItem(new Item.Properties(), "uncommon"));
+        registerCustomItem("ultra_gachapon", () -> ULTRA_GACHAPON = new GachaponItem(new Item.Properties(), "rare"));
+        registerCustomItem("master_gachapon", () -> MASTER_GACHAPON = new GachaponItem(new Item.Properties(), "ultrarare"));
+        registerCustomItem("cherish_gachapon", () -> CHERISH_GACHAPON = new GachaponItem(new Item.Properties(), "legendary"));
+        registerCustomItem("premier_gachapon", () -> PREMIER_GACHAPON = new GachaponItem(new Item.Properties(), "bonus"));
+        registerCustomItem("event_gachapon", () -> EVENT_GACHAPON = new GachaponItem(new Item.Properties(), "event"));
+        registerCustomItem("pokemon_poke_gachapon", () -> POKEMON_POKE_GACHAPON = new PokemonGachaponItem(new Item.Properties(), "common"));
+        registerCustomItem("pokemon_great_gachapon", () -> POKEMON_GREAT_GACHAPON = new PokemonGachaponItem(new Item.Properties(), "uncommon"));
+        registerCustomItem("pokemon_ultra_gachapon", () -> POKEMON_ULTRA_GACHAPON = new PokemonGachaponItem(new Item.Properties(), "rare"));
+        registerCustomItem("pokemon_master_gachapon", () -> POKEMON_MASTER_GACHAPON = new PokemonGachaponItem(new Item.Properties(), "ultrarare"));
+        registerCustomItem("pokemon_cherish_gachapon", () -> POKEMON_CHERISH_GACHAPON = new PokemonGachaponItem(new Item.Properties(), "legendary"));
+        registerCustomItem("pokemon_premier_gachapon", () -> POKEMON_PREMIER_GACHAPON = new PokemonGachaponItem(new Item.Properties(), "bonus"));
+        registerCustomItem("pokemon_event_gachapon", () -> POKEMON_EVENT_GACHAPON = new PokemonGachaponItem(new Item.Properties(), "event"));
+
+        registerCustomItem("litwick_pin", () -> LITWICK_PIN = new PokemonPinItem(new Item.Properties(), 5, 15, false));
+        registerCustomItem("staryu_pin", () -> STARYU_PIN = new PokemonPinItem(new Item.Properties(), 5, 15, false));
+        registerCustomItem("bellsprout_pin", () -> BELLSPROUT_PIN = new PokemonPinItem(new Item.Properties(), 5, 15, false));
+        registerCustomItem("tyrogue_pin", () -> TYROGUE_PIN = new PokemonPinItem(new Item.Properties(), 10, 15, false));
+        registerCustomItem("scyther_pin", () -> SCYTHER_PIN = new PokemonPinItem(new Item.Properties(), 10, 15, false));
+        registerCustomItem("eevee_pin", () -> EEVEE_PIN = new PokemonPinItem(new Item.Properties(), 10, 21, false));
+        registerCustomItem("dratini_pin", () -> DRATINI_PIN = new PokemonPinItem(new Item.Properties(), 10, 15, false));
+        registerCustomItem("rotom_pin", () -> ROTOM_PIN = new PokemonPinItem(new Item.Properties(), 10, 21, false));
+        registerCustomItem("ditto_pin", () -> DITTO_PIN = new PokemonPinItem(new Item.Properties(), 5, 31, false));
+        registerCustomItem("porygon_pin", () -> PORYGON_PIN = new PokemonPinItem(new Item.Properties(), 10, 15, false));
+
+        registerCustomItem("bill_10", () -> BILL_10 = new BillItem(new Item.Properties(), 10));
+        registerCustomItem("bill_50", () -> BILL_50 = new BillItem(new Item.Properties(), 50));
+        registerCustomItem("bill_100", () -> BILL_100 = new BillItem(new Item.Properties(), 100));
+        registerCustomItem("bill_500", () -> BILL_500 = new BillItem(new Item.Properties(), 500));
+        registerCustomItem("bill_1k", () -> BILL_1K = new BillItem(new Item.Properties(), 1_000));
+        registerCustomItem("bill_5k", () -> BILL_5K = new BillItem(new Item.Properties(), 5_000));
+        registerCustomItem("bill_10k", () -> BILL_10K = new BillItem(new Item.Properties(), 10_000));
+        registerCustomItem("bill_25k", () -> BILL_25K = new BillItem(new Item.Properties(), 25_000));
+        registerCustomItem("bill_50k", () -> BILL_50K = new BillItem(new Item.Properties(), 50_000));
+        registerCustomItem("bill_100k", () -> BILL_100K = new BillItem(new Item.Properties(), 100_000));
+        registerCustomItem("bill_500k", () -> BILL_500K = new BillItem(new Item.Properties(), 500_000));
+        registerCustomItem("bill_1m", () -> BILL_1M = new BillItem(new Item.Properties(), 1_000_000));
+        registerCustomItem("bill_10m", () -> BILL_10M = new BillItem(new Item.Properties(), 10_000_000));
+        registerCustomItem("bill_100m", () -> BILL_100M = new BillItem(new Item.Properties(), 100_000_000));
+
+        registerCustomItem("wallet", () -> WALLET = new WalletItem(new Item.Properties()));
+
+        registerItem("diamond_nugget", () -> DIAMOND_NUGGET = new Item(new Item.Properties()));
+        registerItemWithTooltip("charged_diamond", () -> CHARGED_DIAMOND = new TooltipItem(new Item.Properties()));
+        registerItemWithTooltip("hypercharged_diamond", () -> HYPERCHARGED_DIAMOND = new TooltipItem(new Item.Properties()));
+        registerItemWithTooltip("handful_of_relic_coins", () -> HANDFUL_OF_RELIC_COINS = new TooltipItem(new Item.Properties()));
+        registerItemWithTooltip("stack_of_relic_coins", () -> STACK_OF_RELIC_COINS = new TooltipItem(new Item.Properties()));
+
+        registerItem("firered_gc_music_disc", () -> FIRERED_GC_MUSIC_DISC = new Item(new Item.Properties().jukeboxPlayable(ModSounds.FIRERED_GC_KEY).stacksTo(1)));
+        registerItem("heartgold_gc_music_disc", () -> HEARTGOLD_GC_MUSIC_DISC = new Item(new Item.Properties().jukeboxPlayable(ModSounds.HEARTGOLD_GC_KEY).stacksTo(1)));
+        registerItem("emerald_gc_music_disc", () -> EMERALD_GC_MUSIC_DISC = new Item(new Item.Properties().jukeboxPlayable(ModSounds.EMERALD_GC_KEY).stacksTo(1)));
+        registerItem("platinum_gc_music_disc", () -> PLATINUM_GC_MUSIC_DISC = new Item(new Item.Properties().jukeboxPlayable(ModSounds.PLATINUM_GC_KEY).stacksTo(1)));
     }
 
-    private static TooltipItem registerItemWithTooltip(String name, TooltipItem item) {
-        return Registry.register(Registries.ITEM, Identifier.of(CasinoRocket.MOD_ID, name), item);
+    private static <T extends Item> void registerItem(String name, Supplier<T> supplier) {
+        ITEMS.register(name, () -> {
+            T item = supplier.get();
+            updateDiamondValuesIfReady();
+            return item;
+        });
     }
 
-    private static <T extends Item> T registerCustomItem(String name, T item) {
-        return Registry.register(Registries.ITEM, Identifier.of(CasinoRocket.MOD_ID, name), item);
+    private static void registerItemWithTooltip(String name, Supplier<TooltipItem> supplier) {
+        registerItem(name, supplier);
     }
 
-    private static ChipItem registerChipItem(String name) {
+    private static <T extends Item> void registerCustomItem(String name, Supplier<T> supplier) {
+        registerItem(name, supplier);
+    }
+
+    private static void registerChipItem(String name, Consumer<ChipItem> assignment) {
+        registerCustomItem(name, () -> {
+            ChipItem item = createChipItem(name);
+            assignment.accept(item);
+            return item;
+        });
+    }
+
+    private static ChipItem createChipItem(String name) {
         String typeRaw = CasinoRocket.CONFIG.generalConfig.economy_type;
         String type = (typeRaw == null ? "" : typeRaw.trim().toLowerCase());
         long value;
@@ -156,21 +210,31 @@ public class ModItems {
                 type = "relic_coins";
             }
         }
-        ChipItem newChipitem = new ChipItem(new Item.Settings(), value, type);
-        Registry.register(Registries.ITEM, Identifier.of(CasinoRocket.MOD_ID, name), newChipitem);
-        return newChipitem;
+        return new ChipItem(new Item.Properties(), value, type);
     }
 
-    public static void registerModItems() {
+    public static void registerModItems(IEventBus eventBus) {
+        ITEMS.register(eventBus);
         CasinoRocket.LOGGER.info("Registering Mod Items for " + CasinoRocket.MOD_ID);
     }
 
-    // === HELPERS ===
+    private static void updateDiamondValuesIfReady() {
+        if (CHARGED_DIAMOND == null || HYPERCHARGED_DIAMOND == null || ModBlocks.CONDENSED_DIAMOND_BLOCK == null) {
+            return;
+        }
+
+        DIAMOND_VALUES.clear();
+        DIAMOND_VALUES.put(Items.DIAMOND, 1L);
+        DIAMOND_VALUES.put(CHARGED_DIAMOND, 4L);
+        DIAMOND_VALUES.put(Items.DIAMOND_BLOCK, 9L);
+        DIAMOND_VALUES.put(HYPERCHARGED_DIAMOND, 16L);
+        DIAMOND_VALUES.put(ModBlocks.CONDENSED_DIAMOND_BLOCK.asItem(), 81L);
+    }
 
     public static long getDiamondValue(ItemStack stack) {
+        updateDiamondValuesIfReady();
         Long value = DIAMOND_VALUES.get(stack.getItem());
         if (value == null) return 0L;
         return value * stack.getCount();
     }
-
 }

@@ -1,16 +1,16 @@
 package net.andrespr.casinorocket.villager.shops;
 
 import net.andrespr.casinorocket.villager.VillagerTradeHelper;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.ListTag;
 
 public final class TMInstructorShops implements IShop {
 
     @Override
     public VillagerTradeHelper.ShopData build() {
-        NbtList shops = new NbtList();
+        ListTag shops = new ListTag();
 
         // ===== ATTACK TMs =====
-        NbtList attackTMs = new NbtList();
+        ListTag attackTMs = new ListTag();
         attackTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_ember", "1000"));
         attackTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_watergun", "1000"));
         attackTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_razorleaf", "1000"));
@@ -22,7 +22,7 @@ public final class TMInstructorShops implements IShop {
         shops.add(VillagerTradeHelper.makeShopCompound("Attack TM's", attackTMs));
 
         // ===== STATUS TMs =====
-        NbtList statusTMs = new NbtList();
+        ListTag statusTMs = new ListTag();
         statusTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_supersonic", "1500"));
         statusTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_protect", "2000"));
         statusTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_leechseed", "2500"));
@@ -40,3 +40,4 @@ public final class TMInstructorShops implements IShop {
     }
 
 }
+

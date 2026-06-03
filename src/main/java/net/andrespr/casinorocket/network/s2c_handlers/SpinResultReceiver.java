@@ -4,56 +4,47 @@ import net.andrespr.casinorocket.games.slot.SlotLineResult;
 import net.andrespr.casinorocket.games.slot.SlotSymbol;
 import net.andrespr.casinorocket.network.s2c.SendSpinResultS2CPayload;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineScreen;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
-
+import net.minecraft.client.Minecraft;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SpinResultReceiver {
 
-    public static void register() {
-        ClientPlayNetworking.registerGlobalReceiver(
-                SendSpinResultS2CPayload.ID,
-                (payload, context) -> {
+    public static void handle(SendSpinResultS2CPayload payload, IPayloadContext context) {
+        long newBalance = payload.newBalance();
+        long totalWin = payload.totalWin();
+        int modeUsed = payload.modeUsed();
 
-                    long newBalance = payload.newBalance();
-                    long totalWin = payload.totalWin();
-                    int modeUsed = payload.modeUsed();
+        int stop1 = payload.stop1();
+        int stop2 = payload.stop2();
+        int stop3 = payload.stop3();
 
-                    int stop1 = payload.stop1();
-                    int stop2 = payload.stop2();
-                    int stop3 = payload.stop3();
+        int[] flatMatrix = payload.matrix();
+        List<SendSpinResultS2CPayload.LineWin> netWins = payload.wins();
 
-                    int[] flatMatrix = payload.matrix();
-                    List<SendSpinResultS2CPayload.LineWin> netWins = payload.wins();
+        SlotSymbol[][] matrix = new SlotSymbol[3][3];
+        SlotSymbol[] symbols = SlotSymbol.values();
 
-                    SlotSymbol[][] matrix = new SlotSymbol[3][3];
-                    SlotSymbol[] symbols = SlotSymbol.values();
+        int idx = 0;
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                int ord = flatMatrix[idx++];
+                matrix[row][col] = symbols[ord];
+            }
+        }
 
-                    int idx = 0;
-                    for (int row = 0; row < 3; row++) {
-                        for (int col = 0; col < 3; col++) {
-                            int ord = flatMatrix[idx++];
-                            matrix[row][col] = symbols[ord];
-                        }
-                    }
+        List<SlotLineResult> wins = new ArrayList<>();
+        for (SendSpinResultS2CPayload.LineWin w : netWins) {
+            SlotSymbol symbol = symbols[w.symbolOrdinal()];
+            wins.add(new SlotLineResult(true, symbol, w.count(), w.multiplier(), w.winAmount(), w.lineIndex()));
+        }
 
-                    List<SlotLineResult> wins = new ArrayList<>();
-                    for (SendSpinResultS2CPayload.LineWin w : netWins) {
-                        SlotSymbol symbol = symbols[w.symbolOrdinal()];
-                        wins.add(new SlotLineResult(true, symbol, w.count(), w.multiplier(), w.winAmount(), w.lineIndex()));
-                    }
-
-                    MinecraftClient client = MinecraftClient.getInstance();
-                    client.execute(() -> {
-                        if (client.currentScreen instanceof SlotMachineScreen screen) {
-                            screen.onSpinResult(matrix, wins, modeUsed, totalWin, newBalance, stop1, stop2, stop3);
-                        }
-                    });
-
-                }
-        );
+        Minecraft client = Minecraft.getInstance();
+        client.execute(() -> {
+            if (client.screen instanceof SlotMachineScreen screen) {
+                screen.onSpinResult(matrix, wins, modeUsed, totalWin, newBalance, stop1, stop2, stop3);
+            }
+        });
     }
-
 }

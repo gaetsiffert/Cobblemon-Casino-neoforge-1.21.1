@@ -3,39 +3,60 @@ package net.andrespr.casinorocket.villager;
 import com.google.common.collect.ImmutableSet;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.ModBlocks;
-import net.fabricmc.fabric.api.object.builder.v1.world.poi.PointOfInterestHelper;
-import net.minecraft.block.Block;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
-import net.minecraft.village.VillagerProfession;
-import net.minecraft.world.poi.PointOfInterestType;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
+import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.Set;
+import java.util.function.Supplier;
 
 public class ModVillagers {
+    private static final DeferredRegister<PoiType> POIS =
+            DeferredRegister.create(Registries.POINT_OF_INTEREST_TYPE, CasinoRocket.MOD_ID);
+    private static final DeferredRegister<VillagerProfession> PROFESSIONS =
+            DeferredRegister.create(Registries.VILLAGER_PROFESSION, CasinoRocket.MOD_ID);
 
-    public static final RegistryKey<PointOfInterestType> CHIP_TABLE_POI_KEY = registerPoiKey("chip_table_poi");
-    public static final PointOfInterestType CHIP_TABLE_POI = registerPOI("chip_table_poi", ModBlocks.CHIP_TABLE);
-    public static final VillagerProfession CASINO_WORKER = registerProfession("casino_worker", CHIP_TABLE_POI_KEY);
+    public static final ResourceKey<PoiType> CHIP_TABLE_POI_KEY = registerPoiKey("chip_table_poi");
+    public static PoiType CHIP_TABLE_POI;
+    public static VillagerProfession CASINO_WORKER;
 
-    private static VillagerProfession registerProfession(String name, RegistryKey<PointOfInterestType> type) {
-        return Registry.register(Registries.VILLAGER_PROFESSION, Identifier.of(CasinoRocket.MOD_ID, name),
-                new VillagerProfession(name, entry -> entry.matchesKey(type),
-                        entry -> entry.matchesKey(type), ImmutableSet.of(), ImmutableSet.of(), SoundEvents.ENTITY_VILLAGER_WORK_LIBRARIAN));
+    static {
+        registerPOI("chip_table_poi", () -> CHIP_TABLE_POI = createPoi(ModBlocks.CHIP_TABLE));
+        registerProfession("casino_worker", () -> CASINO_WORKER = createProfession("casino_worker", CHIP_TABLE_POI_KEY));
     }
 
-    private static PointOfInterestType registerPOI(String name, Block block) {
-        return PointOfInterestHelper.register(Identifier.of(CasinoRocket.MOD_ID, name), 1, 1, block);
+    private static VillagerProfession createProfession(String name, ResourceKey<PoiType> type) {
+        return new VillagerProfession(name, entry -> entry.is(type), entry -> entry.is(type),
+                ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_LIBRARIAN);
     }
 
-    private static RegistryKey<PointOfInterestType> registerPoiKey(String name) {
-        return RegistryKey.of(RegistryKeys.POINT_OF_INTEREST_TYPE, Identifier.of(CasinoRocket.MOD_ID, name));
+    private static PoiType createPoi(Block block) {
+        Set<BlockState> states = ImmutableSet.copyOf(block.getStateDefinition().getPossibleStates());
+        return new PoiType(states, 1, 1);
     }
 
-    public static void registerVillagers() {
+    private static void registerProfession(String name, Supplier<VillagerProfession> supplier) {
+        PROFESSIONS.register(name, supplier);
+    }
+
+    private static void registerPOI(String name, Supplier<PoiType> supplier) {
+        POIS.register(name, supplier);
+    }
+
+    private static ResourceKey<PoiType> registerPoiKey(String name) {
+        return ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, name));
+    }
+
+    public static void registerVillagers(IEventBus eventBus) {
+        POIS.register(eventBus);
+        PROFESSIONS.register(eventBus);
         CasinoRocket.LOGGER.info("Registering villagers for " + CasinoRocket.MOD_ID);
     }
-
 }

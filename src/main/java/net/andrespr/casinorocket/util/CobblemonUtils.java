@@ -8,15 +8,15 @@ import com.cobblemon.mod.common.pokemon.IVs;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.RandomSource;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
 public class CobblemonUtils {
 
-    public static PokemonProperties safeParse(String input, ServerPlayerEntity player, MinecraftServer server) {
+    public static PokemonProperties safeParse(String input, ServerPlayer player, MinecraftServer server) {
         PokemonProperties properties = tryParse(input);
         if (properties == null) {
             CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.species_not_found", false, input);
@@ -52,7 +52,7 @@ public class CobblemonUtils {
         return ivs;
     }
 
-    public static void addPokemon(PokemonProperties properties, ServerPlayerEntity player) {
+    public static void addPokemon(PokemonProperties properties, ServerPlayer player) {
         Pokemon pokemon = properties.create();
         String pokemonName = pokemon.getSpecies().getTranslatedName().getString();
         PlayerPartyStore party = Cobblemon.INSTANCE.getStorage().getParty(player);
@@ -122,7 +122,7 @@ public class CobblemonUtils {
     }
 
     // === SHINY ODDS ===
-    public static boolean itWillBeShiny(Random random, String shiny) {
+    public static boolean itWillBeShiny(RandomSource random, String shiny) {
         String key = shiny.toLowerCase();
         return switch (key) {
             case "default" -> defaultOdds(random);
@@ -132,12 +132,12 @@ public class CobblemonUtils {
         };
     }
 
-    public static boolean defaultOdds(Random random) {
+    public static boolean defaultOdds(RandomSource random) {
         int roll = random.nextInt(2048);
         return roll == 1;
     }
 
-    public static boolean boostedOdds(Random random) {
+    public static boolean boostedOdds(RandomSource random) {
         int roll = random.nextInt(512);
         return roll == 1;
     }
@@ -172,3 +172,4 @@ public class CobblemonUtils {
     }
 
 }
+

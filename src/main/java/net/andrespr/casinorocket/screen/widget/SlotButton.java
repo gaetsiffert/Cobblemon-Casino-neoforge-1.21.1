@@ -1,16 +1,16 @@
 package net.andrespr.casinorocket.screen.widget;
 
 import net.andrespr.casinorocket.sound.ModSounds;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
-public class SlotButton extends ButtonWidget {
+public class SlotButton extends Button {
 
-    private final Identifier texture;
+    private final ResourceLocation texture;
     private final int texWidth;
     private final int texHeight;
     private final int stateHeight;
@@ -20,8 +20,8 @@ public class SlotButton extends ButtonWidget {
 
     private boolean fakePressed = false;
 
-    public SlotButton(int x, int y, int width, int height, Identifier texture, PressAction onPress, Text text) {
-        super(x, y, width, height, text, onPress, DEFAULT_NARRATION_SUPPLIER);
+    public SlotButton(int x, int y, int width, int height, ResourceLocation texture, OnPress onPress, Component text) {
+        super(x, y, width, height, text, onPress, DEFAULT_NARRATION);
         this.texture = texture;
         this.texWidth = width;
         this.stateHeight = height;
@@ -53,7 +53,7 @@ public class SlotButton extends ButtonWidget {
     }
 
     @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
         int vOffset = 0;
 
         // Fake pressed
@@ -77,13 +77,14 @@ public class SlotButton extends ButtonWidget {
             vOffset = this.stateHeight;
         }
 
-        context.drawTexture(this.texture, this.getX(), this.getY(), 0, vOffset,
+        context.blit(this.texture, this.getX(), this.getY(), 0, vOffset,
                 this.getWidth(), this.stateHeight, this.texWidth, this.texHeight);
     }
 
     @Override
     public void playDownSound(SoundManager soundManager) {
-        soundManager.play(PositionedSoundInstance.master(ModSounds.BUTTON, 1.0F));
+        soundManager.play(SimpleSoundInstance.forUI(ModSounds.BUTTON, 1.0F));
     }
 
 }
+
