@@ -47,6 +47,7 @@ neoForge {
 
         server {
             server()
+            gameDirectory = file('run-server')
             programArgument '--nogui'
         }
 
@@ -105,6 +106,10 @@ tasks.named('processResources', ProcessResources).configure {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+tasks.named('runServer').configure {
+    standardInput = System.in
 }
 
 idea {

@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 public class ModBlocks {
     private static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(CasinoRocket.MOD_ID);
     private static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(CasinoRocket.MOD_ID);
-
     // BLOCKS
 
     public static Block CUT_GOLD_BLOCK;
@@ -219,67 +218,33 @@ public class ModBlocks {
 
         // ENTITIES
         registerBlock("gacha_machine", () -> GACHA_MACHINE =
-                    new GachaMachineBlock(BlockBehaviour.Properties.of()
-                            .strength(-1.0F, 3600000.0F)
-                            .noLootTable()
-                            .isValidSpawn(Blocks::never)
-                            .noOcclusion()
-                    )
+                    new GachaMachineBlock(machineProperties())
             );
 
         registerBlock("pokemon_gacha_machine", () -> POKEMON_GACHA_MACHINE =
-                    new PokemonGachaMachineBlock(BlockBehaviour.Properties.of()
-                            .strength(-1.0F, 3600000.0F)
-                            .noLootTable()
-                            .isValidSpawn(Blocks::never)
-                            .noOcclusion()
-                    )
+                    new PokemonGachaMachineBlock(machineProperties())
             );
 
         registerBlock("plushies_gacha_machine", () -> PLUSHIES_GACHA_MACHINE =
-                    new PlushiesGachaMachineBlock(BlockBehaviour.Properties.of()
-                            .strength(-1.0F, 3600000.0F)
-                            .noLootTable()
-                            .isValidSpawn(Blocks::never)
-                            .noOcclusion()
-                    )
+                    new PlushiesGachaMachineBlock(machineProperties())
             );
 
         registerBlock("event_gacha_machine", () -> EVENT_GACHA_MACHINE =
-                    new EventGachaMachineBlock(BlockBehaviour.Properties.of()
-                            .strength(-1.0F, 3600000.0F)
-                            .noLootTable()
-                            .isValidSpawn(Blocks::never)
-                            .noOcclusion()
-                    )
+                    new EventGachaMachineBlock(machineProperties())
             );
 
         registerBlock("slot_machine", () -> SLOT_MACHINE =
-                    new SlotMachineBlock(BlockBehaviour.Properties.of()
-                            .strength(-1.0F, 3600000.0F)
-                            .noLootTable()
-                            .isValidSpawn(Blocks::never)
+                    new SlotMachineBlock(machineProperties()
                             .lightLevel(state -> 14)
-                            .noOcclusion()
                     )
             );
 
         registerBlock("blackjack_table", () -> BLACKJACK_TABLE =
-                    new BlackjackTableBlock(BlockBehaviour.Properties.of()
-                            .strength(-1.0F, 3600000.0F)
-                            .noLootTable()
-                            .isValidSpawn(Blocks::never)
-                            .noOcclusion()
-                    )
+                    new BlackjackTableBlock(machineProperties())
             );
 
         registerBlock("chip_table", () -> CHIP_TABLE =
-                    new ChipTableBlock(BlockBehaviour.Properties.of()
-                            .strength(-1.0F, 3600000.0F)
-                            .noLootTable()
-                            .isValidSpawn(Blocks::never)
-                            .noOcclusion()
-                    )
+                    new ChipTableBlock(machineProperties())
             );
     }
 
@@ -288,6 +253,13 @@ public class ModBlocks {
     private static <T extends Block> void registerBlock(String name, Supplier<T> supplier) {
         DeferredBlock<T> block = BLOCKS.register(name, supplier);
         ITEMS.registerSimpleBlockItem(name, block);
+    }
+
+    private static BlockBehaviour.Properties machineProperties() {
+        return BlockBehaviour.Properties.of()
+                .strength(3.5F, 6.0F)
+                .isValidSpawn(Blocks::never)
+                .noOcclusion();
     }
 
     public static void registerModBlocks(IEventBus eventBus) {

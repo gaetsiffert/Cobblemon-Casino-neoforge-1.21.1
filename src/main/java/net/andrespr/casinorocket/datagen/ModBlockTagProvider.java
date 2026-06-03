@@ -54,7 +54,15 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(ModBlocks.DIAMOND_TRAPDOOR)
                 .add(ModBlocks.CONDENSED_DIAMOND_BLOCK)
                 .add(ModBlocks.CHARGED_DIAMOND_BLOCK)
-                .add(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
+                .add(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK)
+                // ADDING CASINO MACHINES
+                .add(ModBlocks.GACHA_MACHINE)
+                .add(ModBlocks.POKEMON_GACHA_MACHINE)
+                .add(ModBlocks.PLUSHIES_GACHA_MACHINE)
+                .add(ModBlocks.EVENT_GACHA_MACHINE)
+                .add(ModBlocks.SLOT_MACHINE)
+                .add(ModBlocks.BLACKJACK_TABLE)
+                .add(ModBlocks.CHIP_TABLE);
 
         tag(BlockTags.NEEDS_IRON_TOOL)
                 // ADDING GOLD BLOCKS

@@ -61,4 +61,11 @@ Useful commands:
 .\gradlew.bat build --stacktrace
 .\gradlew.bat runClient --stacktrace
 .\gradlew.bat runData --stacktrace
+.\run-test-server.bat
 ```
+
+`run-test-server.bat` starts the NeoForge dev server with an interactive console. Use normal server commands directly in that terminal, for example `op PlayerName`, `deop PlayerName`, or `stop`.
+
+The Gradle `runServer` task uses `run-server/` as its working directory so it can run at the same time as the dev client in `run/`.
+
+IntelliJ also has a shared run configuration named `Server Test`. Launch it from the run configuration dropdown, then type server commands directly in the Run console.

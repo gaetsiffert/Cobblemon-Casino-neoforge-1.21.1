@@ -154,6 +154,7 @@
   "message.casinorocket.bill_cobbledollars_disabled": "CobbleDollars economy is disabled in Casino Rocket config.",
   "message.casinorocket.bill_cobbledollars_missing": "CobbleDollars is not installed. Your bills were not consumed.",
   "message.casinorocket.bill_deposit_failed": "CobbleDollars deposit failed. Your bills were not consumed.",
+  "message.casinorocket.machine_unbreakable": "This machine is protected. Only creative players or admins can break it.",
   "message.casinorocket.item_gachapon_received": "You have obtained %sx %s!",
 
   "message.casinorocket.gacha_machines_coin_inserted": "§7Coin inserted... please wait!",

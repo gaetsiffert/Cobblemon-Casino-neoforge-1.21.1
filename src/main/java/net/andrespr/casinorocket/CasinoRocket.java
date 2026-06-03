@@ -7,6 +7,7 @@ import net.andrespr.casinorocket.block.ModBlocks;
 import net.andrespr.casinorocket.block.entity.ModBlockEntities;
 import net.andrespr.casinorocket.command.CasinoRocketCommands;
 import net.andrespr.casinorocket.config.CasinoRocketConfig;
+import net.andrespr.casinorocket.condition.ModConditions;
 import net.andrespr.casinorocket.games.gachapon.GachaponUtils;
 import net.andrespr.casinorocket.games.gachapon.PlushiesGachaponUtils;
 import net.andrespr.casinorocket.games.gachapon.PokemonGachaponUtils;
@@ -18,17 +19,22 @@ import net.andrespr.casinorocket.network.SuitSyncPayload;
 import net.andrespr.casinorocket.network.s2c.SlotConfigSyncS2CPayload;
 import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.sound.ModSounds;
+import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.andrespr.casinorocket.util.SuitData;
 import net.andrespr.casinorocket.villager.ModVillagers;
 import net.andrespr.casinorocket.villager.ShopsRegistry;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +59,7 @@ public class CasinoRocket {
         ModMenuTypes.registerMenuTypes(modEventBus);
         ModVillagers.registerVillagers(modEventBus);
         ModItemsGroup.registerItemGroups(modEventBus);
+        ModConditions.register(modEventBus);
 
         modEventBus.addListener(CasinoRocketDataGenerator::gatherData);
         modEventBus.addListener(CasinoRocketPackets::registerPayloads);
@@ -61,6 +68,7 @@ public class CasinoRocket {
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedIn);
         NeoForge.EVENT_BUS.addListener(this::onStartTracking);
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);
+        NeoForge.EVENT_BUS.addListener(this::onBlockBreak);
 
         ShopsRegistry.bootstrap();
         LOGGER.info("Mod initialized successfully!");
@@ -86,6 +94,33 @@ public class CasinoRocket {
         GachaponUtils.buildCache(CasinoRocket.CONFIG.itemGachapon.pools);
         PokemonGachaponUtils.buildCache(CasinoRocket.CONFIG.pokemonGachapon.pools);
         PlushiesGachaponUtils.buildCache(CasinoRocket.CONFIG.plushiesGachapon.plushies);
+    }
+
+    private void onBlockBreak(BlockEvent.BreakEvent event) {
+        if (!CasinoRocket.CONFIG.generalConfig.makeMachinesUnbreakable) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        if (player.isCreative() || player.hasPermissions(2)) {
+            return;
+        }
+
+        if (isCasinoMachine(event.getState())) {
+            event.setCanceled(true);
+            CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.machine_unbreakable", true);
+        }
+    }
+
+    private static boolean isCasinoMachine(BlockState state) {
+        Block block = state.getBlock();
+        return block == ModBlocks.GACHA_MACHINE
+                || block == ModBlocks.POKEMON_GACHA_MACHINE
+                || block == ModBlocks.PLUSHIES_GACHA_MACHINE
+                || block == ModBlocks.EVENT_GACHA_MACHINE
+                || block == ModBlocks.SLOT_MACHINE
+                || block == ModBlocks.BLACKJACK_TABLE
+                || block == ModBlocks.CHIP_TABLE;
     }
 }
 

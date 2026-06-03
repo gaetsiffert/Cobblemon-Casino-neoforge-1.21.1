@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.datagen;
 import com.cobblemon.mod.common.CobblemonItems;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.ModBlocks;
+import net.andrespr.casinorocket.condition.MachinesCraftingEnabledCondition;
 import net.andrespr.casinorocket.item.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -176,6 +177,85 @@ public class ModRecipeProvider extends RecipeProvider {
         // STONECUTTING FROM DIAMOND_PILLAR
         stonecutterResultFromBase(recipeExporter, RecipeCategory.BUILDING_BLOCKS, ModBlocks.HEAVY_DIAMOND_PILLAR, ModBlocks.DIAMOND_PILLAR);
 
+        // CASINO MACHINES
+        offerMachineRecipes(recipeExporter.withConditions(MachinesCraftingEnabledCondition.INSTANCE));
+
+    }
+
+    private static void offerMachineRecipes(RecipeOutput exporter) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ModBlocks.POKEMON_GACHA_MACHINE)
+                .define('G', Items.GLASS)
+                .define('I', Items.IRON_INGOT)
+                .define('C', Items.CHEST)
+                .define('R', Items.REDSTONE)
+                .pattern("GGG")
+                .pattern("ICI")
+                .pattern("IRI")
+                .unlockedBy(getHasName(Items.REDSTONE), has(Items.REDSTONE))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "pokemon_gacha_machine"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ModBlocks.GACHA_MACHINE)
+                .define('I', Items.IRON_INGOT)
+                .define('L', Items.LAPIS_LAZULI)
+                .define('M', ModBlocks.POKEMON_GACHA_MACHINE)
+                .pattern("ILI")
+                .pattern("LML")
+                .pattern("ILI")
+                .unlockedBy(getHasName(ModBlocks.POKEMON_GACHA_MACHINE), has(ModBlocks.POKEMON_GACHA_MACHINE))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "gacha_machine"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ModBlocks.PLUSHIES_GACHA_MACHINE)
+                .define('W', Items.WHITE_WOOL)
+                .define('Y', Items.YELLOW_DYE)
+                .define('M', ModBlocks.POKEMON_GACHA_MACHINE)
+                .pattern("WYW")
+                .pattern("YMY")
+                .pattern("WYW")
+                .unlockedBy(getHasName(ModBlocks.POKEMON_GACHA_MACHINE), has(ModBlocks.POKEMON_GACHA_MACHINE))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "plushies_gacha_machine"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ModBlocks.EVENT_GACHA_MACHINE)
+                .define('E', Items.EMERALD)
+                .define('D', Items.DIAMOND)
+                .define('M', ModBlocks.POKEMON_GACHA_MACHINE)
+                .pattern("EDE")
+                .pattern("DMD")
+                .pattern("EDE")
+                .unlockedBy(getHasName(ModBlocks.POKEMON_GACHA_MACHINE), has(ModBlocks.POKEMON_GACHA_MACHINE))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "event_gacha_machine"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ModBlocks.SLOT_MACHINE)
+                .define('G', Items.GLASS_PANE)
+                .define('R', Items.REDSTONE)
+                .define('I', Items.IRON_INGOT)
+                .define('D', Items.DIAMOND)
+                .pattern("GRG")
+                .pattern("IDI")
+                .pattern("IRI")
+                .unlockedBy(getHasName(Items.REDSTONE), has(Items.REDSTONE))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "slot_machine"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.BLACKJACK_TABLE)
+                .define('W', Items.GREEN_WOOL)
+                .define('G', Items.GOLD_INGOT)
+                .define('R', Items.REDSTONE)
+                .define('I', Items.IRON_INGOT)
+                .pattern("WWW")
+                .pattern("GRG")
+                .pattern("I I")
+                .unlockedBy(getHasName(Items.GREEN_WOOL), has(Items.GREEN_WOOL))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "blackjack_table"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ModBlocks.CHIP_TABLE)
+                .define('G', Items.GOLD_INGOT)
+                .define('C', Items.CHEST)
+                .define('I', Items.IRON_INGOT)
+                .define('R', Items.REDSTONE)
+                .pattern("GCG")
+                .pattern("IRI")
+                .pattern("G G")
+                .unlockedBy(getHasName(Items.GOLD_INGOT), has(Items.GOLD_INGOT))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "chip_table"));
     }
 
     public static void offerDeconstruct(RecipeOutput exporter, RecipeCategory category, ItemLike output, ItemLike input, int count) {

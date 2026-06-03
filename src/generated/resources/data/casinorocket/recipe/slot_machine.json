@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "casinorocket:machines_crafting_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "GRG",
+    "IDI",
+    "IRI"
+  ],
+  "result": {
+    "count": 1,
+    "id": "casinorocket:slot_machine"
+  }
+}

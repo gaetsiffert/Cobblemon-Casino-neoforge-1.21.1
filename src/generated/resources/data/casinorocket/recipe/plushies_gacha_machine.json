@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "casinorocket:machines_crafting_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "M": {
+      "item": "casinorocket:pokemon_gacha_machine"
+    },
+    "W": {
+      "item": "minecraft:white_wool"
+    },
+    "Y": {
+      "item": "minecraft:yellow_dye"
+    }
+  },
+  "pattern": [
+    "WYW",
+    "YMY",
+    "WYW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "casinorocket:plushies_gacha_machine"
+  }
+}

@@ -46,8 +46,8 @@ public class GeneralConfig implements ConfigData {
 
     }
 
-    public boolean enableMachinesCrafting = false;
-    public boolean makeMachinesUnbreakable = true;
+    public boolean enableMachinesCrafting = true;
+    public boolean makeMachinesUnbreakable = false;
     public boolean enableDirectBets = true;
     public boolean enableDirectPayout = true;
 

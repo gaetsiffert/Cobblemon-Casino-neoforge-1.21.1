@@ -1,11 +1,17 @@
 package net.andrespr.casinorocket.datagen;
 
 import net.andrespr.casinorocket.block.ModBlocks;
+import net.andrespr.casinorocket.block.custom.EventGachaMachineBlock;
+import net.andrespr.casinorocket.block.custom.GachaMachineBlock;
+import net.andrespr.casinorocket.block.custom.PlushiesGachaMachineBlock;
+import net.andrespr.casinorocket.block.custom.PokemonGachaMachineBlock;
+import net.andrespr.casinorocket.block.custom.SlotMachineBlock;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import java.util.List;
 import java.util.Set;
 
@@ -46,7 +52,14 @@ public class ModLootTableProvider extends BlockLootSubProvider {
             ModBlocks.DIAMOND_TRAPDOOR,
             ModBlocks.CONDENSED_DIAMOND_BLOCK,
             ModBlocks.CHARGED_DIAMOND_BLOCK,
-            ModBlocks.HYPERCHARGED_DIAMOND_BLOCK
+            ModBlocks.HYPERCHARGED_DIAMOND_BLOCK,
+            ModBlocks.GACHA_MACHINE,
+            ModBlocks.POKEMON_GACHA_MACHINE,
+            ModBlocks.PLUSHIES_GACHA_MACHINE,
+            ModBlocks.EVENT_GACHA_MACHINE,
+            ModBlocks.SLOT_MACHINE,
+            ModBlocks.BLACKJACK_TABLE,
+            ModBlocks.CHIP_TABLE
     );
 
     public ModLootTableProvider(HolderLookup.Provider registries) {
@@ -92,6 +105,15 @@ public class ModLootTableProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.CONDENSED_DIAMOND_BLOCK);
         dropSelf(ModBlocks.CHARGED_DIAMOND_BLOCK);
         dropSelf(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
+
+        // ADDING DROPS FOR CASINO MACHINES
+        add(ModBlocks.GACHA_MACHINE, createSinglePropConditionTable(ModBlocks.GACHA_MACHINE, GachaMachineBlock.HALF, DoubleBlockHalf.LOWER));
+        add(ModBlocks.POKEMON_GACHA_MACHINE, createSinglePropConditionTable(ModBlocks.POKEMON_GACHA_MACHINE, PokemonGachaMachineBlock.HALF, DoubleBlockHalf.LOWER));
+        add(ModBlocks.PLUSHIES_GACHA_MACHINE, createSinglePropConditionTable(ModBlocks.PLUSHIES_GACHA_MACHINE, PlushiesGachaMachineBlock.HALF, DoubleBlockHalf.LOWER));
+        add(ModBlocks.EVENT_GACHA_MACHINE, createSinglePropConditionTable(ModBlocks.EVENT_GACHA_MACHINE, EventGachaMachineBlock.HALF, DoubleBlockHalf.LOWER));
+        add(ModBlocks.SLOT_MACHINE, createSinglePropConditionTable(ModBlocks.SLOT_MACHINE, SlotMachineBlock.HALF, DoubleBlockHalf.LOWER));
+        dropSelf(ModBlocks.BLACKJACK_TABLE);
+        dropSelf(ModBlocks.CHIP_TABLE);
     }
 
     @Override

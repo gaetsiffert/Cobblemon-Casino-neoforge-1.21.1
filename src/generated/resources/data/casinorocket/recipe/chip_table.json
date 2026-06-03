@@ -1,0 +1,32 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "casinorocket:machines_crafting_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "minecraft:chest"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "GCG",
+    "IRI",
+    "G G"
+  ],
+  "result": {
+    "count": 1,
+    "id": "casinorocket:chip_table"
+  }
+}

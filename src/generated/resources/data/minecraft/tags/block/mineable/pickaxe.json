@@ -34,6 +34,13 @@
     "casinorocket:diamond_trapdoor",
     "casinorocket:condensed_diamond_block",
     "casinorocket:charged_diamond_block",
-    "casinorocket:hypercharged_diamond_block"
+    "casinorocket:hypercharged_diamond_block",
+    "casinorocket:gacha_machine",
+    "casinorocket:pokemon_gacha_machine",
+    "casinorocket:plushies_gacha_machine",
+    "casinorocket:event_gacha_machine",
+    "casinorocket:slot_machine",
+    "casinorocket:blackjack_table",
+    "casinorocket:chip_table"
   ]
 }
