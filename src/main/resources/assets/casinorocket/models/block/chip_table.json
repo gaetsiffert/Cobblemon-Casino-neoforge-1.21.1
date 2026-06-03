@@ -1400,49 +1400,49 @@
 			"color": 0,
 			"children": [
 				{
-					"name": "basic_chip",
+					"name": "red_chip",
 					"origin": [4, 11, 4],
 					"color": 2,
 					"children": [13, 14, 15, 16, 17]
 				},
 				{
-					"name": "basic_chip",
+					"name": "red_chip",
 					"origin": [4, 11, 4],
 					"color": 2,
 					"children": [18, 19, 20, 21, 22]
 				},
 				{
-					"name": "basic_chip",
+					"name": "red_chip",
 					"origin": [4, 11, 4],
 					"color": 2,
 					"children": [23, 24, 25, 26, 27]
 				},
 				{
-					"name": "basic_chip",
+					"name": "red_chip",
 					"origin": [4, 11, 4],
 					"color": 2,
 					"children": [28, 29, 30, 31, 32]
 				},
 				{
-					"name": "basic_chip",
+					"name": "red_chip",
 					"origin": [4, 11, 4],
 					"color": 2,
 					"children": [33, 34, 35, 36, 37]
 				},
 				{
-					"name": "basic_chip",
+					"name": "red_chip",
 					"origin": [4, 11, 4],
 					"color": 2,
 					"children": [38, 39, 40, 41, 42]
 				},
 				{
-					"name": "basic_chip",
+					"name": "red_chip",
 					"origin": [4, 11, 4],
 					"color": 2,
 					"children": [43, 44, 45, 46, 47]
 				},
 				{
-					"name": "basic_chip",
+					"name": "red_chip",
 					"origin": [4, 11, 4],
 					"color": 2,
 					"children": [48, 49, 50, 51, 52]

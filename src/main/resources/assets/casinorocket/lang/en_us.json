@@ -1,7 +1,7 @@
 {
-  "item.casinorocket.basic_chip": "Basic Chip",
   "item.casinorocket.red_chip": "Red Chip",
   "item.casinorocket.blue_chip": "Blue Chip",
+  "item.casinorocket.yellow_chip": "Yellow Chip",
   "item.casinorocket.purple_chip": "Purple Chip",
   "item.casinorocket.copper_chip": "Copper Chip",
   "item.casinorocket.iron_chip": "Iron Chip",
@@ -9,6 +9,9 @@
   "item.casinorocket.gold_chip": "Gold Chip",
   "item.casinorocket.diamond_chip": "Diamond Chip",
   "item.casinorocket.netherite_chip": "Netherite Chip",
+  "item.casinorocket.black_chip": "Black Chip",
+  "item.casinorocket.white_chip": "White Chip",
+  "item.casinorocket.rainbow_chip": "Rainbow Chip",
 
   "item.casinorocket.litwick_pin": "Litwick",
   "item.casinorocket.staryu_pin": "Staryu",
@@ -28,6 +31,8 @@
   "item.casinorocket.event_coin": "Event Coin",
   "item.casinorocket.primogem": "Primogem",
 
+  "item.casinorocket.bill_1": "$1 Bill",
+  "item.casinorocket.bill_5": "$5 Bill",
   "item.casinorocket.bill_10": "$10 Bill",
   "item.casinorocket.bill_50": "$50 Bill",
   "item.casinorocket.bill_100": "$100 Bill",
@@ -35,13 +40,10 @@
   "item.casinorocket.bill_1k": "$1k Bill",
   "item.casinorocket.bill_5k": "$5k Bill",
   "item.casinorocket.bill_10k": "$10k Bill",
-  "item.casinorocket.bill_25k": "$25k Bill",
   "item.casinorocket.bill_50k": "$50k Bill",
   "item.casinorocket.bill_100k": "$100k Bill",
   "item.casinorocket.bill_500k": "$500k Bill",
   "item.casinorocket.bill_1m": "$1M Bill",
-  "item.casinorocket.bill_10m": "$10M Bill",
-  "item.casinorocket.bill_100m": "$100M Bill",
 
   "item.casinorocket.poke_gachapon": "Poké Ball Gachapon",
   "item.casinorocket.great_gachapon": "Great Ball Gachapon",

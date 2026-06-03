@@ -72,7 +72,7 @@ public class MoneyCalculator {
 
     public static MoneyResult calculateDenomination(long value) {
 
-        if (value <= 0) return new MoneyResult(ModItems.BILL_10, 1);
+        if (value <= 0) return new MoneyResult(ModItems.BILL_1, 1);
 
         List<BillItem> bills = ModItems.ALL_BILL_ITEMS.stream()
                 .map(item -> (BillItem) item)
@@ -89,7 +89,7 @@ public class MoneyCalculator {
             }
         }
 
-        return new MoneyResult(ModItems.BILL_10, 1);
+        return new MoneyResult(ModItems.BILL_1, 1);
     }
 
     public static List<ItemStack> calculateChipWithdraw(long amount) {

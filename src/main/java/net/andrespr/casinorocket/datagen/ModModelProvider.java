@@ -47,17 +47,9 @@ public class ModModelProvider extends BlockStateProvider {
         cube(ModBlocks.CHARGED_DIAMOND_BLOCK);
         cube(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
 
+        flatItems(ModItems.ALL_CHIP_ITEMS.toArray(Item[]::new));
+
         flatItems(
-                ModItems.BASIC_CHIP,
-                ModItems.RED_CHIP,
-                ModItems.BLUE_CHIP,
-                ModItems.PURPLE_CHIP,
-                ModItems.COPPER_CHIP,
-                ModItems.IRON_CHIP,
-                ModItems.EMERALD_CHIP,
-                ModItems.GOLD_CHIP,
-                ModItems.DIAMOND_CHIP,
-                ModItems.NETHERITE_CHIP,
                 ModItems.COPPER_COIN,
                 ModItems.IRON_COIN,
                 ModItems.GOLD_COIN,

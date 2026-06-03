@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "casinorocket:item/basic_chip"
+    "layer0": "casinorocket:item/rainbow_chip"
   }
 }

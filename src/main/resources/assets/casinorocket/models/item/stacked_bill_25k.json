@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "casinorocket:item/bills/stacked_bill_25k"
-  }
-}

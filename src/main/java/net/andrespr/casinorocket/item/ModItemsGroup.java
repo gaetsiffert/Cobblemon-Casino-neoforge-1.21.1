@@ -24,16 +24,7 @@ public class ModItemsGroup {
                         .title(Component.translatable("itemgroup.casinorocket.casino_rocket_items"))
                         .displayItems((displayContext, entries) -> {
                             // CHIP ITEMS
-                            entries.accept(ModItems.BASIC_CHIP);
-                            entries.accept(ModItems.RED_CHIP);
-                            entries.accept(ModItems.BLUE_CHIP);
-                            entries.accept(ModItems.PURPLE_CHIP);
-                            entries.accept(ModItems.COPPER_CHIP);
-                            entries.accept(ModItems.IRON_CHIP);
-                            entries.accept(ModItems.EMERALD_CHIP);
-                            entries.accept(ModItems.GOLD_CHIP);
-                            entries.accept(ModItems.DIAMOND_CHIP);
-                            entries.accept(ModItems.NETHERITE_CHIP);
+                            ModItems.ALL_CHIP_ITEMS.forEach(entries::accept);
                             // ECONOMY
                             entries.accept(ModItems.DIAMOND_NUGGET);
                             entries.accept(ModItems.CHARGED_DIAMOND);
@@ -62,20 +53,7 @@ public class ModItemsGroup {
                             entries.accept(ModItems.POKEMON_CHERISH_GACHAPON);
                             entries.accept(ModItems.POKEMON_EVENT_GACHAPON);
                             // BILLS
-                            entries.accept(ModItems.BILL_10);
-                            entries.accept(ModItems.BILL_50);
-                            entries.accept(ModItems.BILL_100);
-                            entries.accept(ModItems.BILL_500);
-                            entries.accept(ModItems.BILL_1K);
-                            entries.accept(ModItems.BILL_5K);
-                            entries.accept(ModItems.BILL_10K);
-                            entries.accept(ModItems.BILL_25K);
-                            entries.accept(ModItems.BILL_50K);
-                            entries.accept(ModItems.BILL_100K);
-                            entries.accept(ModItems.BILL_500K);
-                            entries.accept(ModItems.BILL_1M);
-                            entries.accept(ModItems.BILL_10M);
-                            entries.accept(ModItems.BILL_100M);
+                            ModItems.ALL_BILL_ITEMS.forEach(entries::accept);
                             // WALLET
                             entries.accept(ModItems.WALLET);
                             // DISCS
