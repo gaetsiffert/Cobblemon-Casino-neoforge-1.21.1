@@ -20,7 +20,7 @@ public final class GachaDealerShops implements IShop {
         VillagerTradeHelper.makeCoinOffer(coinOffers, ModItems.DIAMOND_COIN);
         VillagerTradeHelper.makeCoinOffer(coinOffers, ModItems.EVENT_COIN);
         VillagerTradeHelper.makeCoinOffer(coinOffers, ModItems.PRIMOGEM);
-        shops.add(VillagerTradeHelper.makeShopCompound("Gacha Coins", coinOffers));
+        VillagerTradeHelper.addShopCompound(shops, "Gacha Coins", coinOffers);
 
         if (CasinoRocket.CONFIG.gachaMachines.gacha_store.gachapon_store.enableItemGachaponStore) {
             ListTag ItemGachaponOffers = new ListTag();
@@ -30,7 +30,7 @@ public final class GachaDealerShops implements IShop {
             VillagerTradeHelper.makeGachaponOffer(ItemGachaponOffers, ModItems.MASTER_GACHAPON);
             VillagerTradeHelper.makeGachaponOffer(ItemGachaponOffers, ModItems.CHERISH_GACHAPON);
             VillagerTradeHelper.makeGachaponOffer(ItemGachaponOffers, ModItems.PREMIER_GACHAPON);
-            shops.add(VillagerTradeHelper.makeShopCompound("Item Gacha", ItemGachaponOffers));
+            VillagerTradeHelper.addShopCompound(shops, "Item Gacha", ItemGachaponOffers);
         }
         if (CasinoRocket.CONFIG.gachaMachines.gacha_store.gachapon_store.enablePokemonGachaponStore) {
             ListTag PokemonGachaponOffers = new ListTag();
@@ -40,7 +40,7 @@ public final class GachaDealerShops implements IShop {
             VillagerTradeHelper.makeGachaponOffer(PokemonGachaponOffers, ModItems.POKEMON_MASTER_GACHAPON);
             VillagerTradeHelper.makeGachaponOffer(PokemonGachaponOffers, ModItems.POKEMON_CHERISH_GACHAPON);
             VillagerTradeHelper.makeGachaponOffer(PokemonGachaponOffers, ModItems.POKEMON_PREMIER_GACHAPON);
-            shops.add(VillagerTradeHelper.makeShopCompound("Pokémon Gacha", PokemonGachaponOffers));
+            VillagerTradeHelper.addShopCompound(shops, "Pokémon Gacha", PokemonGachaponOffers);
         }
 
         return new VillagerTradeHelper.ShopData(shops,"cobbledollars:cobble_merchant", 3, "cobblemon:display_case");

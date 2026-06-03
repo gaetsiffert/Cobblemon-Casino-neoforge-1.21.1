@@ -62,7 +62,7 @@ public class DoSpinReceiver {
         storage.setBalance(uuid, newBalance);
 
         if (CasinoRocket.CONFIG.slotMachine.debug) {
-            CasinoRocket.LOGGER.info("[SlotDebug] {} stops=({}, {}, {}) mid=[{}, {}, {}] win={}",
+            CasinoRocket.LOGGER.debug("[SlotDebug] {} stops=({}, {}, {}) mid=[{}, {}, {}] win={}",
                     player.getName().getString(),
                     stop1, stop2, stop3,
                     spinResult.matrix()[1][0], spinResult.matrix()[1][1], spinResult.matrix()[1][2],

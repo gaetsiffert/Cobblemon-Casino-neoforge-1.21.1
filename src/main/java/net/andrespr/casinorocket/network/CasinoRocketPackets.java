@@ -44,7 +44,7 @@ public final class CasinoRocketPackets {
     private CasinoRocketPackets() {}
 
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(CasinoRocket.MOD_ID);
+        PayloadRegistrar registrar = event.registrar(CasinoRocket.NETWORK_VERSION);
 
         registrar.playToServer(OpenBetScreenC2SPayload.ID, OpenBetScreenC2SPayload.CODEC, BetScreenReceiver::openBetScreen);
         registrar.playToServer(DoBetC2SPayload.ID, DoBetC2SPayload.CODEC, DoBetReceiver::handle);

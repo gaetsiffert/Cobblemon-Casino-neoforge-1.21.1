@@ -20,8 +20,8 @@ public class CobblemonUtils {
         PokemonProperties properties = tryParse(input);
         if (properties == null) {
             CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.species_not_found", false, input);
-            String messageToOps = String.format("[Cobblemon] Player " + player.getName().getString() +
-                    " tried to claim " + player.getName().getString(), input + " but failed! (species not found)");
+            String messageToOps = "[Cobblemon] Player " + player.getName().getString()
+                    + " tried to claim " + input + " but failed! (species not found)";
             CasinoRocketLogger.toOps(server, CasinoRocketLogger.LogLevel.ERROR, messageToOps);
             return null;
         }

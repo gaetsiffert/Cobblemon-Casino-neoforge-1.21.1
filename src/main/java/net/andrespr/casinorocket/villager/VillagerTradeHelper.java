@@ -7,7 +7,10 @@ import net.andrespr.casinorocket.util.MoneyCalculator;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import java.util.List;
 
 public class VillagerTradeHelper {
@@ -41,9 +44,23 @@ public class VillagerTradeHelper {
     // ===== COBBLEDOLLARS TRADES =====
 
     public static CompoundTag makeShopCompound(String category, ListTag offers) {
+        return createShopCompound(category, filterShopOffers(offers));
+    }
+
+    public static boolean addShopCompound(ListTag shops, String category, ListTag offers) {
+        ListTag filtered = filterShopOffers(offers);
+        if (filtered.isEmpty()) {
+            return false;
+        }
+
+        shops.add(createShopCompound(category, filtered));
+        return true;
+    }
+
+    private static CompoundTag createShopCompound(String category, ListTag filteredOffers) {
         CompoundTag shop = new CompoundTag();
         shop.putString("Category", category);
-        shop.put("Offers", offers);
+        shop.put("Offers", filteredOffers);
         return shop;
     }
 
@@ -62,8 +79,19 @@ public class VillagerTradeHelper {
 
     public static CompoundTag makeVanillaShopCompound(ListTag trades) {
         CompoundTag offers = new CompoundTag();
-        offers.put("Recipes", trades);
+        offers.put("Recipes", filterVanillaOffers(trades));
         return offers;
+    }
+
+    public static boolean hasTrades(ShopData data) {
+        return data != null
+                && ((data.shops != null && !data.shops.isEmpty()) || hasVanillaOffers(data.offersNbt));
+    }
+
+    public static boolean hasVanillaOffers(CompoundTag offers) {
+        return offers != null
+                && offers.contains("Recipes")
+                && !offers.getList("Recipes", Tag.TAG_COMPOUND).isEmpty();
     }
 
     public static CompoundTag makeVanillaOffer(String buyItem, int buyCount, String sellItem, int sellCount) {
@@ -145,6 +173,35 @@ public class VillagerTradeHelper {
             String gachaponPrice = CasinoRocket.CONFIG.gachaMachines.getGachaponPrice(gachaponId);
             trades.add(makeOffer(gachaponId, gachaponPrice));
         }
+    }
+
+    private static ListTag filterShopOffers(ListTag offers) {
+        ListTag filtered = new ListTag();
+        for (int i = 0; i < offers.size(); i++) {
+            CompoundTag offer = offers.getCompound(i);
+            CompoundTag item = offer.getCompound("Item");
+            if (isKnownItem(item.getString("id"))) {
+                filtered.add(offer);
+            }
+        }
+        return filtered;
+    }
+
+    private static ListTag filterVanillaOffers(ListTag trades) {
+        ListTag filtered = new ListTag();
+        for (int i = 0; i < trades.size(); i++) {
+            CompoundTag trade = trades.getCompound(i);
+            if (isKnownItem(trade.getCompound("buy").getString("id"))
+                    && isKnownItem(trade.getCompound("sell").getString("id"))) {
+                filtered.add(trade);
+            }
+        }
+        return filtered;
+    }
+
+    private static boolean isKnownItem(String itemId) {
+        ResourceLocation id = ResourceLocation.tryParse(itemId);
+        return id != null && BuiltInRegistries.ITEM.containsKey(id) && BuiltInRegistries.ITEM.get(id) != Items.AIR;
     }
 
 }

@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class CasinoRocket {
 
     public static final String MOD_ID = "casinorocket";
+    public static final String NETWORK_VERSION = "1";
     public static final Logger LOGGER = LoggerFactory.getLogger("CasinoRocket");
     public static CasinoRocketConfig CONFIG;
 

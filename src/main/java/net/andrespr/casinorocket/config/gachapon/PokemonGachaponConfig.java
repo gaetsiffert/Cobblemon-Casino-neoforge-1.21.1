@@ -331,7 +331,12 @@ public class PokemonGachaponConfig implements ConfigData {
             ));
 
             pools.put("event", List.of(
-                    // ONLY FOR EVENTS
+                    new GachaEntry("pikachu", 25, 24,"boosted", 20),
+                    new GachaEntry("eevee", 25, 24,"boosted", 20),
+                    new GachaEntry("rotom", 30, 27,"boosted", 12),
+                    new GachaEntry("dratini", 30, 27,"boosted", 10),
+                    new GachaEntry("ditto", 35, 31,"boosted", 6),
+                    new GachaEntry("mew", 50, 31,"default", 1)
             ));
         }
 

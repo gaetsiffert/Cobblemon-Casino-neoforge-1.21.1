@@ -16,7 +16,7 @@ public final class BankerShops implements IShop {
         // ===== IN CASH MONEY =====
         ListTag billOffers = new ListTag();
         for (Item bill : ModItems.ALL_BILL_ITEMS) VillagerTradeHelper.makeInCashOffer(billOffers, (BillItem) bill);
-        shops.add(VillagerTradeHelper.makeShopCompound("Bills", billOffers));
+        VillagerTradeHelper.addShopCompound(shops, "Bills", billOffers);
 
         return new VillagerTradeHelper.ShopData(shops, "cobbledollars:cobble_merchant", 2, "cobblemon:display_case");
 

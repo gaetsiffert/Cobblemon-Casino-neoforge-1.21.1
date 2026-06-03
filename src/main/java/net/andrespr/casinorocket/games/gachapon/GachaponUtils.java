@@ -33,7 +33,19 @@ public class GachaponUtils {
             int totalWeight = 0;
 
             for (ItemGachaponConfig.GachaEntry entry : entries) {
-                ResourceLocation id = ResourceLocation.parse(entry.itemId);
+                if (entry == null || entry.itemId == null || entry.itemId.isBlank()) {
+                    CasinoRocket.LOGGER.warn("[Gachapon] Skipping blank item id in pool '{}'", poolKey);
+                    continue;
+                }
+
+                ResourceLocation id = ResourceLocation.tryParse(entry.itemId);
+                if (id == null) {
+                    if (WARNED_ITEMS.add(entry.itemId)) {
+                        CasinoRocket.LOGGER.warn("[Gachapon] Invalid item id format in pool '{}': '{}'", poolKey, entry.itemId);
+                    }
+                    continue;
+                }
+
                 if (!BuiltInRegistries.ITEM.containsKey(id)) {
                     if (WARNED_ITEMS.add(entry.itemId)) {
                         CasinoRocket.LOGGER.warn("[Gachapon] Invalid item in pool '{}': '{}'", poolKey, entry.itemId);

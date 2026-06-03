@@ -33,7 +33,7 @@ public final class SnackmasterShops implements IShop {
                 "sweet_whipped_cream_curry" // Fairy
         );
         VillagerTradeHelper.makeListOffer(curryOffers, curries, "cobblecuisine", "5000");
-        shops.add(VillagerTradeHelper.makeShopCompound("Curries", curryOffers));
+        VillagerTradeHelper.addShopCompound(shops, "Curries", curryOffers);
 
         // ===== INGREDIENTS =====
         ListTag ingredientOffers = new ListTag();
@@ -46,7 +46,7 @@ public final class SnackmasterShops implements IShop {
         ingredientOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:indigo_bean","500"));
         ingredientOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:spice_mix","1000"));
         ingredientOffers.add(VillagerTradeHelper.makeOffer("cobblemon:galarica_nuts","2000"));
-        shops.add(VillagerTradeHelper.makeShopCompound("Ingredients", ingredientOffers));
+        VillagerTradeHelper.addShopCompound(shops, "Ingredients", ingredientOffers);
 
         // ===== SPECIAL FOOD =====
         ListTag specialFoodOffers = new ListTag();
@@ -58,7 +58,7 @@ public final class SnackmasterShops implements IShop {
         specialFoodOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:eclair", "25000"));
         specialFoodOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:candied_bluk_berry", "50000"));
         specialFoodOffers.add(VillagerTradeHelper.makeOffer("cobblecuisine:candied_nanab_berry", "1000000"));
-        shops.add(VillagerTradeHelper.makeShopCompound("Special Food", specialFoodOffers));
+        VillagerTradeHelper.addShopCompound(shops, "Special Food", specialFoodOffers);
 
         return new VillagerTradeHelper.ShopData(shops,"cobbledollars:cobble_merchant",1, "cobblemon:display_case");
 

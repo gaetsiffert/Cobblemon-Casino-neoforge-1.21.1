@@ -22,7 +22,7 @@ public final class BattleGearShops implements IShop {
         battleOffers.add(VillagerTradeHelper.makeOffer("cobblemon:scope_lens","10000"));
         battleOffers.add(VillagerTradeHelper.makeOffer("cobblemon:quick_claw","10000"));
         battleOffers.add(VillagerTradeHelper.makeOffer("cobblemon:eviolite","20000"));
-        shops.add(VillagerTradeHelper.makeShopCompound("Battle Items", battleOffers));
+        VillagerTradeHelper.addShopCompound(shops, "Battle Items", battleOffers);
 
         // ===== TYPE BOOST ITEMS =====
         ListTag typeBoostOffers = new ListTag();
@@ -47,7 +47,7 @@ public final class BattleGearShops implements IShop {
                 "fairy_feather"
         );
         VillagerTradeHelper.makeListOffer(typeBoostOffers, typeBoostItems, "cobblemon", "10000");
-        shops.add(VillagerTradeHelper.makeShopCompound("Type Boost", typeBoostOffers));
+        VillagerTradeHelper.addShopCompound(shops, "Type Boost", typeBoostOffers);
 
         return new VillagerTradeHelper.ShopData(shops,"cobbledollars:cobble_merchant",1, "cobblemon:display_case");
 

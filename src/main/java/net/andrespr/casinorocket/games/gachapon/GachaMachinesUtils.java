@@ -213,7 +213,7 @@ public class GachaMachinesUtils {
             adjusted.put("legendary", newLegendary);
         }
 
-        CasinoRocket.LOGGER.debug("[GachaMachines-Pity] {} used {} {} times → legendary {}%", player.getName().getString(), coinKey, uses, newLegendary * 100);
+        CasinoRocket.LOGGER.debug("[GachaMachines-Pity] {} used {} {} times -> legendary {}%", player.getName().getString(), coinKey, uses, newLegendary * 100);
 
         data.setDirty();
 

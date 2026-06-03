@@ -122,6 +122,10 @@ public final class VillagerCommands {
         BlockPos villagerPos = blockPos.east();
 
         VillagerTradeHelper.ShopData data = shop.build();
+        if (!VillagerTradeHelper.hasTrades(data)) {
+            source.sendFailure(Component.literal("Casino worker type has no valid offers with the currently loaded mods: " + type));
+            return 0;
+        }
 
         String blockId = (data.jobBlockId != null) ? data.jobBlockId : "cobblemon:display_case";
         Block jobBlock = BuiltInRegistries.BLOCK.get(ResourceLocation.parse(blockId));
@@ -137,7 +141,7 @@ public final class VillagerCommands {
         if (data.shops != null && !data.shops.isEmpty()) {
             root.put("CobbleMerchantShop", data.shops);
         }
-        if (data.offersNbt != null && data.offersNbt.contains("Recipes")) {
+        if (VillagerTradeHelper.hasVanillaOffers(data.offersNbt)) {
             root.put("Offers", data.offersNbt);
         }
 

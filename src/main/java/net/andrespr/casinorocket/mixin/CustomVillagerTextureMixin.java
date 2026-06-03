@@ -28,9 +28,6 @@ public class CustomVillagerTextureMixin {
             case 3 -> cir.setReturnValue(TUX_GOLD);
             default -> { return; }
         }
-        if (CasinoRocket.LOGGER.isDebugEnabled()) {
-            CasinoRocket.LOGGER.debug("[Render] Using custom suit {} for {}", suit, villager.getUUID());
-        }
     }
 
 }

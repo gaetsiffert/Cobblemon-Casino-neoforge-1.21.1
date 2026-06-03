@@ -27,7 +27,7 @@ public final class ChipDealerShops implements IShop {
             VillagerTradeHelper.makeMoneyToChipOffer(chipOffers, ModItems.GOLD_CHIP);
             VillagerTradeHelper.makeMoneyToChipOffer(chipOffers, ModItems.DIAMOND_CHIP);
             VillagerTradeHelper.makeMoneyToChipOffer(chipOffers, ModItems.NETHERITE_CHIP);
-            shops.add(VillagerTradeHelper.makeShopCompound("Chips", chipOffers));
+            VillagerTradeHelper.addShopCompound(shops, "Chips", chipOffers);
 
             return new VillagerTradeHelper.ShopData(shops, "cobbledollars:cobble_merchant", 2, "cobblemon:display_case");
 

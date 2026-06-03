@@ -23,7 +23,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
 
 public class PokemonGachaponItem extends Item {
 
@@ -45,7 +44,12 @@ public class PokemonGachaponItem extends Item {
 
             if (reward != null) {
                 PokemonProperties properties = CobblemonUtils.safeParse(reward.pokemonId(), player, server);
-                Objects.requireNonNull(properties).setLevel(reward.level());
+                if (properties == null) {
+                    CasinoRocket.LOGGER.warn("[Pokémon Gachapon] Skipping reward '{}' because it could not be parsed.", reward.pokemonId());
+                    return InteractionResultHolder.success(stack);
+                }
+
+                properties.setLevel(reward.level());
                 properties.setIvs(CobblemonUtils.createFixedIVs(reward.ivs()));
                 properties.setShiny(CobblemonUtils.itWillBeShiny(world.random, reward.shiny()));
                 properties.setPokeball(CobblemonUtils.getCherishBallIfLegendary(reward.pokemonId()));

@@ -19,7 +19,7 @@ public final class TMInstructorShops implements IShop {
         attackTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_icywind", "2000"));
         attackTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_confusion", "3000"));
         attackTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_rockthrow", "3000"));
-        shops.add(VillagerTradeHelper.makeShopCompound("Attack TM's", attackTMs));
+        VillagerTradeHelper.addShopCompound(shops, "Attack TM's", attackTMs);
 
         // ===== STATUS TMs =====
         ListTag statusTMs = new ListTag();
@@ -29,7 +29,7 @@ public final class TMInstructorShops implements IShop {
         statusTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_thunderwave", "3000"));
         statusTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_substitute", "5000"));
         statusTMs.add(VillagerTradeHelper.makeOffer("tmcraft:tm_taunt", "5000"));
-        shops.add(VillagerTradeHelper.makeShopCompound("Status TM's", statusTMs));
+        VillagerTradeHelper.addShopCompound(shops, "Status TM's", statusTMs);
 
         return new VillagerTradeHelper.ShopData(shops,"cobbledollars:cobble_merchant",1, "cobblemon:display_case");
     }

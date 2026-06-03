@@ -41,7 +41,14 @@ public final class PlushiesGachaponUtils {
         for (PlushiesGachaponConfig.GachaEntry entry : plushies) {
             if (entry == null || entry.itemId == null || entry.itemId.isBlank()) continue;
 
-            ResourceLocation id = ResourceLocation.parse(entry.itemId);
+            ResourceLocation id = ResourceLocation.tryParse(entry.itemId);
+            if (id == null) {
+                if (WARNED_ITEMS.add(entry.itemId)) {
+                    CasinoRocket.LOGGER.warn("[PlushiesGachapon] Invalid item id format '{}'", entry.itemId);
+                }
+                continue;
+            }
+
             if (!BuiltInRegistries.ITEM.containsKey(id)) {
                 if (WARNED_ITEMS.add(entry.itemId)) {
                     CasinoRocket.LOGGER.warn("[PlushiesGachapon] Invalid item '{}'", entry.itemId);

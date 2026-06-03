@@ -22,7 +22,7 @@ public final class PrizeDealerShops implements IShop {
         pokemonOffers.add(VillagerTradeHelper.makeOffer("casinorocket:rotom_pin", "250000"));
         pokemonOffers.add(VillagerTradeHelper.makeOffer("casinorocket:ditto_pin", "500000"));
         pokemonOffers.add(VillagerTradeHelper.makeOffer("casinorocket:porygon_pin", "999999"));
-        shops.add(VillagerTradeHelper.makeShopCompound("Pokemon", pokemonOffers));
+        VillagerTradeHelper.addShopCompound(shops, "Pokemon", pokemonOffers);
 
         // ===== FOSSILS =====
         ListTag fossilOffers = new ListTag();
@@ -31,7 +31,7 @@ public final class PrizeDealerShops implements IShop {
         fossilOffers.add(VillagerTradeHelper.makeOffer("cobblemon:root_fossil","75000"));
         fossilOffers.add(VillagerTradeHelper.makeOffer("cobblemon:claw_fossil","75000"));
         fossilOffers.add(VillagerTradeHelper.makeOffer("cobblemon:old_amber_fossil","100000"));
-        shops.add(VillagerTradeHelper.makeShopCompound("Fossils", fossilOffers));
+        VillagerTradeHelper.addShopCompound(shops, "Fossils", fossilOffers);
 
         return new VillagerTradeHelper.ShopData(shops,"cobbledollars:cobble_merchant",1, "cobblemon:display_case");
 

@@ -138,9 +138,9 @@ public class SlotMachineBlock extends BaseEntityBlock implements EntityBlock {
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         world.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), Block.UPDATE_ALL);
         if (!world.isClientSide) {
-            CasinoRocket.LOGGER.info("[DEBUG] SlotMachineBlock placed at {}", pos);
+            CasinoRocket.LOGGER.debug("[SlotMachine] Placed at {}", pos);
             BlockEntity be = world.getBlockEntity(pos);
-            CasinoRocket.LOGGER.info("[DEBUG] BlockEntity = {}", be);
+            CasinoRocket.LOGGER.debug("[SlotMachine] BlockEntity = {}", be);
         }
     }
 

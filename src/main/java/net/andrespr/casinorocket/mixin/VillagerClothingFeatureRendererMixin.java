@@ -31,9 +31,6 @@ public class VillagerClothingFeatureRendererMixin {
                 int suit = SuitData.getSuit(villager);
                 if (suit > 0) {
                     ci.cancel();
-                    if (CasinoRocket.LOGGER.isDebugEnabled()) {
-                        CasinoRocket.LOGGER.debug("[Render] Hiding vanilla clothing for {} (suit={})", villager.getUUID(), suit);
-                    }
                 }
             }
         } catch (Throwable ex) {
