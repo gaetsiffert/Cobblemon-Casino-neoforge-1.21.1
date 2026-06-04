@@ -2,6 +2,7 @@ package net.andrespr.casinorocket.games.blackjack;
 
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.network.s2c.sender.MachineBalanceSender;
 import net.andrespr.casinorocket.screen.custom.common.BetScreenHandler;
 import net.minecraft.server.MinecraftServer;
@@ -25,13 +26,14 @@ public final class BlackjackBetLogic {
             inventory.setItem(i, ItemStack.EMPTY);
         }
 
+        PlayerCasinoBalanceData balanceData = PlayerCasinoBalanceData.get(Objects.requireNonNull(server));
         PlayerBlackjackData data = PlayerBlackjackData.get(Objects.requireNonNull(server));
-        data.addBalance(player.getUUID(), amount);
+        balanceData.addBalance(player.getUUID(), amount);
         data.addTotalDeposited(player.getUUID(), amount);
 
         CasinoRocket.LOGGER.info("[Blackjack] User {} deposited {}", player.getGameProfile().getName(), amount);
 
-        MachineBalanceSender.send(player, "blackjack", data.getBalance(player.getUUID()));
+        MachineBalanceSender.send(player, "blackjack", balanceData.getBalance(player.getUUID()));
 
         handler.slotsChanged(inventory);
     }

@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.network.s2c.sender;
 
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.games.blackjack.*;
 import net.andrespr.casinorocket.network.s2c.SendBlackjackStateS2CPayload;
 import net.andrespr.casinorocket.network.CasinoRocketPackets;
@@ -12,13 +13,14 @@ public final class BlackjackStateSender {
 
     private BlackjackStateSender() {}
 
-    public static void send(ServerPlayer player, BlockPos pos, PlayerBlackjackData storage, BlackjackGameController controller) {
+    public static void send(ServerPlayer player, BlockPos pos, PlayerCasinoBalanceData balanceStorage,
+                            PlayerBlackjackData storage, BlackjackGameController controller) {
 
         BlackjackRound round = controller.getRound();
         BlackjackHand playerHand = round.getPlayerHand();
         BlackjackHand dealerHand = round.getDealerHand();
 
-        long balance = storage.getBalance(player.getUUID());
+        long balance = balanceStorage.getBalance(player.getUUID());
         int betIndex = storage.getBetIndex(player.getUUID());
 
         // === CARDS ===

@@ -1,7 +1,7 @@
 package net.andrespr.casinorocket.games.blackjack;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.andrespr.casinorocket.data.PlayerBlackjackData;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.network.s2c.sender.MachineBalanceSender;
 import net.andrespr.casinorocket.util.MoneyCalculator;
 import net.minecraft.server.MinecraftServer;
@@ -14,7 +14,7 @@ public final class BlackjackWithdrawLogic {
     private BlackjackWithdrawLogic() {}
 
     public static void handle(ServerPlayer player, MinecraftServer server) {
-        PlayerBlackjackData storage = PlayerBlackjackData.get(server);
+        PlayerCasinoBalanceData storage = PlayerCasinoBalanceData.get(server);
         UUID uuid = player.getUUID();
 
         long balance = storage.getBalance(uuid);

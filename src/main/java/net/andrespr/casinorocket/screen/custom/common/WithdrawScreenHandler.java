@@ -1,7 +1,6 @@
 package net.andrespr.casinorocket.screen.custom.common;
 
-import net.andrespr.casinorocket.data.PlayerBlackjackData;
-import net.andrespr.casinorocket.data.PlayerSlotMachineData;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.network.s2c.sender.MachineBalanceSender;
 import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.CommonMachineOpenData;
@@ -93,8 +92,7 @@ public class WithdrawScreenHandler extends AbstractContainerMenu implements IMac
     private long resolveBalance(Player player) {
         if (player.getServer() == null) return 0L;
         return switch (machineKey) {
-            case "slots" -> PlayerSlotMachineData.get(player.getServer()).getBalance(player.getUUID());
-            case "blackjack" -> PlayerBlackjackData.get(player.getServer()).getBalance(player.getUUID());
+            case "slots", "blackjack" -> PlayerCasinoBalanceData.get(player.getServer()).getBalance(player.getUUID());
             default -> 0L;
         };
     }

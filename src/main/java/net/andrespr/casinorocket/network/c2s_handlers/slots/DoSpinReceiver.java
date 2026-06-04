@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.network.c2s_handlers.slots;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import net.andrespr.casinorocket.CasinoRocket;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
 import net.andrespr.casinorocket.games.slot.SlotMachineConstants;
 import net.andrespr.casinorocket.games.slot.SlotSpinEngine;
@@ -28,10 +29,11 @@ public class DoSpinReceiver {
             return;
         }
 
+        PlayerCasinoBalanceData balanceStorage = PlayerCasinoBalanceData.get(server);
         PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);
         UUID uuid = player.getUUID();
 
-        long balance = storage.getBalance(uuid);
+        long balance = balanceStorage.getBalance(uuid);
         int betBase = storage.getBetBase(uuid);
         int linesMode = storage.getLinesMode(uuid);
 
@@ -59,7 +61,7 @@ public class DoSpinReceiver {
         storage.updateHighestWin(uuid, spinWin);
 
         long newBalance = MoneyCalculator.safeAdd(afterCost, spinWin, SlotMachineConstants.MAX_BALANCE);
-        storage.setBalance(uuid, newBalance);
+        balanceStorage.setBalance(uuid, newBalance);
 
         if (CasinoRocket.CONFIG.slotMachine.debug) {
             CasinoRocket.LOGGER.debug("[SlotDebug] {} stops=({}, {}, {}) mid=[{}, {}, {}] win={}",

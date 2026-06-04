@@ -14,7 +14,6 @@ public class PlayerSlotMachineData extends SavedData {
 
     private static final String STORAGE_KEY = "casinorocket_slot_machine_data";
 
-    private final Map<UUID, Long> balances = new HashMap<>();
     private final Map<UUID, Integer> betIndex = new HashMap<>();
     private final Map<UUID, Integer> betBaseLegacy = new HashMap<>();
     private final Map<UUID, Integer> linesMode = new HashMap<>();
@@ -39,10 +38,6 @@ public class PlayerSlotMachineData extends SavedData {
     public CompoundTag save(CompoundTag nbt, HolderLookup.Provider registryLookup) {
 
         nbt.putInt("dataVersion", dataVersion);
-
-        CompoundTag balTag = new CompoundTag();
-        balances.forEach((uuid, val) -> balTag.putLong(uuid.toString(), val));
-        nbt.put("balances", balTag);
 
         CompoundTag betIndexTag = new CompoundTag();
         betIndex.forEach((uuid, val) -> betIndexTag.putInt(uuid.toString(), val));
@@ -80,13 +75,6 @@ public class PlayerSlotMachineData extends SavedData {
 
         int version = nbt.contains("dataVersion", Tag.TAG_INT) ? nbt.getInt("dataVersion") : 0;
         data.dataVersion = version;
-
-        if (nbt.contains("balances", Tag.TAG_COMPOUND)) {
-            CompoundTag bal = nbt.getCompound("balances");
-            bal.getAllKeys().forEach(key -> {
-                try { data.balances.put(UUID.fromString(key), bal.getLong(key)); } catch (Exception ignored) {}
-            });
-        }
 
         if (nbt.contains("betIndex", Tag.TAG_COMPOUND)) {
             CompoundTag bi = nbt.getCompound("betIndex");
@@ -177,10 +165,6 @@ public class PlayerSlotMachineData extends SavedData {
     }
 
     // === GETTERS ===
-    public long getBalance(UUID id) {
-        return balances.getOrDefault(id, 0L);
-    }
-
     public int getBetBase(UUID id) {
         List<Integer> bets = SlotMachineConstants.betValues();
         if (bets.isEmpty()) return SlotMachineConstants.defaultBetBase();
@@ -227,7 +211,6 @@ public class PlayerSlotMachineData extends SavedData {
 
     public Set<UUID> getAllKnownPlayers() {
         Set<UUID> s = new HashSet<>();
-        s.addAll(balances.keySet());
         s.addAll(totalDeposited.keySet());
         s.addAll(totalWon.keySet());
         s.addAll(highestWin.keySet());
@@ -260,22 +243,12 @@ public class PlayerSlotMachineData extends SavedData {
         setDirty();
     }
 
-    public void setBalance(UUID id, long value) {
-        balances.put(id, value);
-        setDirty();
-    }
-
     public void setLastWin(UUID id, long amount) {
         lastWin.put(id, Math.max(0L, amount));
         setDirty();
     }
 
     // === MUTATORS ===
-    public void addBalance(UUID id, long amount) {
-        balances.merge(id, amount, Long::sum);
-        setDirty();
-    }
-
     public void addTotalDeposited(UUID id, long amount) {
         if (amount <= 0) return;
         totalDeposited.merge(id, amount, Long::sum);

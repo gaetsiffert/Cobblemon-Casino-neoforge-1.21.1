@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.games.slot;
 
 import net.andrespr.casinorocket.CasinoRocket;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
 import net.andrespr.casinorocket.network.s2c.sender.MachineBalanceSender;
 import net.andrespr.casinorocket.screen.custom.common.BetScreenHandler;
@@ -25,13 +26,14 @@ public final class SlotsBetLogic {
             inventory.setItem(i, ItemStack.EMPTY);
         }
 
+        PlayerCasinoBalanceData balanceData = PlayerCasinoBalanceData.get(Objects.requireNonNull(server));
         PlayerSlotMachineData data = PlayerSlotMachineData.get(Objects.requireNonNull(server));
-        data.addBalance(player.getUUID(), amount);
+        balanceData.addBalance(player.getUUID(), amount);
         data.addTotalDeposited(player.getUUID(), amount);
 
         CasinoRocket.LOGGER.info("[SlotMachine] User {} deposited {}", player.getGameProfile().getName(), amount);
 
-        MachineBalanceSender.send(player, "slots", data.getBalance(player.getUUID()));
+        MachineBalanceSender.send(player, "slots", balanceData.getBalance(player.getUUID()));
 
         handler.slotsChanged(inventory);
     }

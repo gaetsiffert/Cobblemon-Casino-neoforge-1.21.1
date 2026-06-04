@@ -5,6 +5,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.games.blackjack.BlackjackAction;
 import net.andrespr.casinorocket.games.blackjack.BlackjackGameController;
 import net.andrespr.casinorocket.network.c2s.blackjack.BlackjackActionC2SPayload;
@@ -58,8 +59,9 @@ public final class BlackjackActionReceiver {
         BlackjackAction action = payload.action();
         controller.handleAction(player, action);
 
+        PlayerCasinoBalanceData balanceStorage = PlayerCasinoBalanceData.get(server);
         PlayerBlackjackData storage = PlayerBlackjackData.get(server);
-        BlackjackStateSender.send(player, table.getBlockPos(), storage, controller);
+        BlackjackStateSender.send(player, table.getBlockPos(), balanceStorage, storage, controller);
 
     }
 

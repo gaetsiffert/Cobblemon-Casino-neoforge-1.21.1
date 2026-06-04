@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.network.c2s_handlers.common;
 
 import net.andrespr.casinorocket.CasinoRocket;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
 import net.andrespr.casinorocket.network.c2s.common.OpenMenuScreenC2SPayload;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineMenuScreenHandler;
@@ -31,7 +32,7 @@ public class MenuScreenReceiver {
                 PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);
                 UUID uuid = player.getUUID();
 
-                long balance = storage.getBalance(uuid);
+                long balance = PlayerCasinoBalanceData.get(server).getBalance(uuid);
                 int betBase = storage.getBetBase(uuid);
                 int lines = storage.getLinesMode(uuid);
 

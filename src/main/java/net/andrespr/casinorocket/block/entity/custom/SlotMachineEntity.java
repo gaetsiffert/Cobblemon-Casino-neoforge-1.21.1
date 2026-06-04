@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.block.entity.custom;
 
 import net.andrespr.casinorocket.block.entity.ModBlockEntities;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineMenuScreenHandler;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineScreenHandler;
@@ -70,10 +71,11 @@ public class SlotMachineEntity extends BlockEntity implements MenuProvider, IMen
     // === OPENING DATA ===
     public SlotMachineOpenData getScreenOpeningData(ServerPlayer player) {
         MinecraftServer server = Objects.requireNonNull(player.getServer());
+        PlayerCasinoBalanceData balanceStorage = PlayerCasinoBalanceData.get(server);
         PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);
         UUID uuid = player.getUUID();
 
-        long balance = storage.getBalance(uuid);
+        long balance = balanceStorage.getBalance(uuid);
         int betBase = storage.getBetBase(uuid);
         int lines = storage.getLinesMode(uuid);
 
@@ -97,10 +99,11 @@ public class SlotMachineEntity extends BlockEntity implements MenuProvider, IMen
     public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
         if (player instanceof ServerPlayer sp) {
             MinecraftServer server = Objects.requireNonNull(sp.getServer());
+            PlayerCasinoBalanceData balanceStorage = PlayerCasinoBalanceData.get(server);
             PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);
             UUID uuid = sp.getUUID();
 
-            long balance = storage.getBalance(uuid);
+            long balance = balanceStorage.getBalance(uuid);
             int betBase = storage.getBetBase(uuid);
             int lines = storage.getLinesMode(uuid);
 

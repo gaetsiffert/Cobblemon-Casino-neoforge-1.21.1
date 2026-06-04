@@ -2,6 +2,7 @@ package net.andrespr.casinorocket.block.entity.custom;
 
 import net.andrespr.casinorocket.block.entity.ModBlockEntities;
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.games.blackjack.BlackjackGameController;
 import net.andrespr.casinorocket.games.blackjack.BlackjackRules;
 import net.andrespr.casinorocket.network.s2c.sender.BlackjackStateSender;
@@ -76,10 +77,11 @@ public class BlackjackTableEntity extends BlockEntity implements MenuProvider, I
     // === OPENING DATA ===
     public BlackjackTableOpenData getScreenOpeningData(ServerPlayer player) {
         MinecraftServer server = Objects.requireNonNull(player.getServer());
+        PlayerCasinoBalanceData balanceStorage = PlayerCasinoBalanceData.get(server);
         PlayerBlackjackData storage = PlayerBlackjackData.get(server);
         UUID uuid = player.getUUID();
 
-        long balance = storage.getBalance(uuid);
+        long balance = balanceStorage.getBalance(uuid);
         int index = storage.getBetIndex(uuid);
 
         return new BlackjackTableOpenData(this.worldPosition, "blackjack", balance, index, BlackjackRules.betValuesArray());
@@ -103,10 +105,11 @@ public class BlackjackTableEntity extends BlockEntity implements MenuProvider, I
 
         if (player instanceof ServerPlayer sp) {
             MinecraftServer server = Objects.requireNonNull(sp.getServer());
+            PlayerCasinoBalanceData balanceStorage = PlayerCasinoBalanceData.get(server);
             PlayerBlackjackData storage = PlayerBlackjackData.get(server);
             UUID uuid = sp.getUUID();
 
-            balance = storage.getBalance(uuid);
+            balance = balanceStorage.getBalance(uuid);
             index = storage.getBetIndex(uuid);
 
             sendState(sp);
@@ -120,17 +123,19 @@ public class BlackjackTableEntity extends BlockEntity implements MenuProvider, I
 
     public BlackjackGameController getOrCreateController(ServerPlayer player) {
         return controllers.computeIfAbsent(player.getUUID(), id ->
-                new BlackjackGameController(id, PlayerBlackjackData.get(Objects.requireNonNull(player.getServer())))
+                new BlackjackGameController(id, PlayerCasinoBalanceData.get(Objects.requireNonNull(player.getServer())),
+                        PlayerBlackjackData.get(Objects.requireNonNull(player.getServer())))
         );
     }
 
     // === SEND STATE ===
     public void sendState(ServerPlayer player) {
         MinecraftServer server = Objects.requireNonNull(player.getServer());
+        PlayerCasinoBalanceData balanceStorage = PlayerCasinoBalanceData.get(server);
         PlayerBlackjackData storage = PlayerBlackjackData.get(server);
         BlackjackGameController controller = getOrCreateController(player);
 
-        BlackjackStateSender.send(player, this.getBlockPos(), storage, controller);
+        BlackjackStateSender.send(player, this.getBlockPos(), balanceStorage, storage, controller);
     }
 
 }

@@ -20,7 +20,6 @@ public class PlayerBlackjackData extends SavedData {
     private static final String STORAGE_KEY = "casinorocket_blackjack_data";
 
     // === GAME DATA ===
-    private final Map<UUID, Long> balances = new HashMap<>();
     private final Map<UUID, Integer> betIndex = new HashMap<>();
 
     // === LEADERBOARD STATS ===
@@ -40,10 +39,6 @@ public class PlayerBlackjackData extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        CompoundTag balTag = new CompoundTag();
-        balances.forEach((uuid, val) -> balTag.putLong(uuid.toString(), val));
-        nbt.put("balances", balTag);
-
         CompoundTag betTag = new CompoundTag();
         betIndex.forEach((uuid, val) -> betTag.putInt(uuid.toString(), val));
         nbt.put("betIndex", betTag);
@@ -73,13 +68,6 @@ public class PlayerBlackjackData extends SavedData {
 
     private static PlayerBlackjackData readNbt(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         PlayerBlackjackData data = new PlayerBlackjackData();
-
-        if (nbt.contains("balances", Tag.TAG_COMPOUND)) {
-            CompoundTag bal = nbt.getCompound("balances");
-            bal.getAllKeys().forEach(key -> {
-                try { data.balances.put(UUID.fromString(key), bal.getLong(key)); } catch (Exception ignored) {}
-            });
-        }
 
         if (nbt.contains("betIndex", Tag.TAG_COMPOUND)) {
             CompoundTag t = nbt.getCompound("betIndex");
@@ -122,10 +110,6 @@ public class PlayerBlackjackData extends SavedData {
     }
 
     // === GETTERS ===
-    public long getBalance(UUID id) {
-        return balances.getOrDefault(id, 0L);
-    }
-
     public int getBetIndex(UUID id) {
         return BlackjackRules.clampBetIndex(betIndex.getOrDefault(id, BlackjackRules.DEFAULT_BET_INDEX));
     }
@@ -160,7 +144,6 @@ public class PlayerBlackjackData extends SavedData {
 
     public Set<UUID> getAllKnownPlayers() {
         Set<UUID> s = new HashSet<>();
-        s.addAll(balances.keySet());
         s.addAll(betIndex.keySet());
         s.addAll(totalDeposited.keySet());
         s.addAll(totalWon.keySet());
@@ -171,11 +154,6 @@ public class PlayerBlackjackData extends SavedData {
     }
 
     // === SETTERS ===
-    public void setBalance(UUID id, long value) {
-        balances.put(id, Math.max(0L, value));
-        setDirty();
-    }
-
     public void setBetIndex(UUID id, int index) {
         int max = BlackjackRules.maxBetIndex();
         if (index < 0 || index > max) return;
@@ -190,12 +168,6 @@ public class PlayerBlackjackData extends SavedData {
     }
 
     // === MUTATORS ===
-    public void addBalance(UUID id, long amount) {
-        balances.merge(id, amount, Long::sum);
-        if (balances.getOrDefault(id, 0L) < 0L) balances.put(id, 0L);
-        setDirty();
-    }
-
     public void addTotalDeposited(UUID id, long amount) {
         if (amount <= 0) return;
         totalDeposited.merge(id, amount, Long::sum);

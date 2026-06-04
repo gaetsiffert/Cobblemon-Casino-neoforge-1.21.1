@@ -4,6 +4,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.games.blackjack.BlackjackGameController;
 import net.andrespr.casinorocket.games.blackjack.BlackjackPhase;
 import net.andrespr.casinorocket.network.c2s.blackjack.ChangeBlackjackBetIndexC2SPayload;
@@ -46,7 +47,7 @@ public final class ChangeBlackjackBetIndexReceiver {
             storage.decrementBetIndex(player.getUUID());
         }
 
-        BlackjackStateSender.send(player, pos, storage, controller);
+        BlackjackStateSender.send(player, pos, PlayerCasinoBalanceData.get(server), storage, controller);
 
     }
 

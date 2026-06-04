@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.network.c2s_handlers.slots;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
+import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.network.c2s.slots.ChangeBetBaseC2SPayload;
 import net.andrespr.casinorocket.network.s2c.SendMenuSettingsS2CPayload;
 import net.andrespr.casinorocket.games.slot.SlotMachineConstants;
@@ -37,7 +38,7 @@ public class ChangeBetBaseReceiver {
         storage.setBetIndex(uuid, index);
 
         int newBase = bets.get(index);
-        long balance = storage.getBalance(uuid);
+        long balance = PlayerCasinoBalanceData.get(server).getBalance(uuid);
         int lines = storage.getLinesMode(uuid);
 
         CasinoRocketPackets.sendToPlayer(player, new SendMenuSettingsS2CPayload(balance, newBase, lines));
