@@ -1,7 +1,6 @@
 package net.andrespr.casinorocket.screen.custom.common;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.network.c2s.common.DoBetC2SPayload;
 import net.andrespr.casinorocket.screen.ModGuiTextures;
 import net.andrespr.casinorocket.screen.custom.CasinoMachineScreen;
@@ -57,12 +56,7 @@ public class BetScreen extends CasinoMachineScreen<BetScreenHandler> {
 
         context.blit(ModGuiTextures.BET_GUI, x, y, 0, 0, imageWidth, imageHeight);
 
-        if (CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive())
-        { context.blit(ModGuiTextures.COBBLEDOLLARS, x + 112, y + 2, 0, 0, 12, 12, 12,12); }
-        if (CasinoRocket.CONFIG.generalConfig.isRelicCoinActive())
-        { context.blit(ModGuiTextures.RELIC_COIN, x + 112, y + 2, 0, 0, 12, 12, 12,12); }
-        if (CasinoRocket.CONFIG.generalConfig.isDiamondActive())
-        { context.blit(ModGuiTextures.DIAMOND, x + 112, y + 2, 0, 0, 12, 12, 12, 12); }
+        context.blit(ModGuiTextures.CHIP, x + 112, y + 2, 0, 0, 12, 12, 12, 12);
     }
 
     @Override

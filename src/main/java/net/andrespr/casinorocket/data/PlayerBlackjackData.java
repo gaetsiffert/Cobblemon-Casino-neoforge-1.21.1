@@ -127,12 +127,11 @@ public class PlayerBlackjackData extends SavedData {
     }
 
     public int getBetIndex(UUID id) {
-        return betIndex.getOrDefault(id, BlackjackRules.DEFAULT_BET_INDEX);
+        return BlackjackRules.clampBetIndex(betIndex.getOrDefault(id, BlackjackRules.DEFAULT_BET_INDEX));
     }
 
     public long getBetAmount(UUID id) {
-        int index = getBetIndex(id);
-        return BlackjackRules.BET_VALUES.get(index);
+        return BlackjackRules.betAmount(getBetIndex(id));
     }
 
     public long getTotalDeposited(UUID id) {
@@ -178,7 +177,7 @@ public class PlayerBlackjackData extends SavedData {
     }
 
     public void setBetIndex(UUID id, int index) {
-        int max = BlackjackRules.BET_VALUES.size() - 1;
+        int max = BlackjackRules.maxBetIndex();
         if (index < 0 || index > max) return;
 
         betIndex.put(id, index);
@@ -226,7 +225,7 @@ public class PlayerBlackjackData extends SavedData {
 
     public void incrementBetIndex(UUID id) {
         int idx = getBetIndex(id);
-        if (idx < BlackjackRules.BET_VALUES.size() - 1) {
+        if (idx < BlackjackRules.maxBetIndex()) {
             betIndex.put(id, idx + 1);
             setDirty();
         }

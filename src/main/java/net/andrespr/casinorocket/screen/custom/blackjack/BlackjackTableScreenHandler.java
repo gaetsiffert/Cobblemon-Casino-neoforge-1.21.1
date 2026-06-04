@@ -19,6 +19,7 @@ public class BlackjackTableScreenHandler extends AbstractContainerMenu implement
     private final String machineKey;
     private final long initialBalance;
     private final int initialBetIndex;
+    private final long[] initialBetValues;
 
     public BlackjackTableScreenHandler(int syncId, Inventory inv, BlackjackTableOpenData data) {
         super(ModMenuTypes.BLACKJACK_TABLE_MENU_TYPE, syncId);
@@ -26,14 +27,16 @@ public class BlackjackTableScreenHandler extends AbstractContainerMenu implement
         this.machineKey = data.machineKey();
         this.initialBalance = data.balance();
         this.initialBetIndex = data.betIndex();
+        this.initialBetValues = data.betValues();
     }
 
-    public BlackjackTableScreenHandler(int syncId, Inventory inv, BlockPos pos, String machineKey, long balance, int betIndex) {
+    public BlackjackTableScreenHandler(int syncId, Inventory inv, BlockPos pos, String machineKey, long balance, int betIndex, long[] betValues) {
         super(ModMenuTypes.BLACKJACK_TABLE_MENU_TYPE, syncId);
         this.pos = pos;
         this.machineKey = machineKey;
         this.initialBalance = balance;
         this.initialBetIndex = betIndex;
+        this.initialBetValues = betValues;
     }
 
     @Override
@@ -73,6 +76,7 @@ public class BlackjackTableScreenHandler extends AbstractContainerMenu implement
     public BlockPos getMachinePos() { return pos; }
     public long getInitialBalance() { return initialBalance; }
     public int getInitialBetIndex() { return initialBetIndex; }
+    public long[] getInitialBetValues() { return initialBetValues; }
 
     @Override
     public String getMachineKey() {

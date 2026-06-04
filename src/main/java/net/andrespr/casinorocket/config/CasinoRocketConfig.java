@@ -6,6 +6,8 @@ import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
 import net.andrespr.casinorocket.config.gachapon.ItemGachaponConfig;
 import net.andrespr.casinorocket.config.gachapon.PlushiesGachaponConfig;
 import net.andrespr.casinorocket.config.gachapon.PokemonGachaponConfig;
+import net.andrespr.casinorocket.config.machines.BlackjackTableConfig;
+import net.andrespr.casinorocket.config.machines.ChipTableConfig;
 import net.andrespr.casinorocket.config.machines.GachaMachinesConfig;
 import net.andrespr.casinorocket.config.machines.SlotMachineConfig;
 
@@ -35,6 +37,14 @@ public class CasinoRocketConfig extends PartitioningSerializer.GlobalData {
     @ConfigEntry.Category("slot_machine")
     @ConfigEntry.Gui.TransitiveObject
     public SlotMachineConfig slotMachine = new SlotMachineConfig();
+
+    @ConfigEntry.Category("blackjack_table")
+    @ConfigEntry.Gui.TransitiveObject
+    public BlackjackTableConfig blackjackTable = new BlackjackTableConfig();
+
+    @ConfigEntry.Category("chip_table")
+    @ConfigEntry.Gui.TransitiveObject
+    public ChipTableConfig chipTable = new ChipTableConfig();
 
 }
 

@@ -57,9 +57,6 @@ public class ModBlocks {
     public static Block HEAVY_DIAMOND_PILLAR;
     public static Block DIAMOND_DOOR;
     public static Block DIAMOND_TRAPDOOR;
-    public static Block CONDENSED_DIAMOND_BLOCK;
-    public static Block CHARGED_DIAMOND_BLOCK;
-    public static Block HYPERCHARGED_DIAMOND_BLOCK;
     public static Block GACHA_MACHINE;
     public static Block POKEMON_GACHA_MACHINE;
     public static Block PLUSHIES_GACHA_MACHINE;
@@ -205,16 +202,6 @@ public class ModBlocks {
 
         registerBlock("diamond_trapdoor", () -> DIAMOND_TRAPDOOR =
                     new TrapDoorBlock(BlockSetType.GOLD, BlockBehaviour.Properties.ofFullCopy(CUT_DIAMOND_BLOCK).noOcclusion()));
-
-        // ECONOMY
-        registerBlock("condensed_diamond_block", () -> CONDENSED_DIAMOND_BLOCK =
-                    new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_BLOCK)));
-
-        registerBlock("charged_diamond_block", () -> CHARGED_DIAMOND_BLOCK =
-                    new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_BLOCK)));
-
-        registerBlock("hypercharged_diamond_block", () -> HYPERCHARGED_DIAMOND_BLOCK =
-                    new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.DIAMOND_BLOCK)));
 
         // ENTITIES
         registerBlock("gacha_machine", () -> GACHA_MACHINE =

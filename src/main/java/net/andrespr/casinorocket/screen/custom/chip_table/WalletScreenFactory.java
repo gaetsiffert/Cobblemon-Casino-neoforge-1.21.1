@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.screen.custom.chip_table;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.andrespr.casinorocket.screen.opening.ChipTableOpenData;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -18,12 +19,12 @@ public class WalletScreenFactory implements MenuProvider, IMenuProviderExtension
 
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory inventory, Player player) {
-        return new ChipTableScreenHandler(syncId, inventory, BlockPos.ZERO);
+        return new ChipTableScreenHandler(syncId, inventory, new ChipTableOpenData(BlockPos.ZERO, true));
     }
 
     @Override
     public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
-        BlockPos.STREAM_CODEC.encode(buffer, BlockPos.ZERO);
+        ChipTableOpenData.CODEC.encode(buffer, new ChipTableOpenData(BlockPos.ZERO, true));
     }
 
 }

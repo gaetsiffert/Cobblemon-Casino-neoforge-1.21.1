@@ -1,7 +1,6 @@
 package net.andrespr.casinorocket.screen.custom.blackjack;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.games.blackjack.BlackjackAction;
 import net.andrespr.casinorocket.games.blackjack.BlackjackPhase;
 import net.andrespr.casinorocket.games.blackjack.BlackjackRules;
@@ -22,6 +21,9 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScreenHandler> {
 
     // --- BUTTONS ---
@@ -35,6 +37,7 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
     // --- STATE (S2C) ---
     private long balance = 0L;
     private int betIndex = 0;
+    private List<Long> betValues = BlackjackRules.FALLBACK_BET_VALUES;
     private long currentBet = 0L;
 
     private BlackjackPhase phase = BlackjackPhase.IDLE;
@@ -58,6 +61,9 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
         super(handler, inventory, title);
         this.imageWidth = 242;
         this.imageHeight = 222;
+        this.balance = handler.getInitialBalance();
+        this.betIndex = handler.getInitialBetIndex();
+        setBetValues(handler.getInitialBetValues());
     }
 
     @Override
@@ -123,6 +129,7 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
         this.balance = p.balance();
         this.betIndex = p.betIndex();
+        setBetValues(p.betValues());
         this.currentBet = p.currentBet();
 
         this.phase = p.phase();
@@ -178,21 +185,9 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
         drawDealerCards(context, x, y, this.dealerCards);
         drawPlayerCards(context, x, y, this.playerCards);
 
-        if (CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive()) {
-            context.blit(ModGuiTextures.COBBLEDOLLARS, x + 132, y + 18, 0, 0, 12, 12, 12,12);
-            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12,12);
-            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12,12);
-        }
-        if (CasinoRocket.CONFIG.generalConfig.isRelicCoinActive()) {
-            context.blit(ModGuiTextures.RELIC_COIN, x + 132, y + 18, 0, 0, 12, 12, 12,12);
-            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12,12);
-            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12,12);
-        }
-        if (CasinoRocket.CONFIG.generalConfig.isDiamondActive()) {
-            context.blit(ModGuiTextures.DIAMOND, x + 132, y + 18, 0, 0, 12, 12, 12, 12);
-            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 104, y + 207, 0, 0, 12, 12, 12, 12);
-            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 219, y + 207, 0, 0, 12, 12, 12, 12);
-        }
+        context.blit(ModGuiTextures.CHIP, x + 132, y + 18, 0, 0, 12, 12, 12, 12);
+        context.blit(ModGuiTextures.CHIP, x + 104, y + 207, 0, 0, 12, 12, 12, 12);
+        context.blit(ModGuiTextures.CHIP, x + 219, y + 207, 0, 0, 12, 12, 12, 12);
     }
 
     @Override
@@ -226,7 +221,7 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
 
     private void drawNumericValues(GuiGraphics ctx) {
 
-        long betAmount = BlackjackRules.BET_VALUES.get(betIndex);
+        long betAmount = betAmount();
 
         // Bet Amount
         drawRightAlignedTextInBox(ctx, TextUtils.formatCompact(betAmount), 101, 20, 128, 27, resolveInsufficientBalance(balance, betIndex));
@@ -404,7 +399,7 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
     }
 
     private void updateBetIndexButtons() {
-        int max = BlackjackRules.BET_VALUES.size() - 1;
+        int max = maxBetIndex();
 
         subtractButton.active = betIndex > 0 && phase == BlackjackPhase.IDLE;
         plusButton.active = betIndex < max && phase == BlackjackPhase.IDLE;
@@ -454,9 +449,30 @@ public class BlackjackTableScreen extends CasinoMachineScreen<BlackjackTableScre
     }
 
     private int resolveInsufficientBalance(long balance, int betIndex) {
-        long betAmount = BlackjackRules.BET_VALUES.get(betIndex);
+        long betAmount = betAmount();
         boolean insufficientBalance = betAmount > balance;
         return insufficientBalance ? 0xFF5555 : 0x00FF00;
+    }
+
+    private void setBetValues(long[] values) {
+        List<Long> cleaned = new ArrayList<>();
+        if (values != null) {
+            for (long value : values) {
+                if (value > 0 && !cleaned.contains(value)) cleaned.add(value);
+            }
+        }
+
+        if (cleaned.isEmpty()) cleaned = BlackjackRules.FALLBACK_BET_VALUES;
+        this.betValues = List.copyOf(cleaned);
+        this.betIndex = Math.max(0, Math.min(this.betIndex, maxBetIndex()));
+    }
+
+    private long betAmount() {
+        return betValues.get(Math.max(0, Math.min(betIndex, maxBetIndex())));
+    }
+
+    private int maxBetIndex() {
+        return Math.max(0, betValues.size() - 1);
     }
 
     private void showResultText(long bet, long payout) {

@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import java.util.Arrays;
 
-public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reelSize, int[] reel1, int[] reel2, int[] reel3,
+public record SlotConfigSyncS2CPayload(boolean debug, int reelSize, int[] reel1, int[] reel2, int[] reel3,
                                        int[] betValues, int mode1, int mode2, int mode3, long hash) implements CustomPacketPayload {
 
     public static final ResourceLocation ID_RAW = ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "slot_cfg_sync");
@@ -19,7 +19,6 @@ public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reel
 
     private static void write(SlotConfigSyncS2CPayload p, RegistryFriendlyByteBuf buf) {
         buf.writeBoolean(p.debug());
-        buf.writeBoolean(p.useMoney());
         buf.writeInt(p.reelSize());
 
         writeIntArray(buf, p.reel1());
@@ -37,7 +36,6 @@ public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reel
 
     private static SlotConfigSyncS2CPayload read(RegistryFriendlyByteBuf buf) {
         boolean debug = buf.readBoolean();
-        boolean useMoney = buf.readBoolean();
         int reelSize = buf.readInt();
 
         int[] r1 = readIntArray(buf);
@@ -52,7 +50,7 @@ public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reel
 
         long hash = buf.readLong();
 
-        return new SlotConfigSyncS2CPayload(debug, useMoney, reelSize, r1, r2, r3, betValues, mode1, mode2, mode3, hash);
+        return new SlotConfigSyncS2CPayload(debug, reelSize, r1, r2, r3, betValues, mode1, mode2, mode3, hash);
     }
 
     private static void writeIntArray(RegistryFriendlyByteBuf buf, int[] arr) {
@@ -73,14 +71,13 @@ public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reel
     // ===== Helpers to build from server state =====
     public static SlotConfigSyncS2CPayload fromServer() {
         var cfg = CasinoRocket.CONFIG.slotMachine;
-        boolean useMoney = CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive();
 
         SlotSymbol[][] strips = net.andrespr.casinorocket.games.slot.SlotReels.STRIPS;
         int[] r1 = toOrdinalArray(strips[0]);
         int[] r2 = toOrdinalArray(strips[1]);
         int[] r3 = toOrdinalArray(strips[2]);
 
-        int[] bets = (useMoney ? cfg.bet_amounts_in_money : cfg.bet_amounts_in_items)
+        int[] bets = cfg.bet_amounts
                 .stream().mapToInt(Integer::intValue).toArray();
 
         long hash = Arrays.hashCode(r1) * 31L * 31L + Arrays.hashCode(r2) * 31L + Arrays.hashCode(r3);
@@ -93,7 +90,6 @@ public record SlotConfigSyncS2CPayload(boolean debug, boolean useMoney, int reel
 
         return new SlotConfigSyncS2CPayload(
                 cfg.debug,
-                useMoney,
                 cfg.reels.reelSize,
                 r1, r2, r3, bets,
                 cfg.bet_multipliers.mode1,

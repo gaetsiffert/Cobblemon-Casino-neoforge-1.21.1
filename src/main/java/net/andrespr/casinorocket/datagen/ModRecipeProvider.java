@@ -29,18 +29,8 @@ public class ModRecipeProvider extends RecipeProvider {
         // ECONOMY
         offerReversibleCompactingRecipesBetter(recipeExporter, RecipeCategory.MISC, ModItems.DIAMOND_NUGGET, RecipeCategory.MISC, Items.DIAMOND);
 
-        offer2x2Recipe(recipeExporter, RecipeCategory.MISC, ModItems.CHARGED_DIAMOND, Items.DIAMOND, 1);
-        offer2x2Recipe(recipeExporter, RecipeCategory.MISC, ModItems.HYPERCHARGED_DIAMOND, ModItems.CHARGED_DIAMOND, 1);
-
         offer2x2Recipe(recipeExporter, RecipeCategory.MISC, ModItems.HANDFUL_OF_RELIC_COINS, CobblemonItems.RELIC_COIN, 1);
         offer2x2Recipe(recipeExporter, RecipeCategory.MISC, ModItems.STACK_OF_RELIC_COINS, ModItems.HANDFUL_OF_RELIC_COINS, 1);
-
-        offerReversibleCompactingRecipesBetter(recipeExporter, RecipeCategory.MISC, Items.DIAMOND_BLOCK, RecipeCategory.MISC, ModBlocks.CONDENSED_DIAMOND_BLOCK);
-        offerReversibleCompactingRecipesBetter(recipeExporter, RecipeCategory.MISC, ModItems.CHARGED_DIAMOND, RecipeCategory.MISC, ModBlocks.CHARGED_DIAMOND_BLOCK);
-        offerReversibleCompactingRecipesBetter(recipeExporter, RecipeCategory.MISC, ModItems.HYPERCHARGED_DIAMOND, RecipeCategory.MISC, ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
-
-        offerDeconstruct(recipeExporter, RecipeCategory.MISC, Items.DIAMOND, ModItems.CHARGED_DIAMOND, 4);
-        offerDeconstruct(recipeExporter, RecipeCategory.MISC, ModItems.CHARGED_DIAMOND, ModItems.HYPERCHARGED_DIAMOND, 4);
 
         offerDeconstruct(recipeExporter, RecipeCategory.MISC, CobblemonItems.RELIC_COIN, ModItems.HANDFUL_OF_RELIC_COINS, 4);
         offerDeconstruct(recipeExporter, RecipeCategory.MISC, ModItems.HANDFUL_OF_RELIC_COINS, ModItems.STACK_OF_RELIC_COINS, 4);

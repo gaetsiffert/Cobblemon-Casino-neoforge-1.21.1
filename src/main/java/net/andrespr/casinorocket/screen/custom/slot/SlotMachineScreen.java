@@ -1,7 +1,6 @@
 package net.andrespr.casinorocket.screen.custom.slot;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.games.slot.SlotLineResult;
 import net.andrespr.casinorocket.games.slot.SlotMachineConstants;
 import net.andrespr.casinorocket.games.slot.SlotReels;
@@ -382,21 +381,9 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
             clefairy.render(context, x + 191, y + 131);
         }
 
-        if (CasinoRocket.CONFIG.generalConfig.isCobbledollarsActive()) {
-            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 151, y + 34, 0, 0, 12, 12, 12,12);
-            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 69, y + 184, 0, 0, 12, 12, 12,12);
-            context.blit(ModGuiTextures.COBBLEDOLLARS_GREEN, x + 193, y + 184, 0, 0, 12, 12, 12,12);
-        }
-        if (CasinoRocket.CONFIG.generalConfig.isRelicCoinActive()) {
-            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 151, y + 34, 0, 0, 12, 12, 12,12);
-            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 69, y + 184, 0, 0, 12, 12, 12,12);
-            context.blit(ModGuiTextures.RELIC_COIN_GREEN, x + 193, y + 184, 0, 0, 12, 12, 12,12);
-        }
-        if (CasinoRocket.CONFIG.generalConfig.isDiamondActive()) {
-            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 151, y + 34, 0, 0, 12, 12, 12, 12);
-            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 69, y + 184, 0, 0, 12, 12, 12, 12);
-            context.blit(ModGuiTextures.DIAMOND_GREEN, x + 193, y + 184, 0, 0, 12, 12, 12, 12);
-        }
+        context.blit(ModGuiTextures.CHIP, x + 151, y + 34, 0, 0, 12, 12, 12, 12);
+        context.blit(ModGuiTextures.CHIP, x + 69, y + 184, 0, 0, 12, 12, 12, 12);
+        context.blit(ModGuiTextures.CHIP, x + 193, y + 184, 0, 0, 12, 12, 12, 12);
     }
 
     @Override

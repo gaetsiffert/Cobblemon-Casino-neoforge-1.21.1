@@ -16,12 +16,8 @@ public class SlotMachineConfig implements ConfigData {
 
     public boolean debug = false;
 
-    public List<Integer> bet_amounts_in_money = new ArrayList<>(List.of(
-            10, 25, 50, 100, 250, 500, 1_000, 5_000, 10_000, 25_000, 50_000, 100_000, 250_000, 500_000, 1_000_000, 5_000_000
-    ));
-
-    public List<Integer> bet_amounts_in_items = new ArrayList<>(List.of(
-            1, 2, 4, 8, 12, 16, 32, 48, 64, 96, 128, 192, 256
+    public List<Integer> bet_amounts = new ArrayList<>(List.of(
+            1, 5, 10, 50, 100, 500, 1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000
     ));
 
     @CollapsibleObject
@@ -95,12 +91,8 @@ public class SlotMachineConfig implements ConfigData {
     }
 
     // ===== HELPERS =====
-    public int defaultBetBaseMoney() {
-        return bet_amounts_in_money.isEmpty() ? 10 : bet_amounts_in_money.getFirst();
-    }
-
-    public int defaultBetBaseItems() {
-        return bet_amounts_in_items.isEmpty() ? 1 : bet_amounts_in_items.getFirst();
+    public int defaultBetBase() {
+        return bet_amounts.isEmpty() ? 1 : bet_amounts.getFirst();
     }
 
     public int getBetMultiplierForMode(int mode) {
@@ -113,11 +105,9 @@ public class SlotMachineConfig implements ConfigData {
 
     @Override
     public void validatePostLoad() {
-        if (bet_amounts_in_money == null) bet_amounts_in_money = new ArrayList<>();
-        if (bet_amounts_in_items == null) bet_amounts_in_items = new ArrayList<>();
+        if (bet_amounts == null) bet_amounts = new ArrayList<>();
 
-        validateList(bet_amounts_in_money, 10);
-        validateList(bet_amounts_in_items, 1);
+        validateList(bet_amounts, 1);
 
         if (bet_multipliers == null) bet_multipliers = new BetMultipliers(1, 3, 5);
         bet_multipliers.mode1 = Math.max(1, bet_multipliers.mode1);

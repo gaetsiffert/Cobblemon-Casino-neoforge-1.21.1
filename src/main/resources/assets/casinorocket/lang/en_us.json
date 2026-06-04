@@ -50,10 +50,6 @@
   "item.casinorocket.wallet": "Wallet",
 
   "item.casinorocket.diamond_nugget": "Diamond Nugget",
-  "item.casinorocket.charged_diamond": "Charged Diamond",
-  "tooltip.casinorocket.charged_diamond": "Craft this with §64 Diamonds§r!",
-  "item.casinorocket.hypercharged_diamond": "HyperCharged Diamond",
-  "tooltip.casinorocket.hypercharged_diamond": "Craft this with §64 Charged Diamonds§r!",
   "item.casinorocket.handful_of_relic_coins": "Handful of Relic Coins",
   "tooltip.casinorocket.handful_of_relic_coins": "Craft this with §64 Relic Coins§r!",
   "item.casinorocket.stack_of_relic_coins": "Stack of Relic Coins",
@@ -92,9 +88,6 @@
   "block.casinorocket.heavy_diamond_pillar": "Heavy Diamond Pillar",
   "block.casinorocket.diamond_door": "Diamond Door",
   "block.casinorocket.diamond_trapdoor": "Diamond Trapdoor",
-  "block.casinorocket.condensed_diamond_block": "Condensed Diamond Block",
-  "block.casinorocket.charged_diamond_block": "Charged Diamond Block",
-  "block.casinorocket.hypercharged_diamond_block": "Hypercharged Diamond Block",
 
   "block.casinorocket.pokemon_gacha_machine": "Pokemon Gacha Machine",
   "block.casinorocket.gacha_machine": "Item Gacha Machine",
@@ -107,8 +100,7 @@
   "itemgroup.casinorocket.casino_rocket_items": "Casino Rocket",
   "itemgroup.casinorocket.casino_rocket_blocks": "Casino Rocket Blocks",
 
-  "tooltip.casinorocket.chip_money": "§9Value:§r §6$%s§r",
-  "tooltip.casinorocket.chip_item": "§9Value:§r §6%s %s§r",
+  "tooltip.casinorocket.chip_value": "§9Value:§r §6%s chips§r",
   "tooltip.casinorocket.pokemon_pin": "Get this §especial pokémon§r!",
   "tooltip.casinorocket.wallet": "Press >§eRight Click§r< to open!",
 
@@ -140,6 +132,13 @@
   "message.casinorocket.money_deposited": "You deposited $%s into your wallet!",
   "message.casinorocket.machine_unbreakable": "This machine is protected. Only creative players or admins can break it.",
   "message.casinorocket.item_gachapon_received": "You have obtained %sx %s!",
+  "message.casinorocket.chip_table_no_input": "Put items in the input slots first.",
+  "message.casinorocket.chip_table_invalid_input": "This table only accepts chips and relic coins.",
+  "message.casinorocket.chip_table_unrepresentable_value": "This value cannot be converted without loss with the current config.",
+  "message.casinorocket.chip_table_output_not_empty": "Empty the output slots before converting again.",
+  "message.casinorocket.chip_table_output_full": "The output would not fit in the table.",
+  "message.casinorocket.chip_table_mode_disabled": "This conversion mode is disabled.",
+  "message.casinorocket.chip_table_conversion_done": "Conversion complete.",
 
   "message.casinorocket.gacha_machines_coin_inserted": "§7Coin inserted... please wait!",
   "message.casinorocket.gacha_machines_occupied": "§cYou have to wait a bit before using this machine again!",
@@ -191,6 +190,7 @@
   "button.casinorocket.double_down": "Double down",
   "button.casinorocket.finish": "Finish game",
   "button.casinorocket.double_or_nothing": "Double or nothing",
+  "button.casinorocket.convert": "Convert",
 
   "gui.casinorocket.slot_machine": "Slot Machine",
   "gui.casinorocket.slot_machine.settings_bet_amount": "Bet per spin:",
@@ -211,6 +211,8 @@
   "gui.casinorocket.blackjack.draw": "Draw",
   "gui.casinorocket.blackjack.esc": "§cYou must finish the current game before closing the GUI!",
   "gui.casinorocket.chip_table": "Chip Table",
+  "gui.casinorocket.chip_table.mode.currency_to_chips": "To Chips",
+  "gui.casinorocket.chip_table.mode.chips_to_relic_coins": "To Relic",
   "gui.casinorocket.wallet": "Wallet",
 
   "entity.minecraft.villager.casino_worker": "Casino Worker"

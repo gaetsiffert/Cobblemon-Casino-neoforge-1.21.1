@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.block.entity.custom;
 
 import net.andrespr.casinorocket.block.entity.ModBlockEntities;
+import net.andrespr.casinorocket.screen.opening.ChipTableOpenData;
 import net.andrespr.casinorocket.screen.custom.chip_table.ChipTableScreenHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -27,12 +28,12 @@ public class ChipTableEntity extends BlockEntity implements MenuProvider, IMenuP
 
     @Override
     public @Nullable AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
-        return new ChipTableScreenHandler(syncId, playerInventory, this.worldPosition);
+        return new ChipTableScreenHandler(syncId, playerInventory, new ChipTableOpenData(this.worldPosition, false));
     }
 
     @Override
     public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
-        BlockPos.STREAM_CODEC.encode(buffer, this.worldPosition);
+        ChipTableOpenData.CODEC.encode(buffer, new ChipTableOpenData(this.worldPosition, false));
     }
 
 }

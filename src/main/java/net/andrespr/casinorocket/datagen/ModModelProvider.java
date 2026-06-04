@@ -43,10 +43,6 @@ public class ModModelProvider extends BlockStateProvider {
         door(ModBlocks.DIAMOND_DOOR);
         trapdoor(ModBlocks.DIAMOND_TRAPDOOR);
 
-        cube(ModBlocks.CONDENSED_DIAMOND_BLOCK);
-        cube(ModBlocks.CHARGED_DIAMOND_BLOCK);
-        cube(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
-
         flatItems(ModItems.ALL_CHIP_ITEMS.toArray(Item[]::new));
 
         flatItems(
@@ -86,8 +82,6 @@ public class ModModelProvider extends BlockStateProvider {
                 ModItems.EMERALD_GC_MUSIC_DISC,
                 ModItems.PLATINUM_GC_MUSIC_DISC,
                 ModItems.DIAMOND_NUGGET,
-                ModItems.CHARGED_DIAMOND,
-                ModItems.HYPERCHARGED_DIAMOND,
                 ModItems.HANDFUL_OF_RELIC_COINS,
                 ModItems.STACK_OF_RELIC_COINS
         );

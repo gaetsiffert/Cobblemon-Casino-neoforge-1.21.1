@@ -9,14 +9,13 @@ import java.util.Locale;
 @Config(name = "general_config")
 public class GeneralConfig implements ConfigData {
 
-    public String economy_type = "relic_coins";
+    @CollapsibleObject
+    public ChipValues money_chip_values = new ChipValues(1, 5, 10, 50, 100, 500, 1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000);
 
     @CollapsibleObject
-    public ChipPrices chip_prices_in_money = new ChipPrices(1, 5, 10, 50, 100, 500, 1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000);
-    @CollapsibleObject
-    public ChipPrices chip_prices_in_items = new ChipPrices(1, 5, 10, 50, 100, 500, 1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000);
+    public ChipValues relic_coin_chip_values = new ChipValues(1, 1, 1, 1, 1, 1, 1, 5, 10, 50, 100, 500, 1_000);
 
-    public static class ChipPrices implements ConfigData {
+    public static class ChipValues implements ConfigData {
 
         public long red_chip;
         public long blue_chip;
@@ -32,8 +31,8 @@ public class GeneralConfig implements ConfigData {
         public long white_chip;
         public long rainbow_chip;
 
-        public ChipPrices() {}
-        public ChipPrices(long redChip, long blueChip, long yellowChip, long purpleChip, long copperChip,
+        public ChipValues() {}
+        public ChipValues(long redChip, long blueChip, long yellowChip, long purpleChip, long copperChip,
                           long ironChip, long emeraldChip, long goldChip, long diamondChip, long netheriteChip,
                           long blackChip, long whiteChip, long rainbowChip) {
             this.red_chip = redChip;
@@ -55,64 +54,41 @@ public class GeneralConfig implements ConfigData {
 
     public boolean enableMachinesCrafting = true;
     public boolean makeMachinesUnbreakable = false;
-    public boolean enableDirectBets = true;
-    public boolean enableDirectPayout = true;
 
     // ===== HELPERS =====
 
-    public long getChipPriceInMoney(String chipId) {
-        chipId = chipId.toLowerCase(Locale.ROOT);
-        return switch (chipId) {
-            case "red_chip" -> chip_prices_in_money.red_chip;
-            case "blue_chip" -> chip_prices_in_money.blue_chip;
-            case "yellow_chip" -> chip_prices_in_money.yellow_chip;
-            case "purple_chip" -> chip_prices_in_money.purple_chip;
-            case "copper_chip" -> chip_prices_in_money.copper_chip;
-            case "iron_chip" -> chip_prices_in_money.iron_chip;
-            case "emerald_chip" -> chip_prices_in_money.emerald_chip;
-            case "gold_chip" -> chip_prices_in_money.gold_chip;
-            case "diamond_chip" -> chip_prices_in_money.diamond_chip;
-            case "netherite_chip" -> chip_prices_in_money.netherite_chip;
-            case "black_chip" -> chip_prices_in_money.black_chip;
-            case "white_chip" -> chip_prices_in_money.white_chip;
-            case "rainbow_chip" -> chip_prices_in_money.rainbow_chip;
-            default -> 100;
-        };
+    public long getChipValue(String chipId) {
+        return getMoneyChipValue(chipId);
     }
 
-    public long getChipPriceInItems(String chipId) {
+    public long getMoneyChipValue(String chipId) {
+        return getValue(money_chip_values, chipId);
+    }
+
+    public long getRelicCoinChipValue(String chipId) {
+        return getValue(relic_coin_chip_values, chipId);
+    }
+
+    private long getValue(ChipValues values, String chipId) {
+        if (values == null) return 1;
+
         chipId = chipId.toLowerCase(Locale.ROOT);
         return switch (chipId) {
-            case "red_chip" -> chip_prices_in_items.red_chip;
-            case "blue_chip" -> chip_prices_in_items.blue_chip;
-            case "yellow_chip" -> chip_prices_in_items.yellow_chip;
-            case "purple_chip" -> chip_prices_in_items.purple_chip;
-            case "copper_chip" -> chip_prices_in_items.copper_chip;
-            case "iron_chip" -> chip_prices_in_items.iron_chip;
-            case "emerald_chip" -> chip_prices_in_items.emerald_chip;
-            case "gold_chip" -> chip_prices_in_items.gold_chip;
-            case "diamond_chip" -> chip_prices_in_items.diamond_chip;
-            case "netherite_chip" -> chip_prices_in_items.netherite_chip;
-            case "black_chip" -> chip_prices_in_items.black_chip;
-            case "white_chip" -> chip_prices_in_items.white_chip;
-            case "rainbow_chip" -> chip_prices_in_items.rainbow_chip;
+            case "red_chip" -> values.red_chip;
+            case "blue_chip" -> values.blue_chip;
+            case "yellow_chip" -> values.yellow_chip;
+            case "purple_chip" -> values.purple_chip;
+            case "copper_chip" -> values.copper_chip;
+            case "iron_chip" -> values.iron_chip;
+            case "emerald_chip" -> values.emerald_chip;
+            case "gold_chip" -> values.gold_chip;
+            case "diamond_chip" -> values.diamond_chip;
+            case "netherite_chip" -> values.netherite_chip;
+            case "black_chip" -> values.black_chip;
+            case "white_chip" -> values.white_chip;
+            case "rainbow_chip" -> values.rainbow_chip;
             default -> 1;
         };
-    }
-
-    public boolean isCobbledollarsActive() {
-        return economy_type.equalsIgnoreCase("cobbledollars")
-                || economy_type.equalsIgnoreCase("cobbledollar");
-    }
-
-    public boolean isRelicCoinActive() {
-        return economy_type.equalsIgnoreCase("relic_coins")
-                || economy_type.equalsIgnoreCase("relic_coin");
-    }
-
-    public boolean isDiamondActive() {
-        return economy_type.equalsIgnoreCase("diamonds")
-                || economy_type.equalsIgnoreCase("diamond");
     }
 
 }

@@ -50,9 +50,6 @@ public class ModLootTableProvider extends BlockLootSubProvider {
             ModBlocks.HEAVY_DIAMOND_PILLAR,
             ModBlocks.DIAMOND_DOOR,
             ModBlocks.DIAMOND_TRAPDOOR,
-            ModBlocks.CONDENSED_DIAMOND_BLOCK,
-            ModBlocks.CHARGED_DIAMOND_BLOCK,
-            ModBlocks.HYPERCHARGED_DIAMOND_BLOCK,
             ModBlocks.GACHA_MACHINE,
             ModBlocks.POKEMON_GACHA_MACHINE,
             ModBlocks.PLUSHIES_GACHA_MACHINE,
@@ -102,9 +99,6 @@ public class ModLootTableProvider extends BlockLootSubProvider {
         dropSelf(ModBlocks.HEAVY_DIAMOND_PILLAR);
         add(ModBlocks.DIAMOND_DOOR, createDoorTable(ModBlocks.DIAMOND_DOOR));
         dropSelf(ModBlocks.DIAMOND_TRAPDOOR);
-        dropSelf(ModBlocks.CONDENSED_DIAMOND_BLOCK);
-        dropSelf(ModBlocks.CHARGED_DIAMOND_BLOCK);
-        dropSelf(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
 
         // ADDING DROPS FOR CASINO MACHINES
         add(ModBlocks.GACHA_MACHINE, createSinglePropConditionTable(ModBlocks.GACHA_MACHINE, GachaMachineBlock.HALF, DoubleBlockHalf.LOWER));

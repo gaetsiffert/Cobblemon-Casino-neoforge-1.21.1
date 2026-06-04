@@ -1,19 +1,14 @@
 package net.andrespr.casinorocket.item;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.andrespr.casinorocket.block.ModBlocks;
 import net.andrespr.casinorocket.item.custom.*;
 import net.andrespr.casinorocket.sound.ModSounds;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -72,9 +67,6 @@ public class ModItems {
     public static WalletItem WALLET;
 
     public static Item DIAMOND_NUGGET;
-    public static TooltipItem CHARGED_DIAMOND;
-    public static TooltipItem HYPERCHARGED_DIAMOND;
-    public static final Map<Item, Long> DIAMOND_VALUES = new LinkedHashMap<>();
 
     public static TooltipItem HANDFUL_OF_RELIC_COINS;
     public static TooltipItem STACK_OF_RELIC_COINS;
@@ -135,8 +127,6 @@ public class ModItems {
         registerCustomItem("wallet", () -> WALLET = new WalletItem(new Item.Properties()));
 
         registerItem("diamond_nugget", () -> DIAMOND_NUGGET = new Item(new Item.Properties()));
-        registerItemWithTooltip("charged_diamond", () -> CHARGED_DIAMOND = new TooltipItem(new Item.Properties()));
-        registerItemWithTooltip("hypercharged_diamond", () -> HYPERCHARGED_DIAMOND = new TooltipItem(new Item.Properties()));
         registerItemWithTooltip("handful_of_relic_coins", () -> HANDFUL_OF_RELIC_COINS = new TooltipItem(new Item.Properties()));
         registerItemWithTooltip("stack_of_relic_coins", () -> STACK_OF_RELIC_COINS = new TooltipItem(new Item.Properties()));
 
@@ -147,11 +137,7 @@ public class ModItems {
     }
 
     private static <T extends Item> void registerItem(String name, Supplier<T> supplier) {
-        ITEMS.register(name, () -> {
-            T item = supplier.get();
-            updateDiamondValuesIfReady();
-            return item;
-        });
+        ITEMS.register(name, supplier);
     }
 
     private static void registerItemWithTooltip(String name, Supplier<TooltipItem> supplier) {
@@ -171,45 +157,12 @@ public class ModItems {
     }
 
     private static ChipItem createChipItem(String name) {
-        String typeRaw = CasinoRocket.CONFIG.generalConfig.economy_type;
-        String type = (typeRaw == null ? "" : typeRaw.trim().toLowerCase());
-        long value;
-        switch (type) {
-            case "cobbledollars", "cobbledollar"
-                    -> value = CasinoRocket.CONFIG.generalConfig.getChipPriceInMoney(name);
-            case "diamonds", "diamond", "relic_coins", "relic_coin"
-                    -> value = CasinoRocket.CONFIG.generalConfig.getChipPriceInItems(name);
-            default -> {
-                CasinoRocket.LOGGER.warn("Unknown economy_type='{}'. Only admits 'relic_coins', 'diamonds' or 'cobbledollars'. Falling back to 'relic_coins'.", typeRaw);
-                value = CasinoRocket.CONFIG.generalConfig.getChipPriceInItems(name);
-                type = "relic_coins";
-            }
-        }
-        return new ChipItem(new Item.Properties(), value, type);
+        long value = CasinoRocket.CONFIG.generalConfig.getChipValue(name);
+        return new ChipItem(new Item.Properties(), value);
     }
 
     public static void registerModItems(IEventBus eventBus) {
         ITEMS.register(eventBus);
         CasinoRocket.LOGGER.info("Registering Mod Items for " + CasinoRocket.MOD_ID);
-    }
-
-    private static void updateDiamondValuesIfReady() {
-        if (CHARGED_DIAMOND == null || HYPERCHARGED_DIAMOND == null || ModBlocks.CONDENSED_DIAMOND_BLOCK == null) {
-            return;
-        }
-
-        DIAMOND_VALUES.clear();
-        DIAMOND_VALUES.put(Items.DIAMOND, 1L);
-        DIAMOND_VALUES.put(CHARGED_DIAMOND, 4L);
-        DIAMOND_VALUES.put(Items.DIAMOND_BLOCK, 9L);
-        DIAMOND_VALUES.put(HYPERCHARGED_DIAMOND, 16L);
-        DIAMOND_VALUES.put(ModBlocks.CONDENSED_DIAMOND_BLOCK.asItem(), 81L);
-    }
-
-    public static long getDiamondValue(ItemStack stack) {
-        updateDiamondValuesIfReady();
-        Long value = DIAMOND_VALUES.get(stack.getItem());
-        if (value == null) return 0L;
-        return value * stack.getCount();
     }
 }

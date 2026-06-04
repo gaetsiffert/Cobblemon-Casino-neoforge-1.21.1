@@ -26,6 +26,8 @@ public final class ModGuiTextures {
             id("textures/gui/blackjack_table/blackjack_table_gui.png");     // 242x222
     public static final ResourceLocation CHIP_TABLE_GUI =
             id("textures/gui/chip_table/chip_table_gui.png");     // 174x171
+    public static final ResourceLocation CHIP_TABLE_EXCHANGE_GUI =
+            id("textures/gui/chip_table/chip_table_exchange_gui.png");     // 174x199
 
     // === BUTTONS ===
     // COMMON
@@ -107,18 +109,8 @@ public final class ModGuiTextures {
             id("textures/gui/common/cards/card_bottom.png"); // 24x32
 
     // === ECONOMY ===
-    public static final ResourceLocation COBBLEDOLLARS =
-            id("textures/gui/common/economy/cobbledollars.png");
-    public static final ResourceLocation COBBLEDOLLARS_GREEN =
-            id("textures/gui/common/economy/cobbledollars_green.png");
-    public static final ResourceLocation DIAMOND =
-            id("textures/gui/common/economy/diamond.png");
-    public static final ResourceLocation DIAMOND_GREEN =
-            id("textures/gui/common/economy/diamond_green.png");
-    public static final ResourceLocation RELIC_COIN =
-            id("textures/gui/common/economy/relic_coin.png");
-    public static final ResourceLocation RELIC_COIN_GREEN =
-            id("textures/gui/common/economy/relic_coin_green.png");
+    public static final ResourceLocation CHIP =
+            id("textures/gui/common/economy/chip.png");
 
     // === MISC ===
     public static final ResourceLocation LINES_LAYOUT =

@@ -1,0 +1,21 @@
+package net.andrespr.casinorocket.network.c2s_handlers.chip_table;
+
+import net.andrespr.casinorocket.network.c2s.chip_table.ChipTableConvertC2SPayload;
+import net.andrespr.casinorocket.screen.custom.chip_table.ChipTableScreenHandler;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+public final class ChipTableConvertReceiver {
+
+    private ChipTableConvertReceiver() {}
+
+    public static void handle(ChipTableConvertC2SPayload payload, IPayloadContext context) {
+        ServerPlayer player = (ServerPlayer) context.player();
+        if (!(player.containerMenu instanceof ChipTableScreenHandler handler)) return;
+        if (handler.isWalletMode()) return;
+        if (!payload.pos().equals(handler.getTablePos())) return;
+
+        handler.convert(player, payload.mode());
+    }
+
+}

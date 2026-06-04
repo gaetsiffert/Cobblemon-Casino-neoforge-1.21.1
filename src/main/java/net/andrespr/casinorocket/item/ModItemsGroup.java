@@ -27,8 +27,6 @@ public class ModItemsGroup {
                             ModItems.ALL_CHIP_ITEMS.forEach(entries::accept);
                             // ECONOMY
                             entries.accept(ModItems.DIAMOND_NUGGET);
-                            entries.accept(ModItems.CHARGED_DIAMOND);
-                            entries.accept(ModItems.HYPERCHARGED_DIAMOND);
                             entries.accept(ModItems.HANDFUL_OF_RELIC_COINS);
                             entries.accept(ModItems.STACK_OF_RELIC_COINS);
                             // COINS
@@ -99,9 +97,6 @@ public class ModItemsGroup {
                             entries.accept(ModBlocks.HEAVY_DIAMOND_PILLAR);
                             entries.accept(ModBlocks.DIAMOND_DOOR);
                             entries.accept(ModBlocks.DIAMOND_TRAPDOOR);
-                            entries.accept(ModBlocks.CONDENSED_DIAMOND_BLOCK);
-                            entries.accept(ModBlocks.CHARGED_DIAMOND_BLOCK);
-                            entries.accept(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
                             // GACHA MACHINES
                             entries.accept(ModBlocks.POKEMON_GACHA_MACHINE);
                             entries.accept(ModBlocks.GACHA_MACHINE);

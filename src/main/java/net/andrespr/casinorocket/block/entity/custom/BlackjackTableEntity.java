@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.block.entity.custom;
 import net.andrespr.casinorocket.block.entity.ModBlockEntities;
 import net.andrespr.casinorocket.data.PlayerBlackjackData;
 import net.andrespr.casinorocket.games.blackjack.BlackjackGameController;
+import net.andrespr.casinorocket.games.blackjack.BlackjackRules;
 import net.andrespr.casinorocket.network.s2c.sender.BlackjackStateSender;
 import net.andrespr.casinorocket.screen.custom.blackjack.BlackjackTableScreenHandler;
 import net.andrespr.casinorocket.screen.opening.BlackjackTableOpenData;
@@ -81,16 +82,16 @@ public class BlackjackTableEntity extends BlockEntity implements MenuProvider, I
         long balance = storage.getBalance(uuid);
         int index = storage.getBetIndex(uuid);
 
-        return new BlackjackTableOpenData(this.worldPosition, "blackjack", balance, index);
+        return new BlackjackTableOpenData(this.worldPosition, "blackjack", balance, index, BlackjackRules.betValuesArray());
     }
 
     @Override
     public void writeClientSideData(AbstractContainerMenu menu, RegistryFriendlyByteBuf buffer) {
         BlackjackTableOpenData data;
         if (menu instanceof BlackjackTableScreenHandler handler) {
-            data = new BlackjackTableOpenData(this.worldPosition, handler.getMachineKey(), handler.getInitialBalance(), handler.getInitialBetIndex());
+            data = new BlackjackTableOpenData(this.worldPosition, handler.getMachineKey(), handler.getInitialBalance(), handler.getInitialBetIndex(), handler.getInitialBetValues());
         } else {
-            data = new BlackjackTableOpenData(this.worldPosition, "blackjack", 0L, 0);
+            data = new BlackjackTableOpenData(this.worldPosition, "blackjack", 0L, 0, BlackjackRules.betValuesArray());
         }
         BlackjackTableOpenData.CODEC.encode(buffer, data);
     }
@@ -111,7 +112,7 @@ public class BlackjackTableEntity extends BlockEntity implements MenuProvider, I
             sendState(sp);
         }
 
-        return new BlackjackTableScreenHandler(syncId, inv, this.getBlockPos(), "blackjack", balance, index);
+        return new BlackjackTableScreenHandler(syncId, inv, this.getBlockPos(), "blackjack", balance, index, BlackjackRules.betValuesArray());
     }
 
     // === CONTROLLER ===

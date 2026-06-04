@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.util;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.item.custom.ChipItem;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
@@ -44,7 +45,8 @@ public final class CobbledollarsBankIntegration {
                     continue;
                 }
 
-                offers.add(offerConstructor.newInstance(stack, BigInteger.valueOf(chip.getValue()), -1));
+                long chipValue = CasinoRocket.CONFIG.generalConfig.getMoneyChipValue(BuiltInRegistries.ITEM.getKey(chip).getPath());
+                offers.add(offerConstructor.newInstance(stack, BigInteger.valueOf(chipValue), -1));
             }
         } catch (ReflectiveOperationException | RuntimeException exception) {
             CasinoRocket.LOGGER.warn("Could not register Casino Rocket chips in CobbleDollars bank buyback.", exception);

@@ -15,6 +15,7 @@ public record SendBlackjackStateS2CPayload(
 
         long balance,
         int betIndex,
+        long[] betValues,
         long currentBet,
 
         BlackjackPhase phase,
@@ -53,6 +54,7 @@ public record SendBlackjackStateS2CPayload(
 
         buf.writeLong(p.balance());
         buf.writeInt(p.betIndex());
+        writeLongArray(buf, p.betValues());
         buf.writeLong(p.currentBet());
 
         buf.writeEnum(p.phase());
@@ -84,6 +86,7 @@ public record SendBlackjackStateS2CPayload(
 
         long balance = buf.readLong();
         int betIndex = buf.readInt();
+        long[] betValues = readLongArray(buf);
         long currentBet = buf.readLong();
 
         BlackjackPhase phase = buf.readEnum(BlackjackPhase.class);
@@ -110,7 +113,7 @@ public record SendBlackjackStateS2CPayload(
 
         return new SendBlackjackStateS2CPayload(
                 pos, key,
-                balance, betIndex, currentBet,
+                balance, betIndex, betValues, currentBet,
                 phase, winPayout, resultSeq,
                 resultId, resolvedBet, resolvedPayout,
                 revealed, playerCards, dealerCards,
@@ -128,6 +131,18 @@ public record SendBlackjackStateS2CPayload(
         int n = buf.readVarInt();
         int[] arr = new int[n];
         for (int i = 0; i < n; i++) arr[i] = buf.readVarInt();
+        return arr;
+    }
+
+    private static void writeLongArray(RegistryFriendlyByteBuf buf, long[] arr) {
+        buf.writeVarInt(arr.length);
+        for (long value : arr) buf.writeLong(value);
+    }
+
+    private static long[] readLongArray(RegistryFriendlyByteBuf buf) {
+        int n = buf.readVarInt();
+        long[] arr = new long[n];
+        for (int i = 0; i < n; i++) arr[i] = buf.readLong();
         return arr;
     }
 

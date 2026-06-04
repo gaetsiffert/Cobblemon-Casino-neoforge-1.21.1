@@ -46,7 +46,7 @@ public final class BlackjackStateSender {
         SendBlackjackStateS2CPayload payload =
                 new SendBlackjackStateS2CPayload(
                         pos, "blackjack",
-                        balance, betIndex, round.getCurrentBet(),
+                        balance, betIndex, BlackjackRules.betValuesArray(), round.getCurrentBet(),
                         round.getPhase(), round.getWinPayout(), round.getResultSeq(),
                         controller.getResultId(), controller.getLastResolvedBet(), controller.getLastResolvedPayout(),
                         !round.isDealerHoleHidden(), playerCards, dealerCards,

@@ -52,9 +52,6 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(ModBlocks.HEAVY_DIAMOND_PILLAR)
                 .add(ModBlocks.DIAMOND_DOOR)
                 .add(ModBlocks.DIAMOND_TRAPDOOR)
-                .add(ModBlocks.CONDENSED_DIAMOND_BLOCK)
-                .add(ModBlocks.CHARGED_DIAMOND_BLOCK)
-                .add(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK)
                 // ADDING CASINO MACHINES
                 .add(ModBlocks.GACHA_MACHINE)
                 .add(ModBlocks.POKEMON_GACHA_MACHINE)
@@ -98,10 +95,7 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(ModBlocks.DIAMOND_PILLAR)
                 .add(ModBlocks.HEAVY_DIAMOND_PILLAR)
                 .add(ModBlocks.DIAMOND_DOOR)
-                .add(ModBlocks.DIAMOND_TRAPDOOR)
-                .add(ModBlocks.CONDENSED_DIAMOND_BLOCK)
-                .add(ModBlocks.CHARGED_DIAMOND_BLOCK)
-                .add(ModBlocks.HYPERCHARGED_DIAMOND_BLOCK);
+                .add(ModBlocks.DIAMOND_TRAPDOOR);
 
         tag(BlockTags.WALLS)
                 .add(ModBlocks.GOLD_BRICK_WALL)

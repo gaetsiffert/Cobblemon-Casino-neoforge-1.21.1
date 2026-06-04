@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.network;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.network.c2s.blackjack.BlackjackActionC2SPayload;
 import net.andrespr.casinorocket.network.c2s.blackjack.ChangeBlackjackBetIndexC2SPayload;
+import net.andrespr.casinorocket.network.c2s.chip_table.ChipTableConvertC2SPayload;
 import net.andrespr.casinorocket.network.c2s.common.DoBetC2SPayload;
 import net.andrespr.casinorocket.network.c2s.common.DoWithdrawC2SPayload;
 import net.andrespr.casinorocket.network.c2s.common.OpenBetScreenC2SPayload;
@@ -14,6 +15,7 @@ import net.andrespr.casinorocket.network.c2s.slots.ChangeLinesModeC2SPayload;
 import net.andrespr.casinorocket.network.c2s.slots.DoSpinC2SPayload;
 import net.andrespr.casinorocket.network.c2s_handlers.blackjack.BlackjackActionReceiver;
 import net.andrespr.casinorocket.network.c2s_handlers.blackjack.ChangeBlackjackBetIndexReceiver;
+import net.andrespr.casinorocket.network.c2s_handlers.chip_table.ChipTableConvertReceiver;
 import net.andrespr.casinorocket.network.c2s_handlers.common.BetScreenReceiver;
 import net.andrespr.casinorocket.network.c2s_handlers.common.DoBetReceiver;
 import net.andrespr.casinorocket.network.c2s_handlers.common.DoWithdrawReceiver;
@@ -57,6 +59,7 @@ public final class CasinoRocketPackets {
         registrar.playToServer(ChangeLinesModeC2SPayload.ID, ChangeLinesModeC2SPayload.CODEC, ChangeLinesModeReceiver::handle);
         registrar.playToServer(BlackjackActionC2SPayload.ID, BlackjackActionC2SPayload.CODEC, BlackjackActionReceiver::handle);
         registrar.playToServer(ChangeBlackjackBetIndexC2SPayload.ID, ChangeBlackjackBetIndexC2SPayload.CODEC, ChangeBlackjackBetIndexReceiver::handle);
+        registrar.playToServer(ChipTableConvertC2SPayload.ID, ChipTableConvertC2SPayload.CODEC, ChipTableConvertReceiver::handle);
 
         registrar.playToClient(SendMachineBalanceS2CPayload.ID, SendMachineBalanceS2CPayload.CODEC, MachineBalanceReceiver::handle);
         registrar.playToClient(SendMenuSettingsS2CPayload.ID, SendMenuSettingsS2CPayload.CODEC, MenuScreenSettingsReceiver::handle);

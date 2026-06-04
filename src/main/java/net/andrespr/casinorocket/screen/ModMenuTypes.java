@@ -8,9 +8,9 @@ import net.andrespr.casinorocket.screen.custom.common.WithdrawScreenHandler;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineMenuScreenHandler;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineScreenHandler;
 import net.andrespr.casinorocket.screen.opening.BlackjackTableOpenData;
+import net.andrespr.casinorocket.screen.opening.ChipTableOpenData;
 import net.andrespr.casinorocket.screen.opening.CommonMachineOpenData;
 import net.andrespr.casinorocket.screen.opening.SlotMachineOpenData;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.IEventBus;
@@ -42,7 +42,7 @@ public final class ModMenuTypes {
         register("blackjack_table_menu", () -> BLACKJACK_TABLE_MENU_TYPE =
                 IMenuTypeExtension.create((syncId, inv, buf) -> new BlackjackTableScreenHandler(syncId, inv, BlackjackTableOpenData.CODEC.decode(buf))));
         register("chip_table_menu", () -> CHIP_TABLE_MENU_TYPE =
-                IMenuTypeExtension.create((syncId, inv, buf) -> new ChipTableScreenHandler(syncId, inv, BlockPos.STREAM_CODEC.decode(buf))));
+                IMenuTypeExtension.create((syncId, inv, buf) -> new ChipTableScreenHandler(syncId, inv, ChipTableOpenData.CODEC.decode(buf))));
     }
 
     private static <T extends MenuType<?>> void register(String name, Supplier<T> supplier) {

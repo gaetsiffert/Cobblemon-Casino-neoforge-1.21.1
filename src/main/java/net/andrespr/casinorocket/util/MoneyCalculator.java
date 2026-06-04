@@ -10,61 +10,54 @@ import java.util.List;
 public class MoneyCalculator {
 
     public record ItemResult(String item, long amount) {}
+    private record Denomination(String itemId, long value) {}
 
     public static ItemResult calculateItemAmount(String itemId, long value) {
-
         if (value <= 0) return new ItemResult(itemId, 1);
-        if (value <= 64 && value > 0) return new ItemResult(itemId, value);
 
-        long valueDivided4 = Math.min(value / 4, 64);
-        boolean isDivisibleBy4 = value % 4 == 0;
-        if (isDivisibleBy4 && (value / 4) <= 64) return new ItemResult(getItemId(itemId, 4), valueDivided4);
+        List<Denomination> denominations = getDenominations(itemId);
+        Denomination best = null;
+        long bestAmount = 1;
+        long bestTotal = Long.MAX_VALUE;
 
-        long valueDivided9 = Math.min(value / 9, 64);
-        boolean isDivisibleBy9 = value % 9 == 0;
-        if (isDivisibleBy9 && (value / 9) <= 64) return new ItemResult(getItemId(itemId, 9), valueDivided9);
+        for (Denomination denomination : denominations) {
+            long amount = ceilDiv(value, denomination.value());
+            if (amount <= 0 || amount > 64) continue;
 
-        long valueDivided16 = Math.min(value / 16, 64);
-        boolean isDivisibleBy16 = value % 16 == 0;
-        if (isDivisibleBy16 && (value / 16) <= 64) return new ItemResult(getItemId(itemId, 16), valueDivided16);
-
-        long valueDivided81 = Math.min(value / 81, 64);
-        boolean isDivisibleBy81 = value % 81 == 0;
-        if (isDivisibleBy81 && (value / 81) <= 64) return new ItemResult(getItemId(itemId, 81), valueDivided81);
-
-        if (valueDivided4 < 64 && valueDivided4 > 0) return new ItemResult(getItemId(itemId, 4), valueDivided4);
-        if (valueDivided9 < 64 && valueDivided9 > 0) return new ItemResult(getItemId(itemId, 9), valueDivided9);
-        if (valueDivided16 < 64 && valueDivided16 > 0) return new ItemResult(getItemId(itemId, 16), valueDivided16);
-        if (valueDivided81 > 0) return new ItemResult(getItemId(itemId, 81), valueDivided81);
-
-        return new ItemResult(itemId, 1);
-
-    }
-
-    public static String getItemId(String itemId, int division) {
-        switch (itemId) {
-            case "minecraft:diamond" -> {
-                return switch (division) {
-                    case 4 -> "casinorocket:charged_diamond";
-                    case 9 -> "minecraft:diamond_block";
-                    case 16 -> "casinorocket:hypercharged_diamond";
-                    case 81 -> "casinorocket:condensed_diamond_block";
-                    default -> "minecraft:diamond";
-                };
-            }
-            case "cobblemon:relic_coin" -> {
-                return switch (division) {
-                    case 4 -> "casinorocket:handful_of_relic_coins";
-                    case 9 -> "cobblemon:relic_coin_pouch";
-                    case 16 -> "casinorocket:stack_of_relic_coins";
-                    case 81 -> "cobblemon:relic_coin_sack";
-                    default -> "cobblemon:relic_coin";
-                };
-            }
-            default -> {
-                return "cobblemon:relic_coin";
+            long total = amount * denomination.value();
+            if (best == null
+                    || total < bestTotal
+                    || (total == bestTotal && denomination.value() > best.value())) {
+                best = denomination;
+                bestAmount = amount;
+                bestTotal = total;
             }
         }
+
+        if (best != null) return new ItemResult(best.itemId(), bestAmount);
+
+        Denomination largest = denominations.getLast();
+        return new ItemResult(largest.itemId(), 64);
+    }
+
+    private static List<Denomination> getDenominations(String itemId) {
+        switch (itemId) {
+            case "cobblemon:relic_coin" -> {
+                return List.of(
+                        new Denomination("cobblemon:relic_coin", 1),
+                        new Denomination("casinorocket:handful_of_relic_coins", 4),
+                        new Denomination("cobblemon:relic_coin_pouch", 9),
+                        new Denomination("casinorocket:stack_of_relic_coins", 16)
+                );
+            }
+            default -> {
+                return List.of(new Denomination(itemId, 1));
+            }
+        }
+    }
+
+    private static long ceilDiv(long value, long divisor) {
+        return (value + divisor - 1) / divisor;
     }
 
     public static List<ItemStack> calculateChipWithdraw(long amount) {
