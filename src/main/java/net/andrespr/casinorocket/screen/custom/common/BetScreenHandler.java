@@ -1,6 +1,5 @@
 package net.andrespr.casinorocket.screen.custom.common;
 
-import net.andrespr.casinorocket.item.custom.BillItem;
 import net.andrespr.casinorocket.item.custom.ChipItem;
 import net.andrespr.casinorocket.network.s2c.sender.MachineBalanceSender;
 import net.andrespr.casinorocket.screen.ModMenuTypes;
@@ -100,8 +99,6 @@ public class BetScreenHandler extends AbstractContainerMenu implements IMachineB
 
                 if (item instanceof ChipItem chip) {
                     total += chip.getValue() * stack.getCount();
-                } else if (item instanceof BillItem bill) {
-                    total += bill.getValue() * stack.getCount();
                 }
             }
         }

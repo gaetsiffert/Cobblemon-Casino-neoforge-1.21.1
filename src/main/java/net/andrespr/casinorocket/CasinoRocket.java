@@ -20,6 +20,7 @@ import net.andrespr.casinorocket.network.s2c.SlotConfigSyncS2CPayload;
 import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.sound.ModSounds;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
+import net.andrespr.casinorocket.util.CobbledollarsBankIntegration;
 import net.andrespr.casinorocket.util.SuitData;
 import net.andrespr.casinorocket.villager.ModVillagers;
 import net.andrespr.casinorocket.villager.ShopsRegistry;
@@ -94,6 +95,7 @@ public class CasinoRocket {
         GachaponUtils.buildCache(CasinoRocket.CONFIG.itemGachapon.pools);
         PokemonGachaponUtils.buildCache(CasinoRocket.CONFIG.pokemonGachapon.pools);
         PlushiesGachaponUtils.buildCache(CasinoRocket.CONFIG.plushiesGachapon.plushies);
+        CobbledollarsBankIntegration.registerChipsForBuyback();
     }
 
     private void onBlockBreak(BlockEvent.BreakEvent event) {

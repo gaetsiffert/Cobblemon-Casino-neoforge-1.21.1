@@ -52,8 +52,6 @@ public class ModItemsGroup {
                             entries.accept(ModItems.POKEMON_MASTER_GACHAPON);
                             entries.accept(ModItems.POKEMON_CHERISH_GACHAPON);
                             entries.accept(ModItems.POKEMON_EVENT_GACHAPON);
-                            // BILLS
-                            ModItems.ALL_BILL_ITEMS.forEach(entries::accept);
                             // WALLET
                             entries.accept(ModItems.WALLET);
                             // DISCS

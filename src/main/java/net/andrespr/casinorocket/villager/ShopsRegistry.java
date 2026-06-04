@@ -24,14 +24,9 @@ public final class ShopsRegistry {
     }
 
     public static void bootstrap() {
-        register(new ChipDealerShops());
-        register(new CashierShops());
-        register(new PrizeDealerShops());
-        register(new TMInstructorShops());
-        register(new BattleGearShops());
-        register(new SnackmasterShops());
-        register(new GachaDealerShops());
-        register(new BankerShops());
+        register(new ChipSellerShops());
+        register(new ChipBuyerShops());
+        register(new CobbledollarsDealerShops());
     }
 
 }

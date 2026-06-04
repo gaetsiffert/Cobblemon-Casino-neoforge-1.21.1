@@ -1,7 +1,6 @@
 package net.andrespr.casinorocket.util;
 
 import net.andrespr.casinorocket.item.ModItems;
-import net.andrespr.casinorocket.item.custom.BillItem;
 import net.andrespr.casinorocket.item.custom.ChipItem;
 import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
@@ -66,30 +65,6 @@ public class MoneyCalculator {
                 return "cobblemon:relic_coin";
             }
         }
-    }
-
-    public record MoneyResult(BillItem billType, int amount) {}
-
-    public static MoneyResult calculateDenomination(long value) {
-
-        if (value <= 0) return new MoneyResult(ModItems.BILL_1, 1);
-
-        List<BillItem> bills = ModItems.ALL_BILL_ITEMS.stream()
-                .map(item -> (BillItem) item)
-                .sorted(Comparator.comparingLong(BillItem::getValue).reversed())
-                .toList();
-
-        for (BillItem bill : bills) {
-            long billValue = bill.getValue();
-
-            if (billValue > 0 && value % billValue == 0) {
-                long amount = value / billValue;
-                if (amount > 64) amount = 64;
-                return new MoneyResult(bill, (int) amount);
-            }
-        }
-
-        return new MoneyResult(ModItems.BILL_1, 1);
     }
 
     public static List<ItemStack> calculateChipWithdraw(long amount) {

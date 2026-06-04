@@ -2,7 +2,6 @@ package net.andrespr.casinorocket;
 
 import net.andrespr.casinorocket.block.ModBlocks;
 import net.andrespr.casinorocket.games.slot.SlotReels;
-import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.custom.blackjack.BlackjackTableScreen;
 import net.andrespr.casinorocket.screen.custom.chip_table.ChipTableScreen;
@@ -12,8 +11,6 @@ import net.andrespr.casinorocket.screen.custom.slot.SlotMachineMenuScreen;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineScreen;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -39,12 +36,6 @@ public final class CasinoRocketClient {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SLOT_MACHINE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.BLACKJACK_TABLE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CHIP_TABLE, RenderType.cutout());
-
-            ModItems.ALL_BILL_ITEMS.forEach(bill -> ItemProperties.register(
-                    bill,
-                    ResourceLocation.parse("stacked"),
-                    (stack, world, entity, seed) -> stack.getCount() >= 3 ? 1.0F : 0.0F
-            ));
         });
     }
 

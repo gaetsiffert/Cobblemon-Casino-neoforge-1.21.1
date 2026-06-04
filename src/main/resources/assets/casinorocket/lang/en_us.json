@@ -31,20 +31,6 @@
   "item.casinorocket.event_coin": "Event Coin",
   "item.casinorocket.primogem": "Primogem",
 
-  "item.casinorocket.bill_1": "$1 Bill",
-  "item.casinorocket.bill_5": "$5 Bill",
-  "item.casinorocket.bill_10": "$10 Bill",
-  "item.casinorocket.bill_50": "$50 Bill",
-  "item.casinorocket.bill_100": "$100 Bill",
-  "item.casinorocket.bill_500": "$500 Bill",
-  "item.casinorocket.bill_1k": "$1k Bill",
-  "item.casinorocket.bill_5k": "$5k Bill",
-  "item.casinorocket.bill_10k": "$10k Bill",
-  "item.casinorocket.bill_50k": "$50k Bill",
-  "item.casinorocket.bill_100k": "$100k Bill",
-  "item.casinorocket.bill_500k": "$500k Bill",
-  "item.casinorocket.bill_1m": "$1M Bill",
-
   "item.casinorocket.poke_gachapon": "Poké Ball Gachapon",
   "item.casinorocket.great_gachapon": "Great Ball Gachapon",
   "item.casinorocket.ultra_gachapon": "Ultra Ball Gachapon",
@@ -124,7 +110,6 @@
   "tooltip.casinorocket.chip_money": "§9Value:§r §6$%s§r",
   "tooltip.casinorocket.chip_item": "§9Value:§r §6%s %s§r",
   "tooltip.casinorocket.pokemon_pin": "Get this §especial pokémon§r!",
-  "tooltip.casinorocket.bill": "Press >§eRight Click§r< while sneaking to add to your balance!",
   "tooltip.casinorocket.wallet": "Press >§eRight Click§r< to open!",
 
   "tooltip.casinorocket.copper_coin": "Use it in a §6Gacha Machine§r for a reward!",
@@ -153,9 +138,6 @@
   "message.casinorocket.pokemon_received_party": "You received a %s!",
   "message.casinorocket.pokemon_box_full": "Your team and PC are full. %s couldn't be added.",
   "message.casinorocket.money_deposited": "You deposited $%s into your wallet!",
-  "message.casinorocket.bill_cobbledollars_disabled": "CobbleDollars economy is disabled in Casino Rocket config.",
-  "message.casinorocket.bill_cobbledollars_missing": "CobbleDollars is not installed. Your bills were not consumed.",
-  "message.casinorocket.bill_deposit_failed": "CobbleDollars deposit failed. Your bills were not consumed.",
   "message.casinorocket.machine_unbreakable": "This machine is protected. Only creative players or admins can break it.",
   "message.casinorocket.item_gachapon_received": "You have obtained %sx %s!",
 

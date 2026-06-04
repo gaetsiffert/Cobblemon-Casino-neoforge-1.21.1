@@ -26,8 +26,6 @@ Casino Rocket contains optional shop/config references for these mods. They are 
 | Mod | Current behavior without it | Link |
 | --- | --- | --- |
 | CobbleDollars | Casino Rocket can use item-based economy instead, but CobbleDollars merchant shops and money economy need this mod. | https://modrinth.com/mod/cobbledollars |
-| CobbleCuisine | Snackmaster shop categories that only contain CobbleCuisine items are hidden automatically when missing. | https://modrinth.com/mod/cobblecuisine |
-| TMCraft | TM Instructor shop categories are hidden automatically when missing. | https://modrinth.com/mod/tmcraft |
 
 ## External Mods Seen In Dev Logs
 

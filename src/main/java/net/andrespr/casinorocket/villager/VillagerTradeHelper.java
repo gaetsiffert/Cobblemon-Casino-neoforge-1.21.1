@@ -1,7 +1,6 @@
 package net.andrespr.casinorocket.villager;
 
 import net.andrespr.casinorocket.CasinoRocket;
-import net.andrespr.casinorocket.item.custom.BillItem;
 import net.andrespr.casinorocket.item.custom.ChipItem;
 import net.andrespr.casinorocket.util.MoneyCalculator;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -9,9 +8,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import java.util.List;
 
 public class VillagerTradeHelper {
 
@@ -131,48 +128,22 @@ public class VillagerTradeHelper {
 
     public static void makeItemToChipOffer(ListTag trades, ChipItem chip) {
         String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
-        MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(chip.getItem(), chip.getValue());
+        MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(getItemCurrencyId(), getItemCurrencyChipValue(chip));
         trades.add(makeVanillaOffer(itemResult.item(), Math.toIntExact(itemResult.amount()), chipId, 1));
-    }
-
-    public static void makeChipToMoneyOffer(ListTag trades, ChipItem chip) {
-        String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
-        MoneyCalculator.MoneyResult result = MoneyCalculator.calculateDenomination(chip.getValue());
-        String billId = BuiltInRegistries.ITEM.getKey(result.billType()).toString();
-        trades.add(makeVanillaOffer(chipId, 1, billId, result.amount()));
     }
 
     public static void makeChipToItemOffer(ListTag trades, ChipItem chip) {
         String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
-        MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(chip.getItem(), chip.getValue());
+        MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(getItemCurrencyId(), getItemCurrencyChipValue(chip));
         trades.add(makeVanillaOffer(chipId, 1, itemResult.item(), Math.toIntExact(itemResult.amount())));
     }
 
-    public static void makeInCashOffer(ListTag trades, BillItem bill) {
-        String billId = BuiltInRegistries.ITEM.getKey(bill).toString();
-        String value = String.valueOf(bill.getValue());
-        trades.add(makeOffer(billId,value));
+    private static String getItemCurrencyId() {
+        return CasinoRocket.CONFIG.generalConfig.isDiamondActive() ? "minecraft:diamond" : "cobblemon:relic_coin";
     }
 
-    public static void makeListOffer(ListTag trades, List<String> entries, String modID, String price) {
-        for (String entry : entries) {
-            trades.add(makeOffer(modID + ":" + entry, price));
-        }
-    }
-
-    public static void makeCoinOffer(ListTag trades, Item coin) {
-        String coinId = BuiltInRegistries.ITEM.getKey(coin).toString();
-        String coinPrice = CasinoRocket.CONFIG.gachaMachines.getCoinPrice(coinId);
-        trades.add(makeOffer(coinId, coinPrice));
-    }
-
-    public static void makeGachaponOffer(ListTag trades, Item gachapon) {
-        String gachaponId = BuiltInRegistries.ITEM.getKey(gachapon).toString();
-        boolean isGachaponEnable = CasinoRocket.CONFIG.gachaMachines.getGachaponEnable(gachaponId);
-        if (isGachaponEnable) {
-            String gachaponPrice = CasinoRocket.CONFIG.gachaMachines.getGachaponPrice(gachaponId);
-            trades.add(makeOffer(gachaponId, gachaponPrice));
-        }
+    private static long getItemCurrencyChipValue(ChipItem chip) {
+        return CasinoRocket.CONFIG.generalConfig.getChipPriceInItems(BuiltInRegistries.ITEM.getKey(chip).getPath());
     }
 
     private static ListTag filterShopOffers(ListTag offers) {

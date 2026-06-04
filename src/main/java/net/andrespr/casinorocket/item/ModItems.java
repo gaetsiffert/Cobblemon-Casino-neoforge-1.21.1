@@ -69,21 +69,6 @@ public class ModItems {
     public static PokemonPinItem DITTO_PIN;
     public static PokemonPinItem PORYGON_PIN;
 
-    public static final List<Item> ALL_BILL_ITEMS = new ArrayList<>();
-    public static BillItem BILL_1;
-    public static BillItem BILL_5;
-    public static BillItem BILL_10;
-    public static BillItem BILL_50;
-    public static BillItem BILL_100;
-    public static BillItem BILL_500;
-    public static BillItem BILL_1K;
-    public static BillItem BILL_5K;
-    public static BillItem BILL_10K;
-    public static BillItem BILL_50K;
-    public static BillItem BILL_100K;
-    public static BillItem BILL_500K;
-    public static BillItem BILL_1M;
-
     public static WalletItem WALLET;
 
     public static Item DIAMOND_NUGGET;
@@ -146,20 +131,6 @@ public class ModItems {
         registerCustomItem("rotom_pin", () -> ROTOM_PIN = new PokemonPinItem(new Item.Properties(), 10, 21, false));
         registerCustomItem("ditto_pin", () -> DITTO_PIN = new PokemonPinItem(new Item.Properties(), 5, 31, false));
         registerCustomItem("porygon_pin", () -> PORYGON_PIN = new PokemonPinItem(new Item.Properties(), 10, 15, false));
-
-        registerCustomItem("bill_1", () -> BILL_1 = new BillItem(new Item.Properties(), 1));
-        registerCustomItem("bill_5", () -> BILL_5 = new BillItem(new Item.Properties(), 5));
-        registerCustomItem("bill_10", () -> BILL_10 = new BillItem(new Item.Properties(), 10));
-        registerCustomItem("bill_50", () -> BILL_50 = new BillItem(new Item.Properties(), 50));
-        registerCustomItem("bill_100", () -> BILL_100 = new BillItem(new Item.Properties(), 100));
-        registerCustomItem("bill_500", () -> BILL_500 = new BillItem(new Item.Properties(), 500));
-        registerCustomItem("bill_1k", () -> BILL_1K = new BillItem(new Item.Properties(), 1_000));
-        registerCustomItem("bill_5k", () -> BILL_5K = new BillItem(new Item.Properties(), 5_000));
-        registerCustomItem("bill_10k", () -> BILL_10K = new BillItem(new Item.Properties(), 10_000));
-        registerCustomItem("bill_50k", () -> BILL_50K = new BillItem(new Item.Properties(), 50_000));
-        registerCustomItem("bill_100k", () -> BILL_100K = new BillItem(new Item.Properties(), 100_000));
-        registerCustomItem("bill_500k", () -> BILL_500K = new BillItem(new Item.Properties(), 500_000));
-        registerCustomItem("bill_1m", () -> BILL_1M = new BillItem(new Item.Properties(), 1_000_000));
 
         registerCustomItem("wallet", () -> WALLET = new WalletItem(new Item.Properties()));
 
