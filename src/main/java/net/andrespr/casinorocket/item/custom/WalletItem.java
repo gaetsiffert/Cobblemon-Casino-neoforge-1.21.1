@@ -24,8 +24,7 @@ public class WalletItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         if (!world.isClientSide) {
-            boolean rare = world.random.nextInt(64) == 0;
-            world.playSound(null, player.blockPosition(), rare ? ModSounds.WALLET2 : ModSounds.WALLET, SoundSource.PLAYERS,2.0F, 1.0F);
+            world.playSound(null, player.blockPosition(), ModSounds.WALLET, SoundSource.PLAYERS,2.0F, 1.0F);
             player.openMenu(new WalletScreenFactory());
         }
         return InteractionResultHolder.consume(player.getItemInHand(hand));

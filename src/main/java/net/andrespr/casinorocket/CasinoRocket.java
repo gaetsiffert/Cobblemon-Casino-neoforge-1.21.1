@@ -16,6 +16,7 @@ import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.item.ModItemsGroup;
 import net.andrespr.casinorocket.network.CasinoRocketPackets;
 import net.andrespr.casinorocket.network.SuitSyncPayload;
+import net.andrespr.casinorocket.network.s2c.MoneyValuesSyncS2CPayload;
 import net.andrespr.casinorocket.network.s2c.SlotConfigSyncS2CPayload;
 import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.sound.ModSounds;
@@ -81,6 +82,7 @@ public class CasinoRocket {
 
     private void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            CasinoRocketPackets.sendToPlayer(player, MoneyValuesSyncS2CPayload.fromServer());
             CasinoRocketPackets.sendToPlayer(player, SlotConfigSyncS2CPayload.fromServer());
         }
     }

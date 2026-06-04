@@ -138,6 +138,9 @@
   "message.casinorocket.chip_table_output_not_empty": "Empty the output slots before converting again.",
   "message.casinorocket.chip_table_output_full": "The output would not fit in the table.",
   "message.casinorocket.chip_table_mode_disabled": "This conversion mode is disabled.",
+  "message.casinorocket.chip_table_cobbledollars_unavailable": "CobbleDollars is not available.",
+  "message.casinorocket.chip_table_cobbledollars_invalid_amount": "Enter a positive CobbleDollars amount.",
+  "message.casinorocket.chip_table_cobbledollars_insufficient": "Not enough CobbleDollars.",
   "message.casinorocket.chip_table_conversion_done": "Conversion complete.",
 
   "message.casinorocket.gacha_machines_coin_inserted": "§7Coin inserted... please wait!",
@@ -166,7 +169,6 @@
   "sounds.casinorocket.reels_spinning": "Reels Spinning...",
   "sounds.casinorocket.jackpot": "JACKPOT!",
   "sounds.casinorocket.wallet": "Wallet",
-  "sounds.casinorocket.wallet2": "C A R T E R A",
   "sounds.casinorocket.win": "Win",
   "sounds.casinorocket.draw": "Draw",
   "sounds.casinorocket.lose": "Lose",
@@ -213,8 +215,13 @@
   "gui.casinorocket.chip_table": "Chip Table",
   "gui.casinorocket.chip_table.mode.currency_to_chips": "To Chips",
   "gui.casinorocket.chip_table.mode.chips_to_relic_coins": "To Relic",
+  "gui.casinorocket.chip_table.mode.to_cobbledollar": "To CobbleDollar",
+  "gui.casinorocket.chip_table.mode.from_cobbledollar": "From CobbleDollar",
+  "gui.casinorocket.chip_table.cobbledollar_amount": "Amount",
+  "gui.casinorocket.chip_table.currency_values": "Currency Values",
   "gui.casinorocket.wallet": "Wallet",
 
-  "entity.minecraft.villager.casino_worker": "Casino Worker"
+  "entity.minecraft.villager.casino_worker": "Casino Worker",
+  "entity.minecraft.villager.casinorocket.casino_worker": "Casino Worker"
 
 }

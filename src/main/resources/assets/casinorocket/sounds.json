@@ -65,12 +65,6 @@
           "casinorocket:wallet"
       ]
     },
-    "wallet2": {
-      "subtitle": "sounds.casinorocket.wallet2",
-      "sounds": [
-          "casinorocket:wallet2"
-      ]
-    },
     "win": {
       "subtitle": "sounds.casinorocket.win",
       "sounds": [

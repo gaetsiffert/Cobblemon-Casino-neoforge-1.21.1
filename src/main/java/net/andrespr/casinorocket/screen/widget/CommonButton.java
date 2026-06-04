@@ -15,11 +15,17 @@ public class CommonButton extends Button {
     private final int texWidth;
     private final int texHeight;
     private final int stateHeight;
+    private final int sourceWidth;
 
     public CommonButton(int x, int y, int width, int height, ResourceLocation texture, OnPress onPress, Component text) {
+        this(x, y, width, height, width, texture, onPress, text);
+    }
+
+    public CommonButton(int x, int y, int width, int height, int sourceWidth, ResourceLocation texture, OnPress onPress, Component text) {
         super(x, y, width, height, text, onPress, DEFAULT_NARRATION);
         this.texture = texture;
-        this.texWidth = width;
+        this.sourceWidth = sourceWidth;
+        this.texWidth = sourceWidth;
         this.stateHeight = height;
         this.texHeight = height * 3;
     }
@@ -36,8 +42,8 @@ public class CommonButton extends Button {
             vOffset = this.stateHeight;
         }
 
-        context.blit(this.texture, this.getX(), this.getY(), 0, vOffset,
-                this.getWidth(), this.stateHeight, this.texWidth, this.texHeight);
+        context.blit(this.texture, this.getX(), this.getY(), this.getWidth(), this.stateHeight,
+                0, vOffset, this.sourceWidth, this.stateHeight, this.texWidth, this.texHeight);
 
         int color = this.active ? 0xFFFFFF : 0xA0A0A0;
 

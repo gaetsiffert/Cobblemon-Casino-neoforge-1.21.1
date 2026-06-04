@@ -29,6 +29,7 @@ repositories {
     maven { url = 'https://maven.impactdev.net/repository/development/' }
     maven { url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url = 'https://maven.shedaniel.me/' }
+    maven { url = 'https://maven.blamejared.com/' }
     mavenCentral()
 }
 
@@ -81,6 +82,7 @@ dependencies {
     implementation("me.shedaniel.cloth:cloth-config-neoforge:${project.cloth_config_version}") {
         exclude(group: 'net.neoforged')
     }
+    compileOnly "mezz.jei:jei-${project.minecraft_version}-neoforge-api:${project.jei_version}"
 }
 
 def modMetadata = [

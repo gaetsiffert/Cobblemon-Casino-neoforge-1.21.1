@@ -29,10 +29,12 @@ import net.andrespr.casinorocket.network.s2c.SendBlackjackStateS2CPayload;
 import net.andrespr.casinorocket.network.s2c.SendMachineBalanceS2CPayload;
 import net.andrespr.casinorocket.network.s2c.SendMenuSettingsS2CPayload;
 import net.andrespr.casinorocket.network.s2c.SendSpinResultS2CPayload;
+import net.andrespr.casinorocket.network.s2c.MoneyValuesSyncS2CPayload;
 import net.andrespr.casinorocket.network.s2c.SlotConfigSyncS2CPayload;
 import net.andrespr.casinorocket.network.s2c_handlers.BlackjackStateReceiver;
 import net.andrespr.casinorocket.network.s2c_handlers.MachineBalanceReceiver;
 import net.andrespr.casinorocket.network.s2c_handlers.MenuScreenSettingsReceiver;
+import net.andrespr.casinorocket.network.s2c_handlers.MoneyValuesSyncReceiver;
 import net.andrespr.casinorocket.network.s2c_handlers.SlotConfigSyncReceiver;
 import net.andrespr.casinorocket.network.s2c_handlers.SpinResultReceiver;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -65,6 +67,7 @@ public final class CasinoRocketPackets {
         registrar.playToClient(SendMenuSettingsS2CPayload.ID, SendMenuSettingsS2CPayload.CODEC, MenuScreenSettingsReceiver::handle);
         registrar.playToClient(SendSpinResultS2CPayload.ID, SendSpinResultS2CPayload.CODEC, SpinResultReceiver::handle);
         registrar.playToClient(SendBlackjackStateS2CPayload.ID, SendBlackjackStateS2CPayload.CODEC, BlackjackStateReceiver::handle);
+        registrar.playToClient(MoneyValuesSyncS2CPayload.ID, MoneyValuesSyncS2CPayload.CODEC, MoneyValuesSyncReceiver::handle);
         registrar.playToClient(SlotConfigSyncS2CPayload.ID, SlotConfigSyncS2CPayload.CODEC, SlotConfigSyncReceiver::handle);
         registrar.playToClient(SuitSyncPayload.ID, SuitSyncPayload.CODEC, SuitSync::handleClientPayload);
     }

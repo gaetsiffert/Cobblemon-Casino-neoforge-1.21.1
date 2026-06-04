@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.item.custom;
 
 import net.andrespr.casinorocket.item.ModItems;
+import net.andrespr.casinorocket.util.SyncedMoneyValues;
 import net.andrespr.casinorocket.util.TextUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -23,7 +24,8 @@ public class ChipItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, @NotNull List<Component> tooltip, TooltipFlag type) {
-        Component valueText = Component.literal(TextUtils.formatWithCommas(value));
+        long displayValue = SyncedMoneyValues.getChipValue(this, value);
+        Component valueText = Component.literal(TextUtils.formatWithCommas(displayValue));
         tooltip.add(Component.translatable("tooltip.casinorocket.chip_value", valueText.copy().withStyle(ChatFormatting.GOLD)));
         super.appendHoverText(stack, context, tooltip, type);
     }

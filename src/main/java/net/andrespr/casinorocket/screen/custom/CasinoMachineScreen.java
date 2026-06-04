@@ -7,6 +7,7 @@ import net.andrespr.casinorocket.network.c2s.common.ReturnToMachineScreenC2SPayl
 import net.andrespr.casinorocket.screen.opening.MouseRestore;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
 import net.andrespr.casinorocket.network.CasinoRocketPackets;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,6 +22,12 @@ public abstract class CasinoMachineScreen<T extends AbstractContainerMenu> exten
     @Override
     protected void init() {
         super.init();
+    }
+
+    @Override
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
+        super.render(context, mouseX, mouseY, delta);
+        this.renderTooltip(context, mouseX, mouseY);
     }
 
     protected void onBetPressed() {

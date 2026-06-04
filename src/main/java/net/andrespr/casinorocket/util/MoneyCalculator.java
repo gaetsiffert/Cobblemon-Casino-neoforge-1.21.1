@@ -47,7 +47,8 @@ public class MoneyCalculator {
                         new Denomination("cobblemon:relic_coin", 1),
                         new Denomination("casinorocket:handful_of_relic_coins", 4),
                         new Denomination("cobblemon:relic_coin_pouch", 9),
-                        new Denomination("casinorocket:stack_of_relic_coins", 16)
+                        new Denomination("casinorocket:stack_of_relic_coins", 16),
+                        new Denomination("cobblemon:relic_coin_sack", 81)
                 );
             }
             default -> {

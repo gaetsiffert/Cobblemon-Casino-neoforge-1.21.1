@@ -6,6 +6,7 @@ import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.ChipTableOpenData;
 import net.andrespr.casinorocket.screen.widget.BetSlot;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
+import net.andrespr.casinorocket.util.CobbledollarsBalanceIntegration;
 import net.andrespr.casinorocket.util.IChipBankHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.Container;
@@ -31,11 +32,15 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
     private final Container bankInventory;
     private final Container inputInventory;
     private final Container outputInventory;
+    private final List<ChipTableExchange.CurrencyValue> currencyValues;
+    private final boolean cobbledollarsAvailable;
 
     public ChipTableScreenHandler(int syncId, Inventory playerInventory, ChipTableOpenData openData) {
         super(ModMenuTypes.CHIP_TABLE_MENU_TYPE, syncId);
         this.tablePos = openData.pos();
         this.walletMode = openData.walletMode();
+        this.currencyValues = openData.currencyValues();
+        this.cobbledollarsAvailable = openData.cobbledollarsAvailable();
 
         if (this.walletMode) {
             this.inputInventory = null;
@@ -69,7 +74,15 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
         return tablePos;
     }
 
-    public void convert(Player player, ChipTableConversionMode mode) {
+    public List<ChipTableExchange.ValueEntry> getCurrencyValueEntries() {
+        return ChipTableExchange.toValueEntries(this.currencyValues);
+    }
+
+    public boolean isCobbledollarsAvailable() {
+        return this.cobbledollarsAvailable;
+    }
+
+    public void convert(Player player, ChipTableConversionMode mode, long cobbledollarAmount) {
         if (this.walletMode || this.inputInventory == null || this.outputInventory == null) return;
 
         if (!isContainerEmpty(this.outputInventory)) {
@@ -82,7 +95,7 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
             inputs.add(this.inputInventory.getItem(i).copy());
         }
 
-        ChipTableExchange.ConversionResult result = ChipTableExchange.convert(inputs, mode);
+        ChipTableExchange.ConversionResult result = ChipTableExchange.convert(inputs, mode, cobbledollarAmount);
         if (!result.success()) {
             player.displayClientMessage(result.message(), false);
             return;
@@ -93,7 +106,13 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
             return;
         }
 
-        this.inputInventory.clearContent();
+        if (!applyCobbledollarDelta(player, result.cobbledollarDelta())) {
+            return;
+        }
+
+        if (mode != ChipTableConversionMode.FROM_COBBLEDOLLAR) {
+            this.inputInventory.clearContent();
+        }
         for (int i = 0; i < result.outputs().size(); i++) {
             this.outputInventory.setItem(i, result.outputs().get(i).copy());
         }
@@ -185,6 +204,22 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
             if (output.getCount() > output.getMaxStackSize()) return false;
         }
         return true;
+    }
+
+    private boolean applyCobbledollarDelta(Player player, long delta) {
+        if (delta == 0) return true;
+
+        boolean applied = delta > 0
+                ? CobbledollarsBalanceIntegration.deposit(player, delta)
+                : CobbledollarsBalanceIntegration.withdraw(player, Math.abs(delta));
+        if (!applied) {
+            CasinoRocketLogger.toPlayerTranslated(player,
+                    delta > 0
+                            ? "message.casinorocket.chip_table_cobbledollars_unavailable"
+                            : "message.casinorocket.chip_table_cobbledollars_insufficient",
+                    false);
+        }
+        return applied;
     }
 
     private static boolean isContainerEmpty(Container container) {

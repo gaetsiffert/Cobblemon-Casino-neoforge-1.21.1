@@ -15,7 +15,7 @@ public final class ChipTableConvertReceiver {
         if (handler.isWalletMode()) return;
         if (!payload.pos().equals(handler.getTablePos())) return;
 
-        handler.convert(player, payload.mode());
+        handler.convert(player, payload.mode(), payload.cobbledollarAmount());
     }
 
 }

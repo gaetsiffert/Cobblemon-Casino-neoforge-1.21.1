@@ -31,7 +31,6 @@ public class ModSounds {
     public static SoundEvent JACKPOT;
     // WALLET
     public static SoundEvent WALLET;
-    public static SoundEvent WALLET2;
     // BLACKJACK
     public static SoundEvent WIN;
     public static SoundEvent DRAW;
@@ -66,7 +65,6 @@ public class ModSounds {
         registerSoundEvent("reels_spinning", sound -> REELS_SPINNING = sound);
         registerSoundEvent("jackpot", sound -> JACKPOT = sound);
         registerSoundEvent("wallet", sound -> WALLET = sound);
-        registerSoundEvent("wallet2", sound -> WALLET2 = sound);
         registerSoundEvent("win", sound -> WIN = sound);
         registerSoundEvent("draw", sound -> DRAW = sound);
         registerSoundEvent("lose", sound -> LOSE = sound);
