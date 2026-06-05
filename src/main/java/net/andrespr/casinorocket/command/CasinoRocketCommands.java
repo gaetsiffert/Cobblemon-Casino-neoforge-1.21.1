@@ -25,6 +25,8 @@ public final class CasinoRocketCommands {
         root.then(SlotMachineCommands.buildSubcommand());
         // Registering BlackjackCommands
         root.then(BlackjackCommands.buildSubcommand());
+        // Temporary debug commands
+        root.then(CasinoLedgerDebugCommands.buildSubcommand());
 
         dispatcher.register(root);
     }

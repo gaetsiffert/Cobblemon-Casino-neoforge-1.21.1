@@ -7,6 +7,7 @@ import net.andrespr.casinorocket.screen.custom.blackjack.BlackjackTableScreen;
 import net.andrespr.casinorocket.screen.custom.chip_table.ChipTableScreen;
 import net.andrespr.casinorocket.screen.custom.common.BetScreen;
 import net.andrespr.casinorocket.screen.custom.common.WithdrawScreen;
+import net.andrespr.casinorocket.screen.custom.ledger.CasinoLedgerScreen;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineMenuScreen;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineScreen;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -47,6 +48,7 @@ public final class CasinoRocketClient {
         event.register(ModMenuTypes.WITHDRAW_MENU_TYPE, WithdrawScreen::new);
         event.register(ModMenuTypes.BLACKJACK_TABLE_MENU_TYPE, BlackjackTableScreen::new);
         event.register(ModMenuTypes.CHIP_TABLE_MENU_TYPE, ChipTableScreen::new);
+        event.register(ModMenuTypes.CASINO_LEDGER_MENU_TYPE, CasinoLedgerScreen::new);
     }
 }
 

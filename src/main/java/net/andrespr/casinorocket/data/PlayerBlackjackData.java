@@ -167,6 +167,50 @@ public class PlayerBlackjackData extends SavedData {
         setDirty();
     }
 
+    public void setDebugLedgerStats(UUID id, long highestWinAmount, long totalWonAmount, long totalSpentAmount) {
+        highestWin.put(id, Math.max(0L, highestWinAmount));
+        lastWin.put(id, Math.max(0L, highestWinAmount));
+        totalWon.put(id, Math.max(0L, totalWonAmount));
+        totalSpent.put(id, Math.max(0L, totalSpentAmount));
+        totalDeposited.put(id, Math.max(0L, totalSpentAmount));
+        setDirty();
+    }
+
+    public boolean removeLedgerStats(UUID id) {
+        boolean removed = totalDeposited.remove(id) != null;
+        removed |= totalWon.remove(id) != null;
+        removed |= highestWin.remove(id) != null;
+        removed |= lastWin.remove(id) != null;
+        removed |= totalSpent.remove(id) != null;
+
+        if (removed) {
+            setDirty();
+        }
+
+        return removed;
+    }
+
+    public int clearLedgerStats() {
+        Set<UUID> players = new HashSet<>();
+        players.addAll(totalDeposited.keySet());
+        players.addAll(totalWon.keySet());
+        players.addAll(highestWin.keySet());
+        players.addAll(lastWin.keySet());
+        players.addAll(totalSpent.keySet());
+
+        totalDeposited.clear();
+        totalWon.clear();
+        highestWin.clear();
+        lastWin.clear();
+        totalSpent.clear();
+
+        if (!players.isEmpty()) {
+            setDirty();
+        }
+
+        return players.size();
+    }
+
     // === MUTATORS ===
     public void addTotalDeposited(UUID id, long amount) {
         if (amount <= 0) return;

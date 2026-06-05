@@ -5,9 +5,11 @@ import net.andrespr.casinorocket.screen.custom.blackjack.BlackjackTableScreenHan
 import net.andrespr.casinorocket.screen.custom.chip_table.ChipTableScreenHandler;
 import net.andrespr.casinorocket.screen.custom.common.BetScreenHandler;
 import net.andrespr.casinorocket.screen.custom.common.WithdrawScreenHandler;
+import net.andrespr.casinorocket.screen.custom.ledger.CasinoLedgerScreenHandler;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineMenuScreenHandler;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineScreenHandler;
 import net.andrespr.casinorocket.screen.opening.BlackjackTableOpenData;
+import net.andrespr.casinorocket.screen.opening.CasinoLedgerOpenData;
 import net.andrespr.casinorocket.screen.opening.ChipTableOpenData;
 import net.andrespr.casinorocket.screen.opening.CommonMachineOpenData;
 import net.andrespr.casinorocket.screen.opening.SlotMachineOpenData;
@@ -29,6 +31,7 @@ public final class ModMenuTypes {
     public static MenuType<WithdrawScreenHandler> WITHDRAW_MENU_TYPE;
     public static MenuType<BlackjackTableScreenHandler> BLACKJACK_TABLE_MENU_TYPE;
     public static MenuType<ChipTableScreenHandler> CHIP_TABLE_MENU_TYPE;
+    public static MenuType<CasinoLedgerScreenHandler> CASINO_LEDGER_MENU_TYPE;
 
     static {
         register("slot_machine_menu", () -> SLOT_MACHINE_MENU_TYPE =
@@ -43,6 +46,8 @@ public final class ModMenuTypes {
                 IMenuTypeExtension.create((syncId, inv, buf) -> new BlackjackTableScreenHandler(syncId, inv, BlackjackTableOpenData.CODEC.decode(buf))));
         register("chip_table_menu", () -> CHIP_TABLE_MENU_TYPE =
                 IMenuTypeExtension.create((syncId, inv, buf) -> new ChipTableScreenHandler(syncId, inv, ChipTableOpenData.CODEC.decode(buf))));
+        register("casino_ledger_menu", () -> CASINO_LEDGER_MENU_TYPE =
+                IMenuTypeExtension.create((syncId, inv, buf) -> new CasinoLedgerScreenHandler(syncId, inv, CasinoLedgerOpenData.CODEC.decode(buf))));
     }
 
     private static <T extends MenuType<?>> void register(String name, Supplier<T> supplier) {

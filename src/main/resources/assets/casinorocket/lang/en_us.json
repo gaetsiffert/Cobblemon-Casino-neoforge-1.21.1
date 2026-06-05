@@ -48,6 +48,7 @@
   "item.casinorocket.pokemon_event_gachapon": "Pokémon Event Gachapon",
 
   "item.casinorocket.wallet": "Wallet",
+  "item.casinorocket.casino_ledger": "High Roller Ledger",
 
   "item.casinorocket.diamond_nugget": "Diamond Nugget",
   "item.casinorocket.handful_of_relic_coins": "Handful of Relic Coins",
@@ -103,6 +104,7 @@
   "tooltip.casinorocket.chip_value": "§9Value:§r §6%s chips§r",
   "tooltip.casinorocket.pokemon_pin": "Get this §especial pokémon§r!",
   "tooltip.casinorocket.wallet": "Press >§eRight Click§r< to open!",
+  "tooltip.casinorocket.casino_ledger": "Press >§eRight Click§r< to view casino records.",
 
   "tooltip.casinorocket.copper_coin": "Use it in a §6Gacha Machine§r for a reward!",
   "tooltip.casinorocket.iron_coin": "Use it in a §6Gacha Machine§r! Increases the chance of better rewards.",
@@ -220,6 +222,19 @@
   "gui.casinorocket.chip_table.cobbledollar_amount": "Amount",
   "gui.casinorocket.chip_table.currency_values": "Currency Values",
   "gui.casinorocket.wallet": "Wallet",
+  "gui.casinorocket.casino_ledger": "Casino Records",
+  "gui.casinorocket.casino_ledger.balance": "Current Balance: %s chips",
+  "gui.casinorocket.casino_ledger.balance_label": "Current Balance",
+  "gui.casinorocket.casino_ledger.game": "Game",
+  "gui.casinorocket.casino_ledger.record": "Record",
+  "gui.casinorocket.casino_ledger.slots": "Slots",
+  "gui.casinorocket.casino_ledger.blackjack": "Blackjack",
+  "gui.casinorocket.casino_ledger.highest_win": "Highest Win",
+  "gui.casinorocket.casino_ledger.total_won": "Total Won",
+  "gui.casinorocket.casino_ledger.total_lost": "Total Lost",
+  "gui.casinorocket.casino_ledger.your_stats": "Your Stats",
+  "gui.casinorocket.casino_ledger.top": "%s - %s Top 10",
+  "gui.casinorocket.casino_ledger.no_records": "No records yet.",
 
   "entity.minecraft.villager.casino_worker": "Casino Worker",
   "entity.minecraft.villager.casinorocket.casino_worker": "Casino Worker"

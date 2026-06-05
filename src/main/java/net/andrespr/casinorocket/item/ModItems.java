@@ -65,6 +65,7 @@ public class ModItems {
     public static PokemonPinItem PORYGON_PIN;
 
     public static WalletItem WALLET;
+    public static CasinoLedgerItem CASINO_LEDGER;
 
     public static Item DIAMOND_NUGGET;
 
@@ -125,6 +126,7 @@ public class ModItems {
         registerCustomItem("porygon_pin", () -> PORYGON_PIN = new PokemonPinItem(new Item.Properties(), 10, 15, false));
 
         registerCustomItem("wallet", () -> WALLET = new WalletItem(new Item.Properties()));
+        registerCustomItem("casino_ledger", () -> CASINO_LEDGER = new CasinoLedgerItem(new Item.Properties()));
 
         registerItem("diamond_nugget", () -> DIAMOND_NUGGET = new Item(new Item.Properties()));
         registerItemWithTooltip("handful_of_relic_coins", () -> HANDFUL_OF_RELIC_COINS = new TooltipItem(new Item.Properties()));
