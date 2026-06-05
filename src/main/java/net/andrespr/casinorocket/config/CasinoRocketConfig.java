@@ -10,6 +10,9 @@ import net.andrespr.casinorocket.config.machines.BlackjackTableConfig;
 import net.andrespr.casinorocket.config.machines.ChipTableConfig;
 import net.andrespr.casinorocket.config.machines.GachaMachinesConfig;
 import net.andrespr.casinorocket.config.machines.SlotMachineConfig;
+import net.andrespr.casinorocket.config.npc.CobbledollarsDealerNpcConfig;
+import net.andrespr.casinorocket.config.npc.ExchangerNpcConfig;
+import net.andrespr.casinorocket.config.npc.PrizeDealerNpcConfig;
 
 @Config(name = "casinorocket")
 public class CasinoRocketConfig extends PartitioningSerializer.GlobalData {
@@ -45,6 +48,18 @@ public class CasinoRocketConfig extends PartitioningSerializer.GlobalData {
     @ConfigEntry.Category("chip_table")
     @ConfigEntry.Gui.TransitiveObject
     public ChipTableConfig chipTable = new ChipTableConfig();
+
+    @ConfigEntry.Category("npc/exchanger")
+    @ConfigEntry.Gui.TransitiveObject
+    public ExchangerNpcConfig exchangerNpc = new ExchangerNpcConfig();
+
+    @ConfigEntry.Category("npc/prize_dealer")
+    @ConfigEntry.Gui.TransitiveObject
+    public PrizeDealerNpcConfig prizeDealerNpc = new PrizeDealerNpcConfig();
+
+    @ConfigEntry.Category("npc/cobbledollars_dealer")
+    @ConfigEntry.Gui.TransitiveObject
+    public CobbledollarsDealerNpcConfig cobbledollarsDealerNpc = new CobbledollarsDealerNpcConfig();
 
 }
 

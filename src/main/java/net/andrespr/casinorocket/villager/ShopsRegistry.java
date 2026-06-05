@@ -24,9 +24,9 @@ public final class ShopsRegistry {
     }
 
     public static void bootstrap() {
-        register(new ChipSellerShops());
-        register(new ChipBuyerShops());
         register(new CobbledollarsDealerShops());
+        register(new DiamondRelicExchangeShops());
+        register(new PrizeDealerShops());
     }
 
 }

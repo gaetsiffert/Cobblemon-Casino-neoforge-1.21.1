@@ -1,5 +1,7 @@
 package net.andrespr.casinorocket.villager.shops;
 
+import net.andrespr.casinorocket.CasinoRocket;
+import net.andrespr.casinorocket.config.npc.CobbledollarsDealerNpcConfig;
 import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.item.custom.ChipItem;
 import net.andrespr.casinorocket.villager.VillagerTradeHelper;
@@ -18,18 +20,12 @@ public final class CobbledollarsDealerShops implements IShop {
         }
         VillagerTradeHelper.addShopCompound(shops, "Chips", chipOffers);
 
-        ListTag pinOffers = new ListTag();
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:litwick_pin", "10000"));
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:staryu_pin", "10000"));
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:bellsprout_pin", "10000"));
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:tyrogue_pin", "25000"));
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:scyther_pin", "50000"));
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:eevee_pin", "75000"));
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:dratini_pin", "100000"));
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:rotom_pin", "250000"));
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:ditto_pin", "500000"));
-        pinOffers.add(VillagerTradeHelper.makeOffer("casinorocket:porygon_pin", "999999"));
-        VillagerTradeHelper.addShopCompound(shops, "Pokemon Pins", pinOffers);
+        CobbledollarsDealerNpcConfig config = CasinoRocket.CONFIG.cobbledollarsDealerNpc;
+        if (config != null && config.categories != null) {
+            for (CobbledollarsDealerNpcConfig.Category category : config.categories) {
+                VillagerTradeHelper.addCobbledollarCategory(shops, category);
+            }
+        }
 
         return new VillagerTradeHelper.ShopData(shops, "cobbledollars:cobble_merchant", 1, "cobblemon:display_case");
     }

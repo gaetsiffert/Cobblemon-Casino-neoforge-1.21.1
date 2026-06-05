@@ -12,9 +12,6 @@ public class GeneralConfig implements ConfigData {
     @CollapsibleObject
     public ChipValues money_chip_values = new ChipValues(1, 5, 10, 50, 100, 500, 1_000, 5_000, 10_000, 50_000, 100_000, 500_000, 1_000_000);
 
-    @CollapsibleObject
-    public ChipValues relic_coin_chip_values = new ChipValues(1, 1, 1, 1, 1, 1, 1, 5, 10, 50, 100, 500, 1_000);
-
     public static class ChipValues implements ConfigData {
 
         public long red_chip;
@@ -63,10 +60,6 @@ public class GeneralConfig implements ConfigData {
 
     public long getMoneyChipValue(String chipId) {
         return getValue(money_chip_values, chipId);
-    }
-
-    public long getRelicCoinChipValue(String chipId) {
-        return getValue(relic_coin_chip_values, chipId);
     }
 
     private long getValue(ChipValues values, String chipId) {

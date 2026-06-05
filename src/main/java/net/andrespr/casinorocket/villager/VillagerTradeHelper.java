@@ -1,8 +1,9 @@
 package net.andrespr.casinorocket.villager;
 
 import net.andrespr.casinorocket.CasinoRocket;
+import net.andrespr.casinorocket.config.npc.CobbledollarsDealerNpcConfig;
+import net.andrespr.casinorocket.config.npc.NpcTradeConfig;
 import net.andrespr.casinorocket.item.custom.ChipItem;
-import net.andrespr.casinorocket.util.MoneyCalculator;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -11,8 +12,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 
 public class VillagerTradeHelper {
-
-    private static final String RELIC_CURRENCY_ID = "cobblemon:relic_coin";
 
     // ===== BASE STRUCTURE - SHOP DATA =====
 
@@ -74,6 +73,28 @@ public class VillagerTradeHelper {
         return offer;
     }
 
+    public static void addCobbledollarCategory(ListTag shops, CobbledollarsDealerNpcConfig.Category category) {
+        if (category == null || category.name == null || category.name.isBlank() || category.offers == null) {
+            return;
+        }
+
+        ListTag offers = new ListTag();
+        for (CobbledollarsDealerNpcConfig.Offer offer : category.offers) {
+            if (offer == null || offer.item == null || offer.item.isBlank() || offer.price < 0) {
+                continue;
+            }
+            offers.add(makeOffer(offer.item, String.valueOf(offer.price)));
+        }
+
+        addShopCompound(shops, category.name, offers);
+    }
+
+    public static void makeMoneyToChipOffer(ListTag trades, ChipItem chip) {
+        String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
+        String value = String.valueOf(getMoneyChipValue(chip));
+        trades.add(makeOffer(chipId, value));
+    }
+
     // ===== VANILLA TRADES =====
 
     public static CompoundTag makeVanillaShopCompound(ListTag trades) {
@@ -120,33 +141,23 @@ public class VillagerTradeHelper {
         return trade;
     }
 
-    // ===== SPECIFIC TRADES =====
+    public static void addConfiguredVanillaOffers(ListTag trades, Iterable<NpcTradeConfig.Trade> configuredTrades) {
+        if (configuredTrades == null) {
+            return;
+        }
 
-    public static void makeMoneyToChipOffer(ListTag trades, ChipItem chip) {
-        String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
-        String value = String.valueOf(getMoneyChipValue(chip));
-        trades.add(makeOffer(chipId, value));
-    }
-
-    public static void makeItemToChipOffer(ListTag trades, ChipItem chip) {
-        String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
-        MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(RELIC_CURRENCY_ID, getRelicCoinChipValue(chip));
-        trades.add(makeVanillaOffer(itemResult.item(), Math.toIntExact(itemResult.amount()), chipId, 1));
-    }
-
-    public static void makeChipToItemOffer(ListTag trades, ChipItem chip) {
-        String chipId = BuiltInRegistries.ITEM.getKey(chip).toString();
-        MoneyCalculator.ItemResult itemResult = MoneyCalculator.calculateItemAmount(RELIC_CURRENCY_ID, getRelicCoinChipValue(chip));
-        trades.add(makeVanillaOffer(chipId, 1, itemResult.item(), Math.toIntExact(itemResult.amount())));
+        for (NpcTradeConfig.Trade trade : configuredTrades) {
+            if (trade == null || trade.buy_item == null || trade.buy_item.isBlank()
+                    || trade.sell_item == null || trade.sell_item.isBlank()
+                    || trade.buy_count <= 0 || trade.sell_count <= 0) {
+                continue;
+            }
+            trades.add(makeVanillaOffer(trade.buy_item, trade.buy_count, trade.sell_item, trade.sell_count));
+        }
     }
 
     private static long getMoneyChipValue(ChipItem chip) {
         return CasinoRocket.CONFIG.generalConfig.getMoneyChipValue(BuiltInRegistries.ITEM.getKey(chip).getPath());
-    }
-
-    private static long getRelicCoinChipValue(ChipItem chip) {
-        String chipPath = BuiltInRegistries.ITEM.getKey(chip).getPath();
-        return CasinoRocket.CONFIG.generalConfig.getRelicCoinChipValue(chipPath);
     }
 
     private static ListTag filterShopOffers(ListTag offers) {

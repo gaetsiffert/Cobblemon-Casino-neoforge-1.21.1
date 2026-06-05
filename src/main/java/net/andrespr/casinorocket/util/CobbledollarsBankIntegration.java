@@ -1,9 +1,11 @@
 package net.andrespr.casinorocket.util;
 
 import net.andrespr.casinorocket.CasinoRocket;
+import net.andrespr.casinorocket.config.npc.CobbledollarsDealerNpcConfig;
 import net.andrespr.casinorocket.item.ModItems;
 import net.andrespr.casinorocket.item.custom.ChipItem;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
@@ -48,8 +50,38 @@ public final class CobbledollarsBankIntegration {
                 long chipValue = CasinoRocket.CONFIG.generalConfig.getMoneyChipValue(BuiltInRegistries.ITEM.getKey(chip).getPath());
                 offers.add(offerConstructor.newInstance(stack, BigInteger.valueOf(chipValue), -1));
             }
+
+            CobbledollarsDealerNpcConfig config = CasinoRocket.CONFIG.cobbledollarsDealerNpc;
+            if (config == null || config.categories == null) {
+                return;
+            }
+
+            for (CobbledollarsDealerNpcConfig.Category category : config.categories) {
+                if (category == null || category.offers == null) {
+                    continue;
+                }
+
+                for (CobbledollarsDealerNpcConfig.Offer offer : category.offers) {
+                    if (offer == null || offer.item == null || offer.item.isBlank() || offer.buyback_price < 0) {
+                        continue;
+                    }
+
+                    ResourceLocation itemId = ResourceLocation.tryParse(offer.item);
+                    if (itemId == null || !BuiltInRegistries.ITEM.containsKey(itemId)) {
+                        continue;
+                    }
+
+                    Item item = BuiltInRegistries.ITEM.get(itemId);
+                    ItemStack stack = new ItemStack(item);
+                    if (stack.isEmpty() || (boolean) containsStack.invoke(bank, stack)) {
+                        continue;
+                    }
+
+                    offers.add(offerConstructor.newInstance(stack, BigInteger.valueOf(offer.buyback_price), -1));
+                }
+            }
         } catch (ReflectiveOperationException | RuntimeException exception) {
-            CasinoRocket.LOGGER.warn("Could not register Casino Rocket chips in CobbleDollars bank buyback.", exception);
+            CasinoRocket.LOGGER.warn("Could not register Casino Rocket NPC buybacks in CobbleDollars bank.", exception);
         }
     }
 }
