@@ -94,8 +94,11 @@ public class PlushiesGachaMachineBlock extends Block {
             return InteractionResult.FAIL;
         }
 
-        stack.shrink(1);
-        return GachaMachinesUtils.handlePlushiesUse(world, pos, player);
+        InteractionResult result = GachaMachinesUtils.handlePlushiesUse(world, pos, player);
+        if (result == InteractionResult.SUCCESS) {
+            stack.shrink(1);
+        }
+        return result;
 
     }
 

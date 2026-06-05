@@ -467,9 +467,22 @@ public class GachaMachinesUtils {
 
         PLAYER_COOLDOWNS.object2LongEntrySet().removeIf(e -> currentTick > e.getLongValue());
 
+        UUID currentUser = LAST_PLAYER_USED.get(pos);
+        if (currentUser != null && !currentUser.equals(player.getUUID())) {
+            CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_another_occupied", true);
+            return InteractionResult.FAIL;
+        }
+
+        LAST_MACHINE_USED.put(player.getUUID(), pos);
+
         long playerCooldownEnd = PLAYER_COOLDOWNS.getLong(player.getUUID());
         if (currentTick < playerCooldownEnd) {
-            CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_occupied", true);
+            BlockPos lastUsed = LAST_MACHINE_USED.get(player.getUUID());
+            if (lastUsed != null && lastUsed.equals(pos)) {
+                CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_occupied", true);
+            } else {
+                CasinoRocketLogger.toPlayerTranslated(player, "message.casinorocket.gacha_machines_another_occupied", true);
+            }
             return InteractionResult.FAIL;
         }
 

@@ -16,6 +16,7 @@ public final class ModConditions {
 
     public static void register(IEventBus eventBus) {
         CONDITIONS.register("machines_crafting_enabled", () -> MachinesCraftingEnabledCondition.CODEC);
+        CONDITIONS.register("gacha_currency_crafting_enabled", () -> GachaCurrencyCraftingEnabledCondition.CODEC);
         CONDITIONS.register(eventBus);
     }
 }

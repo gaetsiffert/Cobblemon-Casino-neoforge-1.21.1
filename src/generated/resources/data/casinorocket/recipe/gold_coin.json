@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "casinorocket:gacha_currency_crafting_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "pattern": [
+    " # ",
+    "# #",
+    " # "
+  ],
+  "result": {
+    "count": 2,
+    "id": "casinorocket:gold_coin"
+  }
+}

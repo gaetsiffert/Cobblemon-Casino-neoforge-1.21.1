@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "casinorocket:gacha_currency_crafting_enabled"
+    }
+  ],
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_event_coin": {
+      "conditions": {
+        "items": [
+          {
+            "items": "casinorocket:event_coin"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "casinorocket:primogem"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_event_coin"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "casinorocket:primogem"
+    ]
+  }
+}

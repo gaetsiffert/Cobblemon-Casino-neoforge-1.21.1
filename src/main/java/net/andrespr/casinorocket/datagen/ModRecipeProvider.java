@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.datagen;
 import com.cobblemon.mod.common.CobblemonItems;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.ModBlocks;
+import net.andrespr.casinorocket.condition.GachaCurrencyCraftingEnabledCondition;
 import net.andrespr.casinorocket.condition.MachinesCraftingEnabledCondition;
 import net.andrespr.casinorocket.item.ModItems;
 import net.minecraft.core.HolderLookup;
@@ -34,6 +35,9 @@ public class ModRecipeProvider extends RecipeProvider {
 
         offerDeconstruct(recipeExporter, RecipeCategory.MISC, CobblemonItems.RELIC_COIN, ModItems.HANDFUL_OF_RELIC_COINS, 4);
         offerDeconstruct(recipeExporter, RecipeCategory.MISC, ModItems.HANDFUL_OF_RELIC_COINS, ModItems.STACK_OF_RELIC_COINS, 4);
+
+        // GACHA CURRENCY
+        offerGachaCurrencyRecipes(recipeExporter.withConditions(GachaCurrencyCraftingEnabledCondition.INSTANCE));
 
         // GOLD BLOCKS CRAFTING TABLE RECIPES
         offer2x2Recipe(recipeExporter, RecipeCategory.BUILDING_BLOCKS, ModBlocks.CUT_GOLD_BLOCK, Items.GOLD_NUGGET, 1);
@@ -170,6 +174,58 @@ public class ModRecipeProvider extends RecipeProvider {
         // CASINO MACHINES
         offerMachineRecipes(recipeExporter.withConditions(MachinesCraftingEnabledCondition.INSTANCE));
 
+    }
+
+    private static void offerGachaCurrencyRecipes(RecipeOutput exporter) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.COPPER_COIN, 2)
+                .define('#', Items.COPPER_INGOT)
+                .pattern(" # ")
+                .pattern("# #")
+                .pattern(" # ")
+                .unlockedBy(getHasName(Items.COPPER_INGOT), has(Items.COPPER_INGOT))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "copper_coin"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.IRON_COIN, 2)
+                .define('#', Items.IRON_INGOT)
+                .pattern(" # ")
+                .pattern("# #")
+                .pattern(" # ")
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "iron_coin"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.GOLD_COIN, 2)
+                .define('#', Items.GOLD_INGOT)
+                .pattern(" # ")
+                .pattern("# #")
+                .pattern(" # ")
+                .unlockedBy(getHasName(Items.GOLD_INGOT), has(Items.GOLD_INGOT))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "gold_coin"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.DIAMOND_COIN, 4)
+                .define('#', Items.DIAMOND)
+                .pattern(" # ")
+                .pattern("# #")
+                .pattern(" # ")
+                .unlockedBy(getHasName(Items.DIAMOND), has(Items.DIAMOND))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "diamond_coin"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.EVENT_COIN)
+                .define('#', Items.EMERALD)
+                .define('D', Items.DIAMOND)
+                .pattern(" # ")
+                .pattern("#D#")
+                .pattern(" # ")
+                .unlockedBy(getHasName(Items.DIAMOND), has(Items.DIAMOND))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "event_coin"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.PRIMOGEM)
+                .define('#', Items.AMETHYST_SHARD)
+                .define('E', ModItems.EVENT_COIN)
+                .pattern(" # ")
+                .pattern("#E#")
+                .pattern(" # ")
+                .unlockedBy(getHasName(ModItems.EVENT_COIN), has(ModItems.EVENT_COIN))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "primogem"));
     }
 
     private static void offerMachineRecipes(RecipeOutput exporter) {

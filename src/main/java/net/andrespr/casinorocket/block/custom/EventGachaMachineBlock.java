@@ -97,8 +97,11 @@ public class EventGachaMachineBlock extends Block {
             return InteractionResult.FAIL;
         }
 
-        stack.shrink(1);
-        return GachaMachinesUtils.handleEventUse(world, pos, player);
+        InteractionResult result = GachaMachinesUtils.handleEventUse(world, pos, player);
+        if (result == InteractionResult.SUCCESS) {
+            stack.shrink(1);
+        }
+        return result;
     }
 
     @Override

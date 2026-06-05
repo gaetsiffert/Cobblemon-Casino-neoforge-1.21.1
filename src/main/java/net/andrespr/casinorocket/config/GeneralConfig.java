@@ -50,6 +50,7 @@ public class GeneralConfig implements ConfigData {
     }
 
     public boolean enableMachinesCrafting = true;
+    public boolean enableGachaCurrencyCrafting = true;
     public boolean makeMachinesUnbreakable = false;
 
     // ===== HELPERS =====
