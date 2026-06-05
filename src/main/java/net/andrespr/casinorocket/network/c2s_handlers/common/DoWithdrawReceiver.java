@@ -21,6 +21,7 @@ public class DoWithdrawReceiver {
         if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
         if (!packet.pos().equals(bound.getMachinePos())) return;
         if (!packet.machineKey().equals(bound.getMachineKey())) return;
+        if (!player.containerMenu.stillValid(player)) return;
 
         switch (packet.machineKey()) {
             case "slots" -> SlotsWithdrawLogic.handle(player, server);

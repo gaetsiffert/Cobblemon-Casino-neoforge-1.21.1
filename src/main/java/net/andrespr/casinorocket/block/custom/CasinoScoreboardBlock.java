@@ -63,7 +63,7 @@ public class CasinoScoreboardBlock extends Block {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                Player player, BlockHitResult hit) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer && serverPlayer.getServer() != null) {
-            CasinoLedgerOpenData data = CasinoLedgerService.createSnapshot(serverPlayer.getServer(), serverPlayer);
+            CasinoLedgerOpenData data = CasinoLedgerService.createSnapshot(serverPlayer.getServer(), serverPlayer, pos);
             serverPlayer.openMenu(new MenuDataProvider<>(
                     Component.translatable("gui.casinorocket.casino_ledger"),
                     data,

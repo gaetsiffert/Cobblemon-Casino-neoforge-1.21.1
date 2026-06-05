@@ -28,6 +28,7 @@ public final class ChangeBlackjackBetIndexReceiver {
 
         if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
         if (!"blackjack".equals(bound.getMachineKey())) return;
+        if (!player.containerMenu.stillValid(player)) return;
 
         Level world = player.level();
         BlockPos pos = bound.getMachinePos();

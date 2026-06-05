@@ -118,12 +118,17 @@ public class GachaMachineBlock extends Block {
     // === BREAK ===
     @Override
     public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-        DoubleBlockHalf half = state.getValue(HALF);
-        BlockPos otherPos = half == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
-        BlockState otherState = world.getBlockState(otherPos);
+        if (!world.isClientSide && state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            BlockPos lowerPos = pos.below();
+            BlockState lowerState = world.getBlockState(lowerPos);
 
-        if (otherState.is(this) && otherState.getValue(HALF) != half) {
-            world.destroyBlock(otherPos, !player.isCreative());
+            if (lowerState.is(this) && lowerState.getValue(HALF) == DoubleBlockHalf.LOWER) {
+                if (!player.isCreative()) {
+                    popResource(world, lowerPos, new ItemStack(this));
+                }
+                world.levelEvent(2001, lowerPos, Block.getId(lowerState));
+                world.setBlock(lowerPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL | Block.UPDATE_SUPPRESS_DROPS);
+            }
         }
 
         return super.playerWillDestroy(world, pos, state, player);

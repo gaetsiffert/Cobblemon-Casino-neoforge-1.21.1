@@ -28,6 +28,7 @@ public class DoSpinReceiver {
         if (!(player.containerMenu instanceof SlotMachineScreenHandler)) {
             return;
         }
+        if (!player.containerMenu.stillValid(player)) return;
 
         PlayerCasinoBalanceData balanceStorage = PlayerCasinoBalanceData.get(server);
         PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);

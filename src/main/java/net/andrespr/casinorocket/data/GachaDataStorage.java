@@ -85,11 +85,5 @@ public class GachaDataStorage extends SavedData {
 
         return data;
     }
-
-    @Override
-    public boolean isDirty() {
-        return true;
-    }
-
 }
 

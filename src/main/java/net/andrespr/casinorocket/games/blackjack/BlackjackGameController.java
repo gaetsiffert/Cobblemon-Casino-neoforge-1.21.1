@@ -34,7 +34,10 @@ public final class BlackjackGameController {
         balanceStorage.setBalance(playerId, balance - bet);
         blackjackStorage.addTotalSpent(playerId, bet);
 
-        BlackjackEngine.startRound(round, deck, bet);
+        BlackjackEngine.EngineResult res = BlackjackEngine.startRound(round, deck, bet);
+        if (res.roundEnded()) {
+            resolveRound(bet, res.payout());
+        }
         return true;
     }
 
@@ -43,8 +46,7 @@ public final class BlackjackGameController {
         long betBefore = round.getCurrentBet();
         BlackjackEngine.EngineResult res = BlackjackEngine.playerHit(round, deck);
         if (res.roundEnded()) {
-            blackjackStorage.setLastWin(playerId, res.payout());
-            setResolvedResult(betBefore, res.payout());
+            resolveRound(betBefore, res.payout());
         }
     }
 
@@ -53,8 +55,7 @@ public final class BlackjackGameController {
 
         BlackjackEngine.EngineResult res = BlackjackEngine.playerStand(round, deck);
         if (res.roundEnded()) {
-            blackjackStorage.setLastWin(playerId, res.payout());
-            setResolvedResult(betBefore, res.payout());
+            resolveRound(betBefore, res.payout());
         }
     }
 
@@ -71,8 +72,7 @@ public final class BlackjackGameController {
         }
 
         if (res.roundEnded()) {
-            blackjackStorage.setLastWin(playerId, res.payout());
-            setResolvedResult(betBefore + Math.max(0L, res.extraCostToCharge()), res.payout());
+            resolveRound(betBefore + Math.max(0L, res.extraCostToCharge()), res.payout());
         }
 
         return res.extraCostToCharge() > 0;
@@ -81,15 +81,6 @@ public final class BlackjackGameController {
     // === FINISH ===
     public void finish() {
         if (!round.canFinish()) return;
-
-        long win = round.getWinPayout();
-        long balance = balanceStorage.getBalance(playerId);
-
-        balanceStorage.setBalance(playerId, balance + win);
-
-        blackjackStorage.addTotalWon(playerId, win);
-        blackjackStorage.setLastWin(playerId, win);
-        blackjackStorage.updateHighestWin(playerId, win);
 
         round.setPhase(BlackjackPhase.IDLE);
     }
@@ -101,7 +92,15 @@ public final class BlackjackGameController {
         long newBet = round.getWinPayout();
         if (newBet <= 0) return false;
 
-        BlackjackEngine.startRound(round, deck, newBet);
+        long balance = balanceStorage.getBalance(playerId);
+        if (balance < newBet) return false;
+
+        balanceStorage.setBalance(playerId, balance - newBet);
+        blackjackStorage.addTotalSpent(playerId, newBet);
+        BlackjackEngine.EngineResult res = BlackjackEngine.startRound(round, deck, newBet);
+        if (res.roundEnded()) {
+            resolveRound(newBet, res.payout());
+        }
         return true;
     }
 
@@ -124,11 +123,30 @@ public final class BlackjackGameController {
     public long getLastResolvedPayout() { return lastResolvedPayout; }
 
     // === SETTERS ===
+    private void resolveRound(long bet, long payout) {
+        long safePayout = Math.max(0L, payout);
+        if (safePayout > 0) {
+            long balance = balanceStorage.getBalance(playerId);
+            balanceStorage.setBalance(playerId, safeAdd(balance, safePayout));
+            blackjackStorage.addTotalWon(playerId, safePayout);
+            blackjackStorage.updateHighestWin(playerId, safePayout);
+        }
+        blackjackStorage.setLastWin(playerId, safePayout);
+        setResolvedResult(bet, safePayout);
+    }
+
     private void setResolvedResult(long bet, long payout) {
         if (bet <= 0) return;
         this.resultId++;
         this.lastResolvedBet = Math.max(0L, bet);
         this.lastResolvedPayout = Math.max(0L, payout);
+    }
+
+    private static long safeAdd(long a, long b) {
+        if (b > 0 && a > Long.MAX_VALUE - b) {
+            return Long.MAX_VALUE;
+        }
+        return a + b;
     }
 
 }

@@ -2,13 +2,15 @@ package net.andrespr.casinorocket.screen.custom.chip_table;
 
 import net.andrespr.casinorocket.games.chip_table.ChipTableConversionMode;
 import net.andrespr.casinorocket.games.chip_table.ChipTableExchange;
+import net.andrespr.casinorocket.inventory.WalletInventory;
 import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.ChipTableOpenData;
 import net.andrespr.casinorocket.screen.widget.BetSlot;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.andrespr.casinorocket.util.CobbledollarsBalanceIntegration;
-import net.andrespr.casinorocket.util.IChipBankHolder;
+import net.andrespr.casinorocket.util.MenuValidation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,21 +36,28 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
     private final Container outputInventory;
     private final List<ChipTableExchange.CurrencyValue> currencyValues;
     private final boolean cobbledollarsAvailable;
+    private final InteractionHand walletHand;
+    private final int lockedHotbarSlot;
 
     public ChipTableScreenHandler(int syncId, Inventory playerInventory, ChipTableOpenData openData) {
         super(ModMenuTypes.CHIP_TABLE_MENU_TYPE, syncId);
         this.tablePos = openData.pos();
         this.walletMode = openData.walletMode();
+        this.walletHand = openData.walletHand();
         this.currencyValues = openData.currencyValues();
         this.cobbledollarsAvailable = openData.cobbledollarsAvailable();
+        this.lockedHotbarSlot = this.walletMode && this.walletHand == InteractionHand.MAIN_HAND
+                ? playerInventory.selected
+                : -1;
 
         if (this.walletMode) {
             this.inputInventory = null;
             this.outputInventory = null;
-            if (playerInventory.player.level().isClientSide) {
+            if (playerInventory.player.level().isClientSide || !MenuValidation.isValidWallet(playerInventory.player, this.walletHand)) {
                 this.bankInventory = new SimpleContainer(WALLET_SLOT_COUNT);
             } else {
-                this.bankInventory = ((IChipBankHolder) playerInventory.player).casinorocket$getChipBankInventory();
+                this.bankInventory = new WalletInventory(playerInventory.player.getItemInHand(this.walletHand),
+                        playerInventory.player.registryAccess());
             }
             checkContainerSize(this.bankInventory, WALLET_SLOT_COUNT);
             this.bankInventory.startOpen(playerInventory.player);
@@ -127,15 +136,20 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         if (this.walletMode) {
-            return this.bankInventory.stillValid(player);
+            return MenuValidation.isValidWallet(player, this.walletHand) && this.bankInventory.stillValid(player);
         }
-        return this.inputInventory.stillValid(player) && this.outputInventory.stillValid(player);
+        return MenuValidation.isValidChipTable(player, this.tablePos)
+                && this.inputInventory.stillValid(player)
+                && this.outputInventory.stillValid(player);
     }
 
     @Override
     public void removed(Player player) {
         super.removed(player);
         if (this.walletMode) {
+            if (this.bankInventory instanceof WalletInventory walletInventory) {
+                walletInventory.saveToWallet();
+            }
             this.bankInventory.stopOpen(player);
             return;
         }
@@ -259,7 +273,10 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
 
     private void addPlayerHotbar(Inventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 7 + i * 18, this.walletMode ? 148 : 171));
+            Slot slot = this.walletMode && i == this.lockedHotbarSlot
+                    ? new LockedSlot(playerInventory, i, 7 + i * 18, 148)
+                    : new Slot(playerInventory, i, 7 + i * 18, this.walletMode ? 148 : 171);
+            this.addSlot(slot);
         }
     }
 
@@ -277,6 +294,22 @@ public class ChipTableScreenHandler extends AbstractContainerMenu {
     private static class ExchangeOutputSlot extends Slot {
         public ExchangeOutputSlot(Container inventory, int index, int x, int y) {
             super(inventory, index, x, y);
+        }
+
+        @Override
+        public boolean mayPlace(ItemStack stack) {
+            return false;
+        }
+    }
+
+    private static class LockedSlot extends Slot {
+        public LockedSlot(Container inventory, int index, int x, int y) {
+            super(inventory, index, x, y);
+        }
+
+        @Override
+        public boolean mayPickup(Player player) {
+            return false;
         }
 
         @Override

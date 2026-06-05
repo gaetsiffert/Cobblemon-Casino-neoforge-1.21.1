@@ -23,9 +23,12 @@ public class WalletItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+        if (hand != InteractionHand.MAIN_HAND) {
+            return InteractionResultHolder.fail(player.getItemInHand(hand));
+        }
         if (!world.isClientSide) {
             world.playSound(null, player.blockPosition(), ModSounds.WALLET, SoundSource.PLAYERS,2.0F, 1.0F);
-            player.openMenu(new WalletScreenFactory());
+            player.openMenu(new WalletScreenFactory(hand));
         }
         return InteractionResultHolder.consume(player.getItemInHand(hand));
     }

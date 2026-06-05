@@ -36,6 +36,13 @@ ordering="AFTER"
 side="BOTH"
 
 [[dependencies.${mod_id}]]
+modId="cloth_config"
+type="required"
+versionRange="[${cloth_config_version},)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.${mod_id}]]
 modId="cobbledollars"
 type="optional"
 ordering="AFTER"

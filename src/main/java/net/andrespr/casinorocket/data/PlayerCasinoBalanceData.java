@@ -1,5 +1,6 @@
 package net.andrespr.casinorocket.data;
 
+import net.andrespr.casinorocket.util.MoneyCalculator;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -58,8 +59,17 @@ public class PlayerCasinoBalanceData extends SavedData {
     }
 
     public void addBalance(UUID id, long amount) {
-        balances.merge(id, amount, Long::sum);
-        if (balances.getOrDefault(id, 0L) < 0L) balances.put(id, 0L);
+        long current = balances.getOrDefault(id, 0L);
+        long next = amount >= 0
+                ? MoneyCalculator.safeAdd(current, amount, Long.MAX_VALUE)
+                : subtractOrZero(current, amount);
+        balances.put(id, next);
         setDirty();
+    }
+
+    private static long subtractOrZero(long current, long negativeAmount) {
+        if (negativeAmount == Long.MIN_VALUE) return 0L;
+        long decrement = -negativeAmount;
+        return current <= decrement ? 0L : current - decrement;
     }
 }

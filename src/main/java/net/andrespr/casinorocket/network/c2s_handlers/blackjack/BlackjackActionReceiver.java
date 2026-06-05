@@ -32,6 +32,7 @@ public final class BlackjackActionReceiver {
 
         if (!payload.pos().equals(bound.getMachinePos())) return;
         if (!payload.machineKey().equals(bound.getMachineKey())) return;
+        if (!player.containerMenu.stillValid(player)) return;
 
         if (!(payload.machineKey()).equals("blackjack")) {
             CasinoRocket.LOGGER.warn("[BlackjackAction] Wrong machineKey={} from {}", payload.machineKey(), player.getGameProfile().getName());

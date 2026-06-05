@@ -8,6 +8,7 @@ import net.andrespr.casinorocket.network.c2s.slots.ChangeBetBaseC2SPayload;
 import net.andrespr.casinorocket.network.s2c.SendMenuSettingsS2CPayload;
 import net.andrespr.casinorocket.games.slot.SlotMachineConstants;
 import net.andrespr.casinorocket.network.CasinoRocketPackets;
+import net.andrespr.casinorocket.util.IMachineBoundHandler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import java.util.List;
@@ -20,6 +21,9 @@ public class ChangeBetBaseReceiver {
         ServerPlayer player = (ServerPlayer) ctx.player();
         MinecraftServer server = player.getServer();
         if (server == null) return;
+        if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
+        if (!"slots".equals(bound.getMachineKey())) return;
+        if (!player.containerMenu.stillValid(player)) return;
 
         PlayerSlotMachineData storage = PlayerSlotMachineData.get(server);
         UUID uuid = player.getUUID();

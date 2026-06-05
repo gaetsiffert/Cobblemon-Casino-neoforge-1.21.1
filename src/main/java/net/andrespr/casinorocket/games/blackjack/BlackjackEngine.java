@@ -20,6 +20,13 @@ public final class BlackjackEngine {
         round.getPlayerHand().add(deck.draw());
         round.getDealerHand().add(deck.draw());
 
+        if (round.getPlayerHand().isNaturalBlackjack() || round.getDealerHand().isNaturalBlackjack()) {
+            round.revealDealerHole();
+            long payout = evaluatePayout(bet, round.getPlayerHand(), round.getDealerHand());
+            round.finishWithPayout(payout);
+            return EngineResult.ended(0L, payout);
+        }
+
         return EngineResult.ongoing();
     }
 

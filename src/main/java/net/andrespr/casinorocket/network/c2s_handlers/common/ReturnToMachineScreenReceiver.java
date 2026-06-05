@@ -23,6 +23,7 @@ public class ReturnToMachineScreenReceiver {
         if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
         if (!payload.pos().equals(bound.getMachinePos())) return;
         if (!payload.machineKey().equals(bound.getMachineKey())) return;
+        if (!player.containerMenu.stillValid(player)) return;
 
         BlockPos pos = payload.pos();
 

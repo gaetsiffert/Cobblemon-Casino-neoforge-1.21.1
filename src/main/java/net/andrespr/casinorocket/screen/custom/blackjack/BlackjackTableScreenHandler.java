@@ -4,6 +4,7 @@ import net.andrespr.casinorocket.block.entity.custom.BlackjackTableEntity;
 import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.BlackjackTableOpenData;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
+import net.andrespr.casinorocket.util.MenuValidation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -69,7 +70,7 @@ public class BlackjackTableScreenHandler extends AbstractContainerMenu implement
 
     @Override
     public boolean stillValid(Player player) {
-        return true;
+        return MenuValidation.isValidMachine(player, this.pos, this.machineKey);
     }
 
     // === GETTERS ===

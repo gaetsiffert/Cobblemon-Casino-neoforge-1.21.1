@@ -21,6 +21,7 @@ public class DoBetReceiver {
         if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
         if (!payload.pos().equals(bound.getMachinePos())) return;
         if (!payload.machineKey().equals(bound.getMachineKey())) return;
+        if (!player.containerMenu.stillValid(player)) return;
 
         switch (payload.machineKey()) {
             case "slots" -> SlotsBetLogic.handle(player, server);

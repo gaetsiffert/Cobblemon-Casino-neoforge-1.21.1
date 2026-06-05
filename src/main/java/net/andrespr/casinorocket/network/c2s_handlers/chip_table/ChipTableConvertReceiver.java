@@ -14,6 +14,7 @@ public final class ChipTableConvertReceiver {
         if (!(player.containerMenu instanceof ChipTableScreenHandler handler)) return;
         if (handler.isWalletMode()) return;
         if (!payload.pos().equals(handler.getTablePos())) return;
+        if (!handler.stillValid(player)) return;
 
         handler.convert(player, payload.mode(), payload.cobbledollarAmount());
     }

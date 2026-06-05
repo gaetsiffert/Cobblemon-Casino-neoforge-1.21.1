@@ -23,6 +23,7 @@ public class MenuScreenReceiver {
         if (server == null) return;
 
         if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
+        if (!player.containerMenu.stillValid(player)) return;
 
         String key = bound.getMachineKey();
         BlockPos pos = bound.getMachinePos();

@@ -2,6 +2,7 @@ package net.andrespr.casinorocket.screen.custom.ledger;
 
 import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.CasinoLedgerOpenData;
+import net.andrespr.casinorocket.util.MenuValidation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -27,6 +28,6 @@ public class CasinoLedgerScreenHandler extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return true;
+        return MenuValidation.isValidScoreboard(player, this.data.pos());
     }
 }

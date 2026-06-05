@@ -95,8 +95,12 @@ public class MoneyCalculator {
     }
 
     public static long safeAdd(long a, long b, long max) {
+        if (max < 0) return max;
         if (b > 0 && a > max - b) {
             return max;
+        }
+        if (b < 0 && a < Long.MIN_VALUE - b) {
+            return Long.MIN_VALUE;
         }
         return a + b;
     }

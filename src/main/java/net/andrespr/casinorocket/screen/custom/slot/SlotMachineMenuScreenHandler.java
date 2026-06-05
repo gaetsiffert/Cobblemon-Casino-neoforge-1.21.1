@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.screen.custom.slot;
 import net.andrespr.casinorocket.screen.ModMenuTypes;
 import net.andrespr.casinorocket.screen.opening.SlotMachineOpenData;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
+import net.andrespr.casinorocket.util.MenuValidation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -43,7 +44,7 @@ public class SlotMachineMenuScreenHandler extends AbstractContainerMenu implemen
 
     @Override
     public boolean stillValid(Player player) {
-        return true;
+        return MenuValidation.isValidMachine(player, this.pos, this.machineKey);
     }
 
     // === GETTERS ===

@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.data;
 
 import net.andrespr.casinorocket.games.blackjack.BlackjackRules;
+import net.andrespr.casinorocket.util.MoneyCalculator;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -102,11 +103,6 @@ public class PlayerBlackjackData extends SavedData {
         }
 
         return data;
-    }
-
-    @Override
-    public boolean isDirty() {
-        return true;
     }
 
     // === GETTERS ===
@@ -214,13 +210,13 @@ public class PlayerBlackjackData extends SavedData {
     // === MUTATORS ===
     public void addTotalDeposited(UUID id, long amount) {
         if (amount <= 0) return;
-        totalDeposited.merge(id, amount, Long::sum);
+        totalDeposited.put(id, MoneyCalculator.safeAdd(totalDeposited.getOrDefault(id, 0L), amount, Long.MAX_VALUE));
         setDirty();
     }
 
     public void addTotalWon(UUID id, long amount) {
         if (amount <= 0) return;
-        totalWon.merge(id, amount, Long::sum);
+        totalWon.put(id, MoneyCalculator.safeAdd(totalWon.getOrDefault(id, 0L), amount, Long.MAX_VALUE));
         setDirty();
     }
 
@@ -235,7 +231,7 @@ public class PlayerBlackjackData extends SavedData {
 
     public void addTotalSpent(UUID id, long amount) {
         if (amount <= 0) return;
-        totalSpent.merge(id, amount, Long::sum);
+        totalSpent.put(id, MoneyCalculator.safeAdd(totalSpent.getOrDefault(id, 0L), amount, Long.MAX_VALUE));
         setDirty();
     }
 

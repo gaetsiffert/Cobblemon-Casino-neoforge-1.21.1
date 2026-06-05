@@ -1,6 +1,7 @@
 package net.andrespr.casinorocket.data;
 
 import net.andrespr.casinorocket.games.slot.SlotMachineConstants;
+import net.andrespr.casinorocket.util.MoneyCalculator;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -15,7 +16,6 @@ public class PlayerSlotMachineData extends SavedData {
     private static final String STORAGE_KEY = "casinorocket_slot_machine_data";
 
     private final Map<UUID, Integer> betIndex = new HashMap<>();
-    private final Map<UUID, Integer> betBaseLegacy = new HashMap<>();
     private final Map<UUID, Integer> linesMode = new HashMap<>();
 
     private final Map<UUID, Long> totalDeposited = new HashMap<>();
@@ -23,9 +23,6 @@ public class PlayerSlotMachineData extends SavedData {
     private final Map<UUID, Long> highestWin = new HashMap<>();
     private final Map<UUID, Long> lastWin = new HashMap<>();
     private final Map<UUID, Long> totalSpent = new HashMap<>();
-
-    private static final int DATA_VERSION_CURRENT = 2;
-    private int dataVersion = DATA_VERSION_CURRENT;
 
     public static PlayerSlotMachineData get(MinecraftServer server) {
         DimensionDataStorage manager = Objects.requireNonNull(server.getLevel(Level.OVERWORLD)).getDataStorage();
@@ -36,9 +33,6 @@ public class PlayerSlotMachineData extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-
-        nbt.putInt("dataVersion", dataVersion);
-
         CompoundTag betIndexTag = new CompoundTag();
         betIndex.forEach((uuid, val) -> betIndexTag.putInt(uuid.toString(), val));
         nbt.put("betIndex", betIndexTag);
@@ -73,21 +67,11 @@ public class PlayerSlotMachineData extends SavedData {
     private static PlayerSlotMachineData readNbt(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         PlayerSlotMachineData data = new PlayerSlotMachineData();
 
-        int version = nbt.contains("dataVersion", Tag.TAG_INT) ? nbt.getInt("dataVersion") : 0;
-        data.dataVersion = version;
-
         if (nbt.contains("betIndex", Tag.TAG_COMPOUND)) {
             CompoundTag bi = nbt.getCompound("betIndex");
             bi.getAllKeys().forEach(key -> {
                 try { data.betIndex.put(UUID.fromString(key), bi.getInt(key)); } catch (Exception ignored) {}
             });
-        } else if (nbt.contains("betBase", Tag.TAG_COMPOUND)) {
-            CompoundTag bb = nbt.getCompound("betBase");
-            bb.getAllKeys().forEach(key -> {
-                try { data.betBaseLegacy.put(UUID.fromString(key), bb.getInt(key)); } catch (Exception ignored) {}
-            });
-            data.migrateBetBaseToIndex();
-            data.setDirty();
         }
 
         if (nbt.contains("linesMode", Tag.TAG_COMPOUND)) {
@@ -122,46 +106,7 @@ public class PlayerSlotMachineData extends SavedData {
             t.getAllKeys().forEach(k -> { try { data.totalSpent.put(UUID.fromString(k), t.getLong(k)); } catch (Exception ignored) {}});
         }
 
-        if (version < DATA_VERSION_CURRENT) {
-            data.migrate(version);
-            data.dataVersion = DATA_VERSION_CURRENT;
-            data.setDirty();
-        }
-
         return data;
-    }
-
-    private void migrate(int fromVersion) {
-        resetSettingsToDefault();
-    }
-
-    private void migrateBetBaseToIndex() {
-        List<Integer> bets = SlotMachineConstants.betValues();
-        int max = Math.max(0, bets.size() - 1);
-
-        for (var e : betBaseLegacy.entrySet()) {
-            UUID id = e.getKey();
-            int oldValue = e.getValue();
-
-            int idx = bets.indexOf(oldValue);
-            if (idx < 0) idx = 0;
-            if (idx > max) idx = max;
-
-            betIndex.put(id, idx);
-        }
-
-        betBaseLegacy.clear();
-    }
-
-    private void resetSettingsToDefault() {
-        int defaultMode = SlotMachineConstants.defaultLinesMode();
-
-        Set<UUID> players = getAllKnownPlayers();
-
-        for (UUID id : players) {
-            betIndex.put(id, 0);
-            linesMode.put(id, defaultMode);
-        }
     }
 
     // === GETTERS ===
@@ -295,13 +240,13 @@ public class PlayerSlotMachineData extends SavedData {
     // === MUTATORS ===
     public void addTotalDeposited(UUID id, long amount) {
         if (amount <= 0) return;
-        totalDeposited.merge(id, amount, Long::sum);
+        totalDeposited.put(id, MoneyCalculator.safeAdd(totalDeposited.getOrDefault(id, 0L), amount, Long.MAX_VALUE));
         setDirty();
     }
 
     public void addTotalWon(UUID id, long amount) {
         if (amount <= 0) return;
-        totalWon.merge(id, amount, Long::sum);
+        totalWon.put(id, MoneyCalculator.safeAdd(totalWon.getOrDefault(id, 0L), amount, Long.MAX_VALUE));
         setDirty();
     }
 
@@ -316,7 +261,7 @@ public class PlayerSlotMachineData extends SavedData {
 
     public void addTotalSpent(UUID id, long amount) {
         if (amount <= 0) return;
-        totalSpent.merge(id, amount, Long::sum);
+        totalSpent.put(id, MoneyCalculator.safeAdd(totalSpent.getOrDefault(id, 0L), amount, Long.MAX_VALUE));
         setDirty();
     }
 

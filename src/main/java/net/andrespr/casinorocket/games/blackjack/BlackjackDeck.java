@@ -14,6 +14,10 @@ public final class BlackjackDeck {
         resetAndShuffle();
     }
 
+    BlackjackDeck(List<BlackjackCard> orderedCards) {
+        cards.addAll(orderedCards);
+    }
+
     public void resetAndShuffle() {
         cards.clear();
 

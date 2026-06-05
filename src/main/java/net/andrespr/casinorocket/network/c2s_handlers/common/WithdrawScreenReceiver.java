@@ -20,6 +20,7 @@ public class WithdrawScreenReceiver {
 
         server.execute(() -> {
             if (!(player.containerMenu instanceof IMachineBoundHandler bound)) return;
+            if (!player.containerMenu.stillValid(player)) return;
 
             String machineKey = bound.getMachineKey();
             BlockPos pos = bound.getMachinePos();

@@ -7,6 +7,7 @@ import net.andrespr.casinorocket.screen.opening.CommonMachineOpenData;
 import net.andrespr.casinorocket.screen.widget.WithdrawSlot;
 import net.andrespr.casinorocket.util.IMachineBoundHandler;
 import net.andrespr.casinorocket.util.MoneyCalculator;
+import net.andrespr.casinorocket.util.MenuValidation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -60,7 +61,7 @@ public class WithdrawScreenHandler extends AbstractContainerMenu implements IMac
 
     @Override
     public boolean stillValid(Player player) {
-        return true;
+        return MenuValidation.isValidMachine(player, this.pos, this.machineKey);
     }
 
     // ==== HELPER -> INVENTORIES =====

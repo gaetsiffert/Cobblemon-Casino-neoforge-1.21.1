@@ -5,6 +5,7 @@ import net.andrespr.casinorocket.data.PlayerBlackjackData;
 import net.andrespr.casinorocket.data.PlayerCasinoBalanceData;
 import net.andrespr.casinorocket.data.PlayerSlotMachineData;
 import net.andrespr.casinorocket.screen.opening.CasinoLedgerOpenData;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -23,13 +24,14 @@ public final class CasinoLedgerService {
 
     private CasinoLedgerService() {}
 
-    public static CasinoLedgerOpenData createSnapshot(MinecraftServer server, ServerPlayer player) {
+    public static CasinoLedgerOpenData createSnapshot(MinecraftServer server, ServerPlayer player, BlockPos pos) {
         UUID playerId = player.getUUID();
         PlayerSlotMachineData slots = PlayerSlotMachineData.get(server);
         PlayerBlackjackData blackjack = PlayerBlackjackData.get(server);
         long balance = PlayerCasinoBalanceData.get(server).getBalance(playerId);
 
-        return new CasinoLedgerOpenData(balance,
+        return new CasinoLedgerOpenData(pos,
+                balance,
                 createSlotStats(server, slots, playerId),
                 createBlackjackStats(server, blackjack, playerId));
     }

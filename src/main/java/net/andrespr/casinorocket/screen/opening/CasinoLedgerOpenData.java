@@ -1,12 +1,13 @@
 package net.andrespr.casinorocket.screen.opening;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public record CasinoLedgerOpenData(long balance, GameStats slots, GameStats blackjack) {
+public record CasinoLedgerOpenData(BlockPos pos, long balance, GameStats slots, GameStats blackjack) {
 
     public record GameStats(PlayerStats playerStats, List<LeaderboardRow> highestWin,
                             List<LeaderboardRow> totalWon, List<LeaderboardRow> totalLost) {
@@ -25,16 +26,18 @@ public record CasinoLedgerOpenData(long balance, GameStats slots, GameStats blac
             StreamCodec.ofMember(CasinoLedgerOpenData::write, CasinoLedgerOpenData::read);
 
     private static void write(CasinoLedgerOpenData data, RegistryFriendlyByteBuf buf) {
+        buf.writeBlockPos(data.pos());
         buf.writeLong(data.balance());
         writeGameStats(data.slots(), buf);
         writeGameStats(data.blackjack(), buf);
     }
 
     private static CasinoLedgerOpenData read(RegistryFriendlyByteBuf buf) {
+        BlockPos pos = buf.readBlockPos();
         long balance = buf.readLong();
         GameStats slots = readGameStats(buf);
         GameStats blackjack = readGameStats(buf);
-        return new CasinoLedgerOpenData(balance, slots, blackjack);
+        return new CasinoLedgerOpenData(pos, balance, slots, blackjack);
     }
 
     private static void writeGameStats(GameStats stats, RegistryFriendlyByteBuf buf) {
