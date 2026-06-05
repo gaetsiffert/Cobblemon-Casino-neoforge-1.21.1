@@ -1,11 +1,16 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "casinorocket:machines_crafting_enabled"
+    }
+  ],
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_hypercharged_diamond_block": {
+    "has_redstone": {
       "conditions": {
         "items": [
           {
-            "items": "casinorocket:hypercharged_diamond_block"
+            "items": "minecraft:redstone"
           }
         ]
       },
@@ -13,7 +18,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "casinorocket:hypercharged_diamond_from_hypercharged_diamond_block"
+        "recipe": "casinorocket:casino_scoreboard"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +26,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_hypercharged_diamond_block"
+      "has_redstone"
     ]
   ],
   "rewards": {
     "recipes": [
-      "casinorocket:hypercharged_diamond_from_hypercharged_diamond_block"
+      "casinorocket:casino_scoreboard"
     ]
   }
 }

@@ -29,7 +29,6 @@ public class ModItemsGroup {
                             entries.accept(ModItems.DIAMOND_NUGGET);
                             entries.accept(ModItems.HANDFUL_OF_RELIC_COINS);
                             entries.accept(ModItems.STACK_OF_RELIC_COINS);
-                            entries.accept(ModItems.CASINO_LEDGER);
                             // COINS
                             entries.accept(ModItems.COPPER_COIN);
                             entries.accept(ModItems.IRON_COIN);
@@ -109,6 +108,8 @@ public class ModItemsGroup {
                             entries.accept(ModBlocks.BLACKJACK_TABLE);
                             // CHIP TABLE
                             entries.accept(ModBlocks.CHIP_TABLE);
+                            // SCOREBOARD
+                            entries.accept(ModBlocks.CASINO_SCOREBOARD);
                         }).build());
     }
 

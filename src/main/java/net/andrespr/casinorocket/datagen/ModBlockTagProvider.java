@@ -59,7 +59,8 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 .add(ModBlocks.EVENT_GACHA_MACHINE)
                 .add(ModBlocks.SLOT_MACHINE)
                 .add(ModBlocks.BLACKJACK_TABLE)
-                .add(ModBlocks.CHIP_TABLE);
+                .add(ModBlocks.CHIP_TABLE)
+                .add(ModBlocks.CASINO_SCOREBOARD);
 
         tag(BlockTags.NEEDS_IRON_TOOL)
                 // ADDING GOLD BLOCKS

@@ -31,9 +31,6 @@
     "casinorocket:diamond_pillar",
     "casinorocket:heavy_diamond_pillar",
     "casinorocket:diamond_door",
-    "casinorocket:diamond_trapdoor",
-    "casinorocket:condensed_diamond_block",
-    "casinorocket:charged_diamond_block",
-    "casinorocket:hypercharged_diamond_block"
+    "casinorocket:diamond_trapdoor"
   ]
 }

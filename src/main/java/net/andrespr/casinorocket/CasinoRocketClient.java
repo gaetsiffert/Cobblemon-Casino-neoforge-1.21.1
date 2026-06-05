@@ -37,6 +37,7 @@ public final class CasinoRocketClient {
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.SLOT_MACHINE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.BLACKJACK_TABLE, RenderType.cutout());
             ItemBlockRenderTypes.setRenderLayer(ModBlocks.CHIP_TABLE, RenderType.cutout());
+            ItemBlockRenderTypes.setRenderLayer(ModBlocks.CASINO_SCOREBOARD, RenderType.cutout());
         });
     }
 

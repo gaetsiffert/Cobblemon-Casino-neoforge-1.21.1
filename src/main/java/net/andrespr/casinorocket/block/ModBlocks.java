@@ -64,6 +64,7 @@ public class ModBlocks {
     public static Block SLOT_MACHINE;
     public static Block BLACKJACK_TABLE;
     public static Block CHIP_TABLE;
+    public static Block CASINO_SCOREBOARD;
 
     static {
         // GOLD BLOCKS
@@ -232,6 +233,12 @@ public class ModBlocks {
 
         registerBlock("chip_table", () -> CHIP_TABLE =
                     new ChipTableBlock(machineProperties())
+            );
+
+        registerBlock("casino_scoreboard", () -> CASINO_SCOREBOARD =
+                    new CasinoScoreboardBlock(machineProperties()
+                            .lightLevel(state -> 8)
+                    )
             );
     }
 

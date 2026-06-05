@@ -246,6 +246,17 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("G G")
                 .unlockedBy(getHasName(Items.GOLD_INGOT), has(Items.GOLD_INGOT))
                 .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "chip_table"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, ModBlocks.CASINO_SCOREBOARD)
+                .define('G', Items.GOLD_INGOT)
+                .define('R', Items.REDSTONE)
+                .define('P', Items.OAK_PLANKS)
+                .define('I', Items.IRON_INGOT)
+                .pattern("GRG")
+                .pattern("PPP")
+                .pattern("I I")
+                .unlockedBy(getHasName(Items.REDSTONE), has(Items.REDSTONE))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "casino_scoreboard"));
     }
 
     public static void offerDeconstruct(RecipeOutput exporter, RecipeCategory category, ItemLike output, ItemLike input, int count) {

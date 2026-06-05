@@ -124,7 +124,8 @@ public class CasinoRocket {
                 || block == ModBlocks.EVENT_GACHA_MACHINE
                 || block == ModBlocks.SLOT_MACHINE
                 || block == ModBlocks.BLACKJACK_TABLE
-                || block == ModBlocks.CHIP_TABLE;
+                || block == ModBlocks.CHIP_TABLE
+                || block == ModBlocks.CASINO_SCOREBOARD;
     }
 }
 
