@@ -4,7 +4,9 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.andrespr.casinorocket.CasinoRocket;
+import net.andrespr.casinorocket.network.CasinoRocketPackets;
 import net.andrespr.casinorocket.network.SuitSync;
+import net.andrespr.casinorocket.network.SuitSyncPayload;
 import net.andrespr.casinorocket.util.IdleYawData;
 import net.andrespr.casinorocket.util.LookPlayerData;
 import net.andrespr.casinorocket.util.SuitData;
@@ -158,6 +160,7 @@ public final class VillagerCommands {
             source.sendFailure(Component.literal("Error creating villager from NBT: " + e.getMessage()));
             return 0;
         }
+        SuitData.setSuitServer(villager, data.suitId);
 
         ServerPlayer player = source.getPlayer();
         float yaw = (player != null) ? player.getYRot() : 0f;
@@ -177,6 +180,10 @@ public final class VillagerCommands {
         if (!spawned) {
             source.sendFailure(Component.literal("The entity couldn't be spawned in the world."));
             return 0;
+        }
+        SuitSync.sendSuitSync(villager, data.suitId);
+        if (player != null) {
+            CasinoRocketPackets.sendToPlayer(player, new SuitSyncPayload(villager.getId(), data.suitId));
         }
 
         source.sendSuccess(() -> Component.literal("§a¡" + type + " spawned correctly!"), false);

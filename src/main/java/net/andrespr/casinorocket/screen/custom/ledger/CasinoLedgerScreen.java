@@ -145,7 +145,7 @@ public class CasinoLedgerScreen extends AbstractContainerScreen<CasinoLedgerScre
             };
             context.drawString(this.font, (i + 1) + ".", 108, rowY, rankColor, false);
             context.drawString(this.font, trim(row.playerName(), 62), 124, rowY, 0xFFFFFF, false);
-            drawRightAligned(context, formatValue(row.value(), selectedStat == LedgerStat.TOTAL_LOST),
+            drawRightAligned(context, formatValue(row.value()),
                     LEADERBOARD_VALUE_RIGHT_X, rowY, selectedStat == LedgerStat.TOTAL_LOST ? 0xFFFF6666 : 0xFF66FF88);
             rowY += LEADERBOARD_ROW_HEIGHT;
         }
@@ -154,9 +154,9 @@ public class CasinoLedgerScreen extends AbstractContainerScreen<CasinoLedgerScre
         renderScrollbar(context, rows.size(), leaderboardTop);
     }
 
-    private void drawValue(GuiGraphics context, String labelKey, long value, int x, int y, boolean signed) {
+    private void drawValue(GuiGraphics context, String labelKey, long value, int x, int y, boolean lossValue) {
         context.drawString(this.font, Component.translatable(labelKey).getString() + ":", x, y, 0xA0A0A0, false);
-        drawRightAligned(context, formatValue(value, signed), 235, y, signed && value < 0 ? 0xFFFF6666 : 0xFF66FF88);
+        drawRightAligned(context, formatValue(value), 235, y, lossValue ? 0xFFFF6666 : 0xFF66FF88);
     }
 
     private void drawRightAligned(GuiGraphics context, String text, int rightX, int y, int color) {
@@ -164,8 +164,7 @@ public class CasinoLedgerScreen extends AbstractContainerScreen<CasinoLedgerScre
         context.drawString(this.font, visible, rightX - this.font.width(visible), y, color, false);
     }
 
-    private String formatValue(long value, boolean signed) {
-        if (signed && value < 0) return "-" + TextUtils.formatCompactNoDecimal(-value);
+    private String formatValue(long value) {
         return TextUtils.formatCompactNoDecimal(value);
     }
 

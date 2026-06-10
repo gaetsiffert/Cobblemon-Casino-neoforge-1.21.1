@@ -39,34 +39,32 @@ public final class CasinoLedgerService {
     private static CasinoLedgerOpenData.GameStats createSlotStats(MinecraftServer server, PlayerSlotMachineData data, UUID playerId) {
         return new CasinoLedgerOpenData.GameStats(
                 new CasinoLedgerOpenData.PlayerStats(data.getHighestWin(playerId), data.getTotalWon(playerId), data.getTotalLost(playerId)),
-                topRows(server, data.getAllKnownPlayers(), data::getHighestWin, false),
-                topRows(server, data.getAllKnownPlayers(), data::getTotalWon, false),
-                topRows(server, data.getAllKnownPlayers(), data::getTotalLost, true)
+                topRows(server, data.getAllKnownPlayers(), data::getHighestWin),
+                topRows(server, data.getAllKnownPlayers(), data::getTotalWon),
+                topRows(server, data.getAllKnownPlayers(), data::getTotalLost)
         );
     }
 
     private static CasinoLedgerOpenData.GameStats createBlackjackStats(MinecraftServer server, PlayerBlackjackData data, UUID playerId) {
         return new CasinoLedgerOpenData.GameStats(
                 new CasinoLedgerOpenData.PlayerStats(data.getHighestWin(playerId), data.getTotalWon(playerId), data.getTotalLost(playerId)),
-                topRows(server, data.getAllKnownPlayers(), data::getHighestWin, false),
-                topRows(server, data.getAllKnownPlayers(), data::getTotalWon, false),
-                topRows(server, data.getAllKnownPlayers(), data::getTotalLost, true)
+                topRows(server, data.getAllKnownPlayers(), data::getHighestWin),
+                topRows(server, data.getAllKnownPlayers(), data::getTotalWon),
+                topRows(server, data.getAllKnownPlayers(), data::getTotalLost)
         );
     }
 
     private static List<CasinoLedgerOpenData.LeaderboardRow> topRows(MinecraftServer server, Set<UUID> players,
-                                                                     ToLongFunction<UUID> valueFn, boolean lossBoard) {
+                                                                     ToLongFunction<UUID> valueFn) {
         List<Map.Entry<UUID, Long>> rows = new ArrayList<>();
         for (UUID id : players) {
             long value = valueFn.applyAsLong(id);
-            if (lossBoard ? value < 0 : value > 0) {
+            if (value > 0) {
                 rows.add(new AbstractMap.SimpleEntry<>(id, value));
             }
         }
 
-        Comparator<Map.Entry<UUID, Long>> comparator = Comparator.comparingLong(Map.Entry::getValue);
-        if (!lossBoard) comparator = comparator.reversed();
-        rows.sort(comparator);
+        rows.sort(Comparator.<Map.Entry<UUID, Long>>comparingLong(Map.Entry::getValue).reversed());
 
         return rows.stream()
                 .limit(10)

@@ -135,7 +135,9 @@ public class PlayerBlackjackData extends SavedData {
     }
 
     public long getTotalLost(UUID id) {
-        return getTotalWon(id) - getTotalSpent(id);
+        long spent = getTotalSpent(id);
+        long won = getTotalWon(id);
+        return spent > won ? spent - won : 0L;
     }
 
     public Set<UUID> getAllKnownPlayers() {

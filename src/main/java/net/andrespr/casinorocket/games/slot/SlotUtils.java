@@ -33,11 +33,7 @@ public class SlotUtils {
         for (UUID id : data.getAllKnownPlayers()) {
             long v = valueFn.applyAsLong(id);
 
-            if (k.equals("total_lost")) {
-                if (v >= 0) continue;
-            } else {
-                if (v <= 0) continue;
-            }
+            if (v <= 0) continue;
 
             rows.add(new AbstractMap.SimpleEntry<>(id, v));
         }
@@ -46,9 +42,7 @@ public class SlotUtils {
             return Component.literal("No leaderboard entries yet.").withStyle(ChatFormatting.GRAY);
         }
 
-        Comparator<Map.Entry<UUID, Long>> cmp = Comparator.comparingLong(Map.Entry::getValue);
-        if (!k.equals("total_lost")) cmp = cmp.reversed();
-        rows.sort(cmp);
+        rows.sort(Comparator.<Map.Entry<UUID, Long>>comparingLong(Map.Entry::getValue).reversed());
 
         int limit = Math.min(10, rows.size());
         List<Map.Entry<UUID, Long>> top = rows.subList(0, limit);
@@ -81,7 +75,7 @@ public class SlotUtils {
             out.append(Component.literal(rank + ". ").withStyle(ChatFormatting.YELLOW))
                     .append(Component.literal(name).withStyle(TextUtils.rankColors(rank)))
                     .append(Component.literal(" - ").withStyle(ChatFormatting.GRAY))
-                    .append(Component.literal(formatSignedMoney(value)).withStyle(ChatFormatting.YELLOW));
+                    .append(Component.literal(TextUtils.formatCompactNoDecimal(value)).withStyle(ChatFormatting.YELLOW));
 
             if (rank < top.size()) out.append(Component.literal("\n"));
         }
@@ -107,11 +101,6 @@ public class SlotUtils {
     private static String shortUuid(UUID id) {
         String s = id.toString().replace("-", "");
         return s.substring(0, 8);
-    }
-
-    private static String formatSignedMoney(long value) {
-        if (value < 0) return "-" + TextUtils.formatCompactNoDecimal(-value);
-        return TextUtils.formatCompactNoDecimal(value);
     }
 
 }

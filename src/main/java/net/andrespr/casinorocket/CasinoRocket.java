@@ -23,6 +23,7 @@ import net.andrespr.casinorocket.sound.ModSounds;
 import net.andrespr.casinorocket.util.CasinoRocketLogger;
 import net.andrespr.casinorocket.util.CobbledollarsBankIntegration;
 import net.andrespr.casinorocket.util.SuitData;
+import net.andrespr.casinorocket.villager.CasinoVillagerTrades;
 import net.andrespr.casinorocket.villager.ModVillagers;
 import net.andrespr.casinorocket.villager.ShopsRegistry;
 import net.minecraft.server.level.ServerPlayer;
@@ -71,6 +72,7 @@ public class CasinoRocket {
         NeoForge.EVENT_BUS.addListener(this::onStartTracking);
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);
         NeoForge.EVENT_BUS.addListener(this::onBlockBreak);
+        NeoForge.EVENT_BUS.addListener(CasinoVillagerTrades::register);
 
         ShopsRegistry.bootstrap();
         LOGGER.info("Mod initialized successfully!");

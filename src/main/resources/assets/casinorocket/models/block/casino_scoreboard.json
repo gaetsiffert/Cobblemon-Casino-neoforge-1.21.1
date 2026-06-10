@@ -1,6 +1,0 @@
-{
-  "parent": "casinorocket:block/casino_scoreboard_board",
-  "textures": {
-    "particle": "casinorocket:block/casino_scoreboard_particle"
-  }
-}

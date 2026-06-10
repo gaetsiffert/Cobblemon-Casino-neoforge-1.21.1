@@ -38,6 +38,21 @@ class CasinoDataOverflowTest {
     }
 
     @Test
+    void slotTotalLostIsPositiveLossOnly() {
+        PlayerSlotMachineData data = new PlayerSlotMachineData();
+        UUID losingPlayer = UUID.randomUUID();
+        UUID winningPlayer = UUID.randomUUID();
+
+        data.addTotalSpent(losingPlayer, 100L);
+        data.addTotalWon(losingPlayer, 25L);
+        data.addTotalSpent(winningPlayer, 25L);
+        data.addTotalWon(winningPlayer, 100L);
+
+        assertEquals(75L, data.getTotalLost(losingPlayer));
+        assertEquals(0L, data.getTotalLost(winningPlayer));
+    }
+
+    @Test
     void blackjackLedgerStatsSaturatePositiveOverflow() {
         PlayerBlackjackData data = new PlayerBlackjackData();
         UUID player = UUID.randomUUID();
@@ -49,5 +64,20 @@ class CasinoDataOverflowTest {
 
         assertEquals(Long.MAX_VALUE, data.getTotalDeposited(player));
         assertEquals(Long.MAX_VALUE, data.getTotalWon(player));
+    }
+
+    @Test
+    void blackjackTotalLostIsPositiveLossOnly() {
+        PlayerBlackjackData data = new PlayerBlackjackData();
+        UUID losingPlayer = UUID.randomUUID();
+        UUID winningPlayer = UUID.randomUUID();
+
+        data.addTotalSpent(losingPlayer, 100L);
+        data.addTotalWon(losingPlayer, 25L);
+        data.addTotalSpent(winningPlayer, 25L);
+        data.addTotalWon(winningPlayer, 100L);
+
+        assertEquals(75L, data.getTotalLost(losingPlayer));
+        assertEquals(0L, data.getTotalLost(winningPlayer));
     }
 }
