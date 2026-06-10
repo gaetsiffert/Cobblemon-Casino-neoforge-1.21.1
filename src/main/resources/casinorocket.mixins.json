@@ -3,6 +3,8 @@
 	"package": "net.andrespr.casinorocket.mixin",
 	"compatibilityLevel": "JAVA_21",
     "mixins": [
+      "AcquirePoiMixin",
+      "GoToPotentialJobSiteMixin",
       "VillagerSetProfessionMixin",
       "VillagerLookAtPlayerMixin"
     ],

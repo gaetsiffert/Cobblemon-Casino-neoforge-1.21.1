@@ -18,7 +18,7 @@ public abstract class VillagerSetProfessionMixin {
     @Shadow
     public abstract VillagerData getVillagerData();
 
-    @Inject(method = "setVillagerData", at = @At("HEAD"))
+    @Inject(method = "setVillagerData", at = @At("HEAD"), cancellable = true)
     private void casinorocket$onProfessionChange(VillagerData newData, CallbackInfo ci) {
         Villager villager = (Villager) (Object) this;
         if (villager.level().isClientSide()) return;
@@ -27,6 +27,10 @@ public abstract class VillagerSetProfessionMixin {
         VillagerProfession newProfession = newData.getProfession();
 
         if (oldProfession != ModVillagers.CASINO_WORKER && newProfession == ModVillagers.CASINO_WORKER) {
+            if (!ModVillagers.isChipTableCasinoVillagerConversionEnabled()) {
+                ci.cancel();
+                return;
+            }
             casinorocket$applySuit(villager, 1);
         } else if (oldProfession == ModVillagers.CASINO_WORKER && newProfession != ModVillagers.CASINO_WORKER) {
             casinorocket$applySuit(villager, 0);

@@ -3,6 +3,7 @@ package net.andrespr.casinorocket.villager;
 import com.google.common.collect.ImmutableSet;
 import net.andrespr.casinorocket.CasinoRocket;
 import net.andrespr.casinorocket.block.ModBlocks;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -33,8 +34,19 @@ public class ModVillagers {
     }
 
     private static VillagerProfession createProfession(String name, ResourceKey<PoiType> type) {
-        return new VillagerProfession(name, entry -> entry.is(type), entry -> entry.is(type),
+        return new VillagerProfession(name, entry -> entry.is(type),
+                entry -> entry.is(type) && isChipTableCasinoVillagerConversionEnabled(),
                 ImmutableSet.of(), ImmutableSet.of(), SoundEvents.VILLAGER_WORK_LIBRARIAN);
+    }
+
+    public static boolean canVillagersAcquirePoi(Holder<PoiType> poi) {
+        return isChipTableCasinoVillagerConversionEnabled() || !poi.is(CHIP_TABLE_POI_KEY);
+    }
+
+    public static boolean isChipTableCasinoVillagerConversionEnabled() {
+        return CasinoRocket.CONFIG == null
+                || CasinoRocket.CONFIG.generalConfig == null
+                || CasinoRocket.CONFIG.generalConfig.enableChipTableCasinoVillagerConversion;
     }
 
     private static PoiType createPoi(Block block) {
