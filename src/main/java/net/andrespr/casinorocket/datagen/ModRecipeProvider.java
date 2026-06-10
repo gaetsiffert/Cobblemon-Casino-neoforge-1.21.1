@@ -171,6 +171,9 @@ public class ModRecipeProvider extends RecipeProvider {
         // STONECUTTING FROM DIAMOND_PILLAR
         stonecutterResultFromBase(recipeExporter, RecipeCategory.BUILDING_BLOCKS, ModBlocks.HEAVY_DIAMOND_PILLAR, ModBlocks.DIAMOND_PILLAR);
 
+        // CHIP DECORATIONS
+        offerChipDecorationRecipes(recipeExporter);
+
         // CASINO MACHINES
         offerMachineRecipes(recipeExporter.withConditions(MachinesCraftingEnabledCondition.INSTANCE));
 
@@ -313,6 +316,36 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern("I I")
                 .unlockedBy(getHasName(Items.REDSTONE), has(Items.REDSTONE))
                 .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "casino_scoreboard"));
+    }
+
+    private static void offerChipDecorationRecipes(RecipeOutput exporter) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.DECORATIVE_CHIP)
+                .define('#', ModItems.RED_CHIP)
+                .pattern("   ")
+                .pattern("   ")
+                .pattern(" # ")
+                .unlockedBy(getHasName(ModItems.RED_CHIP), has(ModItems.RED_CHIP))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "decorative_chip"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.DECORATIVE_CHIP_STACK1)
+                .define('#', ModItems.RED_CHIP)
+                .pattern("   ")
+                .pattern(" # ")
+                .pattern(" # ")
+                .unlockedBy(getHasName(ModItems.RED_CHIP), has(ModItems.RED_CHIP))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "decorative_chip_stack1"));
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModBlocks.DECORATIVE_CHIP_STACK2)
+                .define('#', ModItems.RED_CHIP)
+                .pattern(" # ")
+                .pattern(" # ")
+                .pattern(" # ")
+                .unlockedBy(getHasName(ModItems.RED_CHIP), has(ModItems.RED_CHIP))
+                .save(exporter, ResourceLocation.fromNamespaceAndPath(CasinoRocket.MOD_ID, "decorative_chip_stack2"));
+
+        offerDeconstruct(exporter, RecipeCategory.MISC, ModItems.RED_CHIP, ModBlocks.DECORATIVE_CHIP, 1);
+        offerDeconstruct(exporter, RecipeCategory.MISC, ModItems.RED_CHIP, ModBlocks.DECORATIVE_CHIP_STACK1, 2);
+        offerDeconstruct(exporter, RecipeCategory.MISC, ModItems.RED_CHIP, ModBlocks.DECORATIVE_CHIP_STACK2, 3);
     }
 
     public static void offerDeconstruct(RecipeOutput exporter, RecipeCategory category, ItemLike output, ItemLike input, int count) {

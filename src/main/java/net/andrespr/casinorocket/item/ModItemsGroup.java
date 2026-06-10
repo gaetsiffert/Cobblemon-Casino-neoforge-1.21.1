@@ -108,6 +108,9 @@ public class ModItemsGroup {
                             entries.accept(ModBlocks.BLACKJACK_TABLE);
                             // CHIP TABLE
                             entries.accept(ModBlocks.CHIP_TABLE);
+                            entries.accept(ModBlocks.DECORATIVE_CHIP);
+                            entries.accept(ModBlocks.DECORATIVE_CHIP_STACK1);
+                            entries.accept(ModBlocks.DECORATIVE_CHIP_STACK2);
                             // SCOREBOARD
                             entries.accept(ModBlocks.CASINO_SCOREBOARD);
                         }).build());

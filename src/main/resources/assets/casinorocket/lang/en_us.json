@@ -96,6 +96,9 @@
   "block.casinorocket.slot_machine": "Slot Machine",
   "block.casinorocket.blackjack_table": "Blackjack Table",
   "block.casinorocket.chip_table": "Chip Table",
+  "block.casinorocket.decorative_chip": "Decorative Chip",
+  "block.casinorocket.decorative_chip_stack1": "Decorative Chip Stack",
+  "block.casinorocket.decorative_chip_stack2": "Decorative Chip Stack",
   "block.casinorocket.casino_scoreboard": "Casino Scoreboard",
 
   "itemgroup.casinorocket.casino_rocket_items": "Casino Rocket",

@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "casinorocket:block/decorative_chip" },
+    "facing=south": { "model": "casinorocket:block/decorative_chip", "y": 180 },
+    "facing=west": { "model": "casinorocket:block/decorative_chip", "y": 270 },
+    "facing=east": { "model": "casinorocket:block/decorative_chip", "y": 90 }
+  }
+}

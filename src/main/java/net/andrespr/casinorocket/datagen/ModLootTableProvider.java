@@ -56,7 +56,10 @@ public class ModLootTableProvider extends BlockLootSubProvider {
             ModBlocks.EVENT_GACHA_MACHINE,
             ModBlocks.SLOT_MACHINE,
             ModBlocks.BLACKJACK_TABLE,
-            ModBlocks.CHIP_TABLE
+            ModBlocks.CHIP_TABLE,
+            ModBlocks.DECORATIVE_CHIP,
+            ModBlocks.DECORATIVE_CHIP_STACK1,
+            ModBlocks.DECORATIVE_CHIP_STACK2
     );
 
     public ModLootTableProvider(HolderLookup.Provider registries) {
@@ -108,6 +111,9 @@ public class ModLootTableProvider extends BlockLootSubProvider {
         add(ModBlocks.SLOT_MACHINE, createSinglePropConditionTable(ModBlocks.SLOT_MACHINE, SlotMachineBlock.HALF, DoubleBlockHalf.LOWER));
         dropSelf(ModBlocks.BLACKJACK_TABLE);
         dropSelf(ModBlocks.CHIP_TABLE);
+        dropSelf(ModBlocks.DECORATIVE_CHIP);
+        dropSelf(ModBlocks.DECORATIVE_CHIP_STACK1);
+        dropSelf(ModBlocks.DECORATIVE_CHIP_STACK2);
     }
 
     @Override

@@ -64,6 +64,9 @@ public class ModBlocks {
     public static Block SLOT_MACHINE;
     public static Block BLACKJACK_TABLE;
     public static Block CHIP_TABLE;
+    public static Block DECORATIVE_CHIP;
+    public static Block DECORATIVE_CHIP_STACK1;
+    public static Block DECORATIVE_CHIP_STACK2;
     public static Block CASINO_SCOREBOARD;
 
     static {
@@ -235,6 +238,19 @@ public class ModBlocks {
                     new ChipTableBlock(machineProperties())
             );
 
+        // DECORATIONS
+        registerBlock("decorative_chip", () -> DECORATIVE_CHIP =
+                    new DecorativeChipBlock(chipDecorationProperties())
+            );
+
+        registerBlock("decorative_chip_stack1", () -> DECORATIVE_CHIP_STACK1 =
+                    new DecorativeChipBlock(chipDecorationProperties())
+            );
+
+        registerBlock("decorative_chip_stack2", () -> DECORATIVE_CHIP_STACK2 =
+                    new DecorativeChipBlock(chipDecorationProperties())
+            );
+
         registerBlock("casino_scoreboard", () -> CASINO_SCOREBOARD =
                     new CasinoScoreboardBlock(machineProperties()
                             .lightLevel(state -> 8)
@@ -253,6 +269,16 @@ public class ModBlocks {
         return BlockBehaviour.Properties.of()
                 .strength(3.5F, 6.0F)
                 .isValidSpawn(Blocks::never)
+                .noOcclusion();
+    }
+
+    private static BlockBehaviour.Properties chipDecorationProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.COLOR_RED)
+                .strength(0.2F)
+                .sound(SoundType.METAL)
+                .isValidSpawn(Blocks::never)
+                .noCollission()
                 .noOcclusion();
     }
 

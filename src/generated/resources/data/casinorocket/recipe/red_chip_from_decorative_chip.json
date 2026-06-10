@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "casinorocket:decorative_chip"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "casinorocket:red_chip"
+  }
+}
