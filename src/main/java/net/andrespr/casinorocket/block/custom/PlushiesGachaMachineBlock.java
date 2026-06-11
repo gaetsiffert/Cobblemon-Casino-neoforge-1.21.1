@@ -90,7 +90,7 @@ public class PlushiesGachaMachineBlock extends Block {
         }
 
         if (!PlushiesGachaponUtils.hasRewards()) {
-            player.displayClientMessage(Component.literal("There're no plushies at the moment.").withStyle(ChatFormatting.RED), true);
+            player.displayClientMessage(Component.literal("No plushies are available. Pokeblocks is probably not installed.").withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
 

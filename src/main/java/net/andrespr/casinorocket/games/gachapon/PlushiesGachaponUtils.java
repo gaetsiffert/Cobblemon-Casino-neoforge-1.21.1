@@ -98,7 +98,7 @@ public final class PlushiesGachaponUtils {
     public static Component getRates() {
 
         if (ENTRIES.isEmpty()) {
-            return Component.literal("Plushies list has no valid items.").withStyle(ChatFormatting.RED);
+            return Component.literal("No plushies are available. Pokeblocks is probably not installed.").withStyle(ChatFormatting.RED);
         }
         if (TOTAL_WEIGHT <= 0) {
             return Component.literal("Plushies total weight is 0.").withStyle(ChatFormatting.RED);

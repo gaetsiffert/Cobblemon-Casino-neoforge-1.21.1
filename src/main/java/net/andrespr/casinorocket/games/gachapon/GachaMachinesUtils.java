@@ -570,8 +570,8 @@ public class GachaMachinesUtils {
 
         ItemStack reward = PlushiesGachaponUtils.pickPlushie(world.getRandom());
         if (reward.isEmpty()) {
-            CasinoRocketLogger.toPlayerTranslated(user, "message.casinorocket.item_gachapon_empty", true);
-            CasinoRocket.LOGGER.warn("[PlushiesMachine] No valid plushies in config (or total weight 0).");
+            user.displayClientMessage(Component.literal("No plushies are available. Pokeblocks is probably not installed.").withStyle(ChatFormatting.RED), true);
+            CasinoRocket.LOGGER.warn("[PlushiesMachine] No valid plushies in config. Pokeblocks is probably not installed.");
             return;
         }
 
