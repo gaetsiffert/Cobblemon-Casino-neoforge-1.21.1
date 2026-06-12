@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "cobblemoncasino:block/diamond_tile_slab"
+    },
+    "type=double": {
+      "model": "cobblemoncasino:block/diamond_tiles"
+    },
+    "type=top": {
+      "model": "cobblemoncasino:block/diamond_tile_slab_top"
+    }
+  }
+}

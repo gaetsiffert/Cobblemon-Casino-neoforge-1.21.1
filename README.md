@@ -1,11 +1,17 @@
-# Casino Rocket
+![Cobblemon Casino](art/CobblemonCasino_title.png)
 
-Casino Rocket is a NeoForge 1.21.1 Cobblemon addon that adds casino-themed blocks, items, gacha machines, slot machines, blackjack, economy helpers, and casino worker villagers.
+# Cobblemon Casino
+
+Cobblemon Casino is a NeoForge 1.21.1 Cobblemon addon that adds casino-themed blocks, items, gacha machines, slot machines, blackjack, economy helpers, and casino worker villagers.
+
+## Credits
+
+Cobblemon Casino is maintained by narrnouille and is based on the original Casino Rocket mod by AndresPR.
 
 ## Target Versions
 
 - Minecraft: `1.21.1`
-- NeoForge: `21.1.230`
+- NeoForge: `21.1.200+`
 - Java: `21`
 
 ## Required Runtime Mods
@@ -21,34 +27,28 @@ These mods are required for the project to run as currently configured.
 
 ## Optional Integrations
 
-Casino Rocket contains optional shop/config references for these mods. They are not required to start the game.
+Cobblemon Casino contains optional shop/config references for these mods. They are not required to start the game.
 
 | Mod | Current behavior without it | Link |
 | --- | --- | --- |
-| CobbleDollars | Casino Rocket can use item-based economy instead, but CobbleDollars merchant shops and money economy need this mod. | https://modrinth.com/mod/cobbledollars |
-
-## External Mods Seen In Dev Logs
-
-The local `run` instance may contain or load data from external mods that are not Casino Rocket dependencies. For example, Adorn-related recipe/loot-table errors can appear in logs if incompatible Adorn data is present in the dev environment.
-
-| Mod | Status | Link |
-| --- | --- | --- |
-| Adorn | Not used directly by Casino Rocket. Treat related log errors as dev-environment noise unless a pack intentionally includes it. | https://modrinth.com/mod/adorn |
+| CobbleDollars | Cobblemon Casino can use item-based economy instead, but CobbleDollars merchant shops and money economy need this mod. | https://modrinth.com/mod/cobbledollars |
+| Pokeblocks | Required if you want the plushies gachapon machine to use its default plushie reward pool. Without it, the plushies machine has no valid default rewards until you replace that config yourself. | https://modrinth.com/mod/pokeblocks |
 
 ## Gachapon Defaults
 
 The default gacha configs are intentionally valid without optional compat mods.
 
-- Item gachapon defaults use `minecraft`, `cobblemon`, and `casinorocket` items only.
+- Item gachapon defaults use `minecraft`, `cobblemon`, and `cobblemoncasino` items only.
 - Pokémon gachapon includes a non-empty `event` pool so event machines are usable by default.
-- Plushies gachapon currently uses Casino Rocket Pokémon pin items as valid fallback rewards. The system is still named `plushies` so a pack/server can replace those entries later with real plushie items from Casino Rocket or another mod.
+- Plushies gachapon default rewards target `pokeblocks` plushie items.
+- If `pokeblocks` is not installed, replace the plushies reward pool in config with your own valid items before using that machine.
 
 ## Local Config Regeneration
 
 AutoConfig does not overwrite existing generated configs. If defaults change, remove the matching files under:
 
 ```text
-run/config/casinorocket/
+run/config/cobblemoncasino/
 ```
 
 Then run the client or server again to regenerate clean defaults.
@@ -59,10 +59,10 @@ Useful commands:
 .\gradlew.bat build --stacktrace
 .\gradlew.bat runClient --stacktrace
 .\gradlew.bat runData --stacktrace
-.\run-test-server.bat
+.\gradlew.bat runServer --stacktrace
 ```
 
-`run-test-server.bat` starts the NeoForge dev server with an interactive console. Use normal server commands directly in that terminal, for example `op PlayerName`, `deop PlayerName`, or `stop`.
+`.\gradlew.bat runServer --stacktrace` starts the NeoForge dev server with an interactive console. Use normal server commands directly in that terminal, for example `op PlayerName`, `deop PlayerName`, or `stop`.
 
 The Gradle `runServer` task uses `run-server/` as its working directory so it can run at the same time as the dev client in `run/`.
 

@@ -1,0 +1,87 @@
+package net.narrnouille.cobblemoncasino.util;
+
+import net.narrnouille.cobblemoncasino.CobblemonCasino;
+import net.narrnouille.cobblemoncasino.config.npc.CobbledollarsDealerNpcConfig;
+import net.narrnouille.cobblemoncasino.item.ModItems;
+import net.narrnouille.cobblemoncasino.item.custom.ChipItem;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.fml.ModList;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigInteger;
+import java.util.List;
+
+public final class CobbledollarsBankIntegration {
+
+    private CobbledollarsBankIntegration() {}
+
+    public static void registerChipsForBuyback() {
+        if (!ModList.get().isLoaded("cobbledollars")) {
+            return;
+        }
+
+        try {
+            Class<?> cobbleDollarsClass = Class.forName("fr.harmex.cobbledollars.common.CobbleDollars");
+            Field instanceField = cobbleDollarsClass.getField("INSTANCE");
+            Object cobbleDollars = instanceField.get(null);
+
+            Object bankConfig = cobbleDollarsClass.getMethod("getBankConfig").invoke(cobbleDollars);
+            Object bank = bankConfig.getClass().getMethod("getBank").invoke(bankConfig);
+
+            Method containsStack = bank.getClass().getMethod("contains", ItemStack.class);
+            Class<?> offerClass = Class.forName("fr.harmex.cobbledollars.common.world.item.trading.shop.Offer");
+            Constructor<?> offerConstructor = offerClass.getConstructor(ItemStack.class, BigInteger.class, int.class);
+
+            @SuppressWarnings("unchecked")
+            List<Object> offers = (List<Object>) bank;
+
+            for (Item item : ModItems.ALL_CHIP_ITEMS) {
+                ChipItem chip = (ChipItem) item;
+                ItemStack stack = new ItemStack(chip);
+                if ((boolean) containsStack.invoke(bank, stack)) {
+                    continue;
+                }
+
+                long chipValue = CobblemonCasino.CONFIG.generalConfig.getMoneyChipValue(BuiltInRegistries.ITEM.getKey(chip).getPath());
+                offers.add(offerConstructor.newInstance(stack, BigInteger.valueOf(chipValue), -1));
+            }
+
+            CobbledollarsDealerNpcConfig config = CobblemonCasino.CONFIG.cobbledollarsDealerNpc;
+            if (config == null || config.categories == null) {
+                return;
+            }
+
+            for (CobbledollarsDealerNpcConfig.Category category : config.categories) {
+                if (category == null || category.offers == null) {
+                    continue;
+                }
+
+                for (CobbledollarsDealerNpcConfig.Offer offer : category.offers) {
+                    if (offer == null || offer.item == null || offer.item.isBlank() || offer.buyback_price < 0) {
+                        continue;
+                    }
+
+                    ResourceLocation itemId = ResourceLocation.tryParse(offer.item);
+                    if (itemId == null || !BuiltInRegistries.ITEM.containsKey(itemId)) {
+                        continue;
+                    }
+
+                    Item item = BuiltInRegistries.ITEM.get(itemId);
+                    ItemStack stack = new ItemStack(item);
+                    if (stack.isEmpty() || (boolean) containsStack.invoke(bank, stack)) {
+                        continue;
+                    }
+
+                    offers.add(offerConstructor.newInstance(stack, BigInteger.valueOf(offer.buyback_price), -1));
+                }
+            }
+        } catch (ReflectiveOperationException | RuntimeException exception) {
+            CobblemonCasino.LOGGER.warn("Could not register Cobblemon Casino NPC buybacks in CobbleDollars bank.", exception);
+        }
+    }
+}

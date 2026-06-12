@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblemoncasino:block/blackjack_table" },
+    "facing=south": { "model": "cobblemoncasino:block/blackjack_table", "y": 180 },
+    "facing=west":  { "model": "cobblemoncasino:block/blackjack_table", "y": 270 },
+    "facing=east":  { "model": "cobblemoncasino:block/blackjack_table", "y": 90 }
+  }
+}

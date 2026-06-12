@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "cobblemoncasino:casino_scoreboard",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "part_x": "1",
+                "part_y": "0"
+              }
+            }
+          ],
+          "name": "cobblemoncasino:casino_scoreboard"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "cobblemoncasino:blocks/casino_scoreboard"
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "cobblemoncasino:block/gold_tiles",
+    "side": "cobblemoncasino:block/gold_tiles",
+    "top": "cobblemoncasino:block/gold_tiles"
+  }
+}

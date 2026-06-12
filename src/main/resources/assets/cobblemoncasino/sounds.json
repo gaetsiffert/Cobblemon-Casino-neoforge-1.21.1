@@ -1,0 +1,130 @@
+{
+    "inserting_coin": {
+      "subtitle": "sounds.cobblemoncasino.inserting_coin",
+      "sounds": [
+          "cobblemoncasino:inserting_coin"
+      ]
+    },
+    "common_prize": {
+      "subtitle": "sounds.cobblemoncasino.common_prize",
+      "sounds": [
+          "cobblemoncasino:common_prize"
+      ]
+    },
+    "uncommon_prize": {
+      "subtitle": "sounds.cobblemoncasino.uncommon_prize",
+      "sounds": [
+          "cobblemoncasino:uncommon_prize"
+      ]
+    },
+    "rare_prize": {
+      "subtitle": "sounds.cobblemoncasino.rare_prize",
+      "sounds": [
+          "cobblemoncasino:rare_prize"
+      ]
+    },
+    "ultrarare_prize": {
+      "subtitle": "sounds.cobblemoncasino.ultrarare_prize",
+      "sounds": [
+          "cobblemoncasino:ultrarare_prize"
+      ]
+    },
+    "legendary_prize": {
+      "subtitle": "sounds.cobblemoncasino.legendary_prize",
+      "sounds": [
+          "cobblemoncasino:legendary_prize"
+      ]
+    },
+    "bonus_prize": {
+      "subtitle": "sounds.cobblemoncasino.bonus_prize",
+      "sounds": [
+          "cobblemoncasino:bonus_prize"
+      ]
+    },
+    "open_prize": {
+      "subtitle": "sounds.cobblemoncasino.open_prize",
+      "sounds": [
+          "cobblemoncasino:open_prize"
+      ]
+    },
+    "reels_spinning": {
+      "subtitle": "sounds.cobblemoncasino.reels_spinning",
+      "sounds": [
+          "cobblemoncasino:reels_spinning"
+      ]
+    },
+    "jackpot": {
+      "subtitle": "sounds.cobblemoncasino.jackpot",
+      "sounds": [
+          "cobblemoncasino:jackpot"
+      ]
+    },
+    "wallet": {
+      "subtitle": "sounds.cobblemoncasino.wallet",
+      "sounds": [
+          "cobblemoncasino:wallet"
+      ]
+    },
+    "win": {
+      "subtitle": "sounds.cobblemoncasino.win",
+      "sounds": [
+          "cobblemoncasino:win"
+      ]
+    },
+    "draw": {
+      "subtitle": "sounds.cobblemoncasino.draw",
+      "sounds": [
+          "cobblemoncasino:draw"
+      ]
+    },
+    "lose": {
+      "subtitle": "sounds.cobblemoncasino.lose",
+      "sounds": [
+          "cobblemoncasino:lose"
+      ]
+    },
+    "card": {
+      "subtitle": "sounds.cobblemoncasino.card",
+      "sounds": [
+          "cobblemoncasino:card"
+      ]
+    },
+    "button": {
+      "subtitle": "sounds.cobblemoncasino.button",
+      "sounds": [
+          "cobblemoncasino:button"
+      ]
+    },
+    "firered_gc": {
+      "sounds": [
+        {
+          "name": "cobblemoncasino:firered_gc",
+          "stream": true
+        }
+      ]
+    },
+    "heartgold_gc": {
+      "sounds": [
+        {
+          "name": "cobblemoncasino:heartgold_gc",
+          "stream": true
+        }
+      ]
+    },
+    "emerald_gc": {
+      "sounds": [
+        {
+          "name": "cobblemoncasino:emerald_gc",
+          "stream": true
+        }
+      ]
+    },
+    "platinum_gc": {
+      "sounds": [
+        {
+          "name": "cobblemoncasino:platinum_gc",
+          "stream": true
+        }
+      ]
+    }
+}

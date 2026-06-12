@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "cobblemoncasino:stack_of_relic_coins"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "cobblemoncasino:handful_of_relic_coins"
+  }
+}

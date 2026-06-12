@@ -1,0 +1,21 @@
+{
+	"required": true,
+	"package": "net.narrnouille.cobblemoncasino.mixin",
+	"compatibilityLevel": "JAVA_21",
+    "mixins": [
+      "AcquirePoiMixin",
+      "GoToPotentialJobSiteMixin",
+      "VillagerSetProfessionMixin",
+      "VillagerLookAtPlayerMixin"
+    ],
+    "client": [
+      "CustomVillagerTextureMixin",
+      "VillagerClothingFeatureRendererMixin"
+    ],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

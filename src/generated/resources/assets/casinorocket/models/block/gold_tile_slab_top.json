@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab_top",
-  "textures": {
-    "bottom": "casinorocket:block/gold_tiles",
-    "side": "casinorocket:block/gold_tiles",
-    "top": "casinorocket:block/gold_tiles"
-  }
-}

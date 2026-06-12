@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/door_top_left",
+  "textures": {
+    "bottom": "cobblemoncasino:block/gold_door_bottom",
+    "top": "cobblemoncasino:block/gold_door_top"
+  }
+}

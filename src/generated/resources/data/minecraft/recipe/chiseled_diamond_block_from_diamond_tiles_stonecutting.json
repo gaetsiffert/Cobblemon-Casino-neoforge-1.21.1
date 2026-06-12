@@ -1,10 +1,10 @@
 {
   "type": "minecraft:stonecutting",
   "ingredient": {
-    "item": "casinorocket:diamond_tiles"
+    "item": "cobblemoncasino:diamond_tiles"
   },
   "result": {
     "count": 1,
-    "id": "casinorocket:chiseled_diamond_block"
+    "id": "cobblemoncasino:chiseled_diamond_block"
   }
 }

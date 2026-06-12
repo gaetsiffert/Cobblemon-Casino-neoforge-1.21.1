@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "cobblemoncasino:gacha_currency_crafting_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "minecraft:emerald"
+    },
+    "D": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "pattern": [
+    " # ",
+    "#D#",
+    " # "
+  ],
+  "result": {
+    "count": 1,
+    "id": "cobblemoncasino:event_coin"
+  }
+}

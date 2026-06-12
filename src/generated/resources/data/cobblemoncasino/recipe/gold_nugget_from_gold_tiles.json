@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "cobblemoncasino:gold_tiles"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "minecraft:gold_nugget"
+  }
+}

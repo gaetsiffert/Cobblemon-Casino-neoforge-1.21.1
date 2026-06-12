@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "bottom": "cobblemoncasino:block/cut_gold_block",
+    "side": "cobblemoncasino:block/cut_gold_block",
+    "top": "cobblemoncasino:block/cut_gold_block"
+  }
+}

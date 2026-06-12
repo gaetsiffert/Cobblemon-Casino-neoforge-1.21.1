@@ -1,0 +1,29 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "cobblemoncasino:machines_crafting_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "E": {
+      "item": "minecraft:emerald"
+    },
+    "M": {
+      "item": "cobblemoncasino:pokemon_gacha_machine"
+    }
+  },
+  "pattern": [
+    "EDE",
+    "DMD",
+    "EDE"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cobblemoncasino:event_gacha_machine"
+  }
+}

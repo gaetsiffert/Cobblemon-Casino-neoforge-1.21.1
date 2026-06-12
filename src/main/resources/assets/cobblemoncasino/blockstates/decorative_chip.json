@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cobblemoncasino:block/decorative_chip" },
+    "facing=south": { "model": "cobblemoncasino:block/decorative_chip", "y": 180 },
+    "facing=west": { "model": "cobblemoncasino:block/decorative_chip", "y": 270 },
+    "facing=east": { "model": "cobblemoncasino:block/decorative_chip", "y": 90 }
+  }
+}

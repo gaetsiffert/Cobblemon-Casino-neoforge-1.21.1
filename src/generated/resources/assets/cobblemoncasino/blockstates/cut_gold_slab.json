@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "cobblemoncasino:block/cut_gold_slab"
+    },
+    "type=double": {
+      "model": "cobblemoncasino:block/cut_gold_block"
+    },
+    "type=top": {
+      "model": "cobblemoncasino:block/cut_gold_slab_top"
+    }
+  }
+}

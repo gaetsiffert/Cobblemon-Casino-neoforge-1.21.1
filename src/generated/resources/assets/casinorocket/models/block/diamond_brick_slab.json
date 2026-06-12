@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab",
-  "textures": {
-    "bottom": "casinorocket:block/diamond_bricks",
-    "side": "casinorocket:block/diamond_bricks",
-    "top": "casinorocket:block/diamond_bricks"
-  }
-}

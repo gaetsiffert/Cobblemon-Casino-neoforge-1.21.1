@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column_horizontal",
+  "textures": {
+    "end": "cobblemoncasino:block/diamond_pillar_top",
+    "side": "cobblemoncasino:block/diamond_pillar"
+  }
+}

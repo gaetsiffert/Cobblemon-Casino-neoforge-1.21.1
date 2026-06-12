@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "cobblemoncasino:gacha_currency_crafting_enabled"
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "E": {
+      "item": "cobblemoncasino:event_coin"
+    }
+  },
+  "pattern": [
+    " # ",
+    "#E#",
+    " # "
+  ],
+  "result": {
+    "count": 1,
+    "id": "cobblemoncasino:primogem"
+  }
+}

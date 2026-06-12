@@ -1,10 +1,10 @@
 {
   "type": "minecraft:stonecutting",
   "ingredient": {
-    "item": "casinorocket:diamond_bricks"
+    "item": "cobblemoncasino:diamond_bricks"
   },
   "result": {
     "count": 2,
-    "id": "casinorocket:diamond_tile_slab"
+    "id": "cobblemoncasino:diamond_tile_slab"
   }
 }

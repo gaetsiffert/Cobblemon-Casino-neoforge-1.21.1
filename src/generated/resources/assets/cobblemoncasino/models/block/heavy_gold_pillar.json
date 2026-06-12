@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "cobblemoncasino:block/heavy_gold_pillar_top",
+    "side": "cobblemoncasino:block/heavy_gold_pillar"
+  }
+}

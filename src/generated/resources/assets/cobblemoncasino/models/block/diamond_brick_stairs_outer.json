@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "cobblemoncasino:block/diamond_bricks",
+    "side": "cobblemoncasino:block/diamond_bricks",
+    "top": "cobblemoncasino:block/diamond_bricks"
+  }
+}

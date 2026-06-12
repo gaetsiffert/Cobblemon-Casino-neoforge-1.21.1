@@ -1,10 +1,10 @@
 {
   "type": "minecraft:stonecutting",
   "ingredient": {
-    "item": "casinorocket:diamond_pillar"
+    "item": "cobblemoncasino:diamond_pillar"
   },
   "result": {
     "count": 1,
-    "id": "casinorocket:heavy_diamond_pillar"
+    "id": "cobblemoncasino:heavy_diamond_pillar"
   }
 }

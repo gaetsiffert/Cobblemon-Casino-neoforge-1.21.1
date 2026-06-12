@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "cobblemoncasino:block/chiseled_gold_block_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "cobblemoncasino:block/chiseled_gold_block"
+    },
+    "axis=z": {
+      "model": "cobblemoncasino:block/chiseled_gold_block_horizontal",
+      "x": 90
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/wall_inventory",
+  "textures": {
+    "wall": "cobblemoncasino:block/gold_tiles"
+  }
+}
