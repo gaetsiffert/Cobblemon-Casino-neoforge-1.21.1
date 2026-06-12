@@ -63,8 +63,7 @@ public final class CasinoLedgerDebugCommands {
                     275_000L * rankWeight);
         }
 
-        source.sendSuccess(() -> Component.literal("Filled casino ledger debug data with "
-                + DEBUG_PLAYER_COUNT + " fake players. Reopen the ledger to refresh the snapshot.")
+        source.sendSuccess(() -> Component.translatable("command.casinorocket.ledger_debug_filled", DEBUG_PLAYER_COUNT)
                 .withStyle(ChatFormatting.GREEN), true);
         return DEBUG_PLAYER_COUNT;
     }
@@ -74,9 +73,7 @@ public final class CasinoLedgerDebugCommands {
         int slotPlayers = PlayerSlotMachineData.get(server).clearLedgerStats();
         int blackjackPlayers = PlayerBlackjackData.get(server).clearLedgerStats();
 
-        source.sendSuccess(() -> Component.literal("Cleared casino ledger stats for "
-                + slotPlayers + " slots players and " + blackjackPlayers
-                + " blackjack players. Reopen the ledger to refresh the snapshot.")
+        source.sendSuccess(() -> Component.translatable("command.casinorocket.ledger_debug_cleared", slotPlayers, blackjackPlayers)
                 .withStyle(ChatFormatting.GREEN), true);
         return slotPlayers + blackjackPlayers;
     }
@@ -85,7 +82,7 @@ public final class CasinoLedgerDebugCommands {
         MinecraftServer server = source.getServer();
         UUID playerId = resolvePlayerId(server, playerName);
         if (playerId == null) {
-            source.sendFailure(Component.literal("Unknown player for ledger debug cleanup: " + playerName)
+            source.sendFailure(Component.translatable("command.casinorocket.ledger_debug_unknown_player", playerName)
                     .withStyle(ChatFormatting.RED));
             return 0;
         }
@@ -93,13 +90,12 @@ public final class CasinoLedgerDebugCommands {
         boolean removedSlots = PlayerSlotMachineData.get(server).removeLedgerStats(playerId);
         boolean removedBlackjack = PlayerBlackjackData.get(server).removeLedgerStats(playerId);
         if (!removedSlots && !removedBlackjack) {
-            source.sendFailure(Component.literal("No casino ledger stats found for " + playerName)
+            source.sendFailure(Component.translatable("command.casinorocket.ledger_debug_no_stats", playerName)
                     .withStyle(ChatFormatting.RED));
             return 0;
         }
 
-        source.sendSuccess(() -> Component.literal("Cleared casino ledger stats for " + playerName
-                + ". Reopen the ledger to refresh the snapshot.")
+        source.sendSuccess(() -> Component.translatable("command.casinorocket.ledger_debug_cleared_player", playerName)
                 .withStyle(ChatFormatting.GREEN), true);
         return 1;
     }

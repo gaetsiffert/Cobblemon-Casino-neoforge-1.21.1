@@ -27,7 +27,7 @@ public class BetScreenReceiver {
         CommonMachineOpenData data = new CommonMachineOpenData(pos, machineKey);
 
         player.openMenu(new MenuDataProvider<>(
-                Component.literal("Bet Menu"),
+                Component.translatable("gui.casinorocket.bet_menu"),
                 data,
                 CommonMachineOpenData.CODEC,
                 (syncId, inv, p, openData) -> new BetScreenHandler(syncId, inv, openData)

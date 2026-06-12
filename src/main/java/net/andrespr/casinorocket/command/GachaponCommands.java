@@ -129,7 +129,8 @@ public final class GachaponCommands {
             target = server.getPlayerList().getPlayerByName(name);
 
             if (target == null) {
-                sender.displayClientMessage(Component.literal("Player '" + name + "' is not online.").withStyle(ChatFormatting.RED), false);
+                sender.displayClientMessage(Component.translatable("command.casinorocket.player_not_online", name)
+                        .withStyle(ChatFormatting.RED), false);
                 return 0;
             }
 

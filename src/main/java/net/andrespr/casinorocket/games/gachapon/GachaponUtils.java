@@ -98,16 +98,16 @@ public class GachaponUtils {
     public static Component getPoolPercentages(String poolKey) {
         CachedPool pool = CACHE.get(poolKey);
         if (pool == null || pool.entries().isEmpty()) {
-            return Component.literal("Pool '" + poolKey + "' has no valid items.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.pool_no_valid_items", poolKey).withStyle(ChatFormatting.RED);
         }
 
         int totalWeight = pool.totalWeight();
         if (totalWeight <= 0) {
-            return Component.literal("Pool '" + poolKey + "' has total weight 0.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.pool_total_weight_zero", poolKey).withStyle(ChatFormatting.RED);
         }
 
         MutableComponent result = Component.literal("")
-                .append(Component.literal("Rates:").withStyle(ChatFormatting.UNDERLINE)).append("\n");
+                .append(Component.translatable("command.casinorocket.rates").withStyle(ChatFormatting.UNDERLINE)).append("\n");
 
         List<CachedEntry> sorted = new ArrayList<>(pool.entries());
         sorted.sort((a, b) -> Integer.compare(b.weight(), a.weight()));
@@ -119,14 +119,13 @@ public class GachaponUtils {
             first = false;
 
             ItemStack stack = new ItemStack(entry.item());
-            String name = stack.getHoverName().getString();
-
             double percentage = (entry.weight() * 100.0) / totalWeight;
             double rounded = Math.round(percentage * 100.0) / 100.0;
 
             ChatFormatting color = TextUtils.percentagesColor(rounded);
 
-            result.append(Component.literal(name + ": ")
+            result.append(stack.getHoverName())
+                    .append(Component.literal(": ")
                     .append(Component.literal(String.format("%.2f%%", rounded)).withStyle(color)));
         }
 

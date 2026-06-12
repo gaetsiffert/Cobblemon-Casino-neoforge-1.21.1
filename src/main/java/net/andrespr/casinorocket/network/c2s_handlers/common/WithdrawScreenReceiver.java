@@ -27,7 +27,7 @@ public class WithdrawScreenReceiver {
             CommonMachineOpenData data = new CommonMachineOpenData(pos, machineKey);
 
             player.openMenu(new MenuDataProvider<>(
-                    Component.literal("Withdraw Menu"),
+                    Component.translatable("gui.casinorocket.withdraw_menu"),
                     data,
                     CommonMachineOpenData.CODEC,
                     (syncId, inv, p, openData) -> new WithdrawScreenHandler(syncId, inv, openData)

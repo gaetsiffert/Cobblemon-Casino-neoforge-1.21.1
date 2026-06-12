@@ -79,14 +79,14 @@ public class PokemonGachaponUtils {
     public static Component getPoolPercentages(String poolKey) {
         CachedPool pool = CACHE.get(poolKey);
         if (pool == null || pool.entries().isEmpty())
-            return Component.literal("Pool '" + poolKey + "' has no valid Pokémon.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.pool_no_valid_pokemon", poolKey).withStyle(ChatFormatting.RED);
 
         int totalWeight = pool.totalWeight();
         if (totalWeight <= 0)
-            return Component.literal("Pool '" + poolKey + "' has total weight 0.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.pool_total_weight_zero", poolKey).withStyle(ChatFormatting.RED);
 
         MutableComponent result = Component.literal("")
-                .append(Component.literal("Rates:").withStyle(ChatFormatting.UNDERLINE)).append("\n");
+                .append(Component.translatable("command.casinorocket.rates").withStyle(ChatFormatting.UNDERLINE)).append("\n");
 
         List<CachedEntry> sorted = new ArrayList<>(pool.entries());
         sorted.sort((a, b) -> Integer.compare(b.weight(), a.weight()));

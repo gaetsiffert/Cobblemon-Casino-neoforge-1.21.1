@@ -570,7 +570,7 @@ public class GachaMachinesUtils {
 
         ItemStack reward = PlushiesGachaponUtils.pickPlushie(world.getRandom());
         if (reward.isEmpty()) {
-            user.displayClientMessage(Component.literal("No plushies are available. Pokeblocks is probably not installed.").withStyle(ChatFormatting.RED), true);
+            user.displayClientMessage(Component.translatable("message.casinorocket.no_plushies_available").withStyle(ChatFormatting.RED), true);
             CasinoRocket.LOGGER.warn("[PlushiesMachine] No valid plushies in config. Pokeblocks is probably not installed.");
             return;
         }
@@ -630,25 +630,27 @@ public class GachaMachinesUtils {
         }
 
         if (stats == null || playerName == null) {
-            return Component.literal("No recorded stats for player.").withStyle(ChatFormatting.GRAY);
+            return Component.translatable("command.casinorocket.no_recorded_stats").withStyle(ChatFormatting.GRAY);
         }
 
         // === Build formatted text ===
         MutableComponent text = Component.literal("\n")
-                .append(Component.literal("Gacha Machine Stats for ").withStyle(ChatFormatting.BOLD))
-                .append(Component.literal(playerName).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
-                .append(Component.literal(":\n").withStyle(ChatFormatting.BOLD))
-                .append(Component.literal("Total Coins Used: ").withStyle(ChatFormatting.YELLOW))
+                .append(Component.translatable("command.casinorocket.gacha_stats_for",
+                        Component.literal(playerName).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD))
+                        .withStyle(ChatFormatting.BOLD))
+                .append(Component.literal("\n"))
+                .append(Component.translatable("command.casinorocket.total_coins_used").withStyle(ChatFormatting.YELLOW))
                 .append(Component.literal(stats.getTotalCoinsUsed() + "\n\n").withStyle(ChatFormatting.YELLOW));
 
         // === Coins Used by Type ===
-        text.append(Component.literal("Coins Inserted:\n").withStyle(ChatFormatting.YELLOW));
+        text.append(Component.translatable("command.casinorocket.coins_inserted").withStyle(ChatFormatting.YELLOW))
+                .append(Component.literal("\n"));
 
         Map<String, Integer> coins = new LinkedHashMap<>();
-        coins.put("Copper", stats.copperUsed);
-        coins.put("Iron", stats.ironUsed);
-        coins.put("Gold", stats.goldUsed);
-        coins.put("Diamond", stats.diamondUsed);
+        coins.put("copper", stats.copperUsed);
+        coins.put("iron", stats.ironUsed);
+        coins.put("gold", stats.goldUsed);
+        coins.put("diamond", stats.diamondUsed);
 
         int coinIndex = 0;
         int coinSize = coins.size();
@@ -657,7 +659,8 @@ public class GachaMachinesUtils {
             int count = e.getValue();
 
             text.append(Component.literal("• ").withStyle(ChatFormatting.YELLOW))
-                    .append(Component.literal(coin + ": ").withStyle(TextUtils.coinColor(coin)))
+                    .append(Component.translatable("command.casinorocket.coin." + coin).withStyle(TextUtils.coinColor(coin)))
+                    .append(Component.literal(": ").withStyle(TextUtils.coinColor(coin)))
                     .append(Component.literal(String.valueOf(count)).withStyle(ChatFormatting.YELLOW));
 
             if (++coinIndex < coinSize) {
@@ -666,7 +669,10 @@ public class GachaMachinesUtils {
         }
 
         // === Rarity Stats ===
-        text.append(Component.literal("\n\nGachapon Rarity Obtained:\n").withStyle(ChatFormatting.YELLOW));
+        text.append(Component.literal("\n\n"))
+                .append(Component.translatable("command.casinorocket.gachapon_rarity_obtained")
+                        .withStyle(ChatFormatting.YELLOW))
+                .append(Component.literal("\n"));
 
         var entries = stats.getRarityCounts().entrySet();
         int index = 0;
@@ -677,7 +683,9 @@ public class GachaMachinesUtils {
             int count = e.getValue();
 
             text.append(Component.literal("• ").withStyle(ChatFormatting.YELLOW))
-                    .append(Component.literal(capitalize(rarity) + ": ").withStyle(TextUtils.rarityColor(rarity)))
+                    .append(Component.translatable("command.casinorocket.rarity." + rarity)
+                            .withStyle(TextUtils.rarityColor(rarity)))
+                    .append(Component.literal(": ").withStyle(TextUtils.rarityColor(rarity)))
                     .append(Component.literal(String.valueOf(count)).withStyle(ChatFormatting.YELLOW));
 
             if (++index < size) {
@@ -698,7 +706,7 @@ public class GachaMachinesUtils {
 
         // === Type validation ===
         if (!isRarity && !isCoin) {
-            return Component.literal("Invalid leaderboard type. Use 'rarity' or 'coins'.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.invalid_leaderboard_type").withStyle(ChatFormatting.RED);
         }
 
         // === Dynamic sort ===
@@ -713,15 +721,21 @@ public class GachaMachinesUtils {
                 .toList();
 
         if (sorted.isEmpty()) {
-            return Component.literal("No entries for " + category + " '" + key + "'.").withStyle(ChatFormatting.GRAY);
+            return Component.translatable("command.casinorocket.no_entries_for", category, key)
+                    .withStyle(ChatFormatting.GRAY);
         }
 
         // === Head ===
         ChatFormatting titleColor = isRarity ? TextUtils.rarityColor(input) : TextUtils.coinColor(input);
-        String titleLabel = (isRarity ? "Gacha Wins (" : "Coins Used (") + key.toUpperCase(Locale.ROOT) + ")";
+        Component titleLabel = isRarity
+                ? Component.translatable("command.casinorocket.gacha_wins_title",
+                Component.translatable("command.casinorocket.rarity." + input))
+                : Component.translatable("command.casinorocket.coins_used_title",
+                Component.translatable("command.casinorocket.coin." + input));
 
         MutableComponent out = Component.literal("\n")
-                .append(Component.literal("Top 10 - " + titleLabel).withStyle(titleColor, ChatFormatting.BOLD))
+                .append(Component.translatable("command.casinorocket.leaderboard_top", titleLabel)
+                        .withStyle(titleColor, ChatFormatting.BOLD))
                 .append(Component.literal("\n"));
 
         // === Body ===
@@ -753,17 +767,20 @@ public class GachaMachinesUtils {
 
         if (!confirm) {
             CLEAN_CONFIRMATION.put(id, now);
-            return Component.literal("⚠ Are you sure you want to delete ALL Gacha data?\n")
-                    .append(Component.literal("Type again within 30 seconds:\n").withStyle(ChatFormatting.GRAY))
+            return Component.translatable("command.casinorocket.gacha_clean_confirm_warning")
+                    .append(Component.literal("\n"))
+                    .append(Component.translatable("command.casinorocket.gacha_clean_confirm_instruction")
+                            .withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal("\n"))
                     .append(Component.literal("'/casinorocket gachapon machines cleandata confirm'").withStyle(ChatFormatting.RED, ChatFormatting.BOLD));
         }
 
         Long lastRequest = CLEAN_CONFIRMATION.get(id);
         if (lastRequest == null) {
-            return Component.literal("You must run '/casinorocket gachapon machines cleandata' first.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.gacha_clean_first").withStyle(ChatFormatting.RED);
         }
         if (now - lastRequest > window) {
-            return Component.literal("Confirmation expired. Type again '/casinorocket gachapon machines cleandata'").withStyle(ChatFormatting.GRAY);
+            return Component.translatable("command.casinorocket.gacha_clean_expired").withStyle(ChatFormatting.GRAY);
         }
 
         CLEAN_CONFIRMATION.remove(id);
@@ -778,14 +795,16 @@ public class GachaMachinesUtils {
 
         CasinoRocket.LOGGER.warn("[CasinoRocket] Cleared Gacha data: {} player stats, {} pity entries removed.", playerCount, pityCount);
 
-        return Component.literal("All Gacha data cleared successfully.\n")
-                .append(Component.literal(playerCount + " player stats and " + pityCount + " pity entries removed.").withStyle(ChatFormatting.GRAY));
+        return Component.translatable("command.casinorocket.gacha_clean_success")
+                .append(Component.literal("\n"))
+                .append(Component.translatable("command.casinorocket.gacha_clean_removed", playerCount, pityCount)
+                        .withStyle(ChatFormatting.GRAY));
     }
 
     public static Component getMachineRatesText(@Nullable ServerPlayer player, String coinKey, boolean includePity) {
         Map<String, Double> base = CasinoRocket.CONFIG.gachaMachines.normalizedProbabilities(coinKey);
         if (base == null || base.isEmpty()) {
-            return Component.literal("No rates available for coin '" + coinKey + "'.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.no_rates_for_coin", coinKey).withStyle(ChatFormatting.RED);
         }
 
         Map<String, Double> rates = new LinkedHashMap<>(base);
@@ -795,23 +814,26 @@ public class GachaMachinesUtils {
         }
 
         MutableComponent result = Component.literal("");
-        String title = includePity
-                ? "Rates with Pity (" + coinKey.toUpperCase(Locale.ROOT) + ")"
-                : "Base Rates (" + coinKey.toUpperCase(Locale.ROOT) + ")";
-        result.append(Component.literal(title).withStyle(ChatFormatting.UNDERLINE)).append("\n");
+        Component title = includePity
+                ? Component.translatable("command.casinorocket.rates_with_pity",
+                Component.translatable("command.casinorocket.coin." + coinKey.toLowerCase(Locale.ROOT)))
+                : Component.translatable("command.casinorocket.base_rates",
+                Component.translatable("command.casinorocket.coin." + coinKey.toLowerCase(Locale.ROOT)));
+        result.append(title.copy().withStyle(ChatFormatting.UNDERLINE)).append("\n");
 
         boolean first = true;
         for (var e : rates.entrySet()) {
             if (!first) result.append(Component.literal(", "));
             first = false;
 
-            String rarity = capitalize(e.getKey());
+            String rarity = e.getKey();
             double percentage = e.getValue() * 100.0;
             double rounded = Math.round(percentage * 100.0) / 100.0;
 
             ChatFormatting color = TextUtils.percentagesColor(rounded);
 
-            result.append(Component.literal(rarity + ": ")
+            result.append(Component.translatable("command.casinorocket.rarity." + rarity)
+                    .append(Component.literal(": "))
                     .append(Component.literal(String.format("%.2f%%", rounded)).withStyle(color)));
         }
 

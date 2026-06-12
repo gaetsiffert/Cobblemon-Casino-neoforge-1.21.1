@@ -85,12 +85,14 @@ public class PlushiesGachaMachineBlock extends Block {
         ItemStack stack = player.getMainHandItem();
 
         if (!stack.is(ModItems.PRIMOGEM)) {
-            player.displayClientMessage(Component.literal("This machine only accepts Primogems!").withStyle(ChatFormatting.RED), true);
+            player.displayClientMessage(Component.translatable("message.casinorocket.plushies_machine_only_accepts_primogems")
+                    .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
 
         if (!PlushiesGachaponUtils.hasRewards()) {
-            player.displayClientMessage(Component.literal("No plushies are available. Pokeblocks is probably not installed.").withStyle(ChatFormatting.RED), true);
+            player.displayClientMessage(Component.translatable("message.casinorocket.no_plushies_available")
+                    .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
 

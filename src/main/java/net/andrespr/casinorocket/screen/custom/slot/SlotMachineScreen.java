@@ -562,7 +562,7 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
         int drawX = Math.max(146 - width, 120);
 
         context.drawString(font, formatted, drawX, 36, betAmount > balance ? 0xFF5555 : 0x00FF00, true);
-        context.drawString(font, "Bet Amount", 60, 36, 0xFFFFFF, true);
+        context.drawString(font, Component.translatable("gui.casinorocket.slot_machine.bet_amount"), 60, 36, 0xFFFFFF, true);
     }
 
     private void drawBalanceAmount(GuiGraphics context) {

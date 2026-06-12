@@ -102,7 +102,8 @@ public class CasinoLedgerScreen extends AbstractContainerScreen<CasinoLedgerScre
         context.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0xFFD96A, false);
         context.drawString(this.font, Component.translatable("gui.casinorocket.casino_ledger.balance_label"),
                 108, 31, 0xFFD96A, false);
-        drawRightAligned(context, TextUtils.formatWithCommas(data.balance()) + " chips", 235, 42, 0xFFFFFF);
+        drawRightAligned(context, Component.translatable("gui.casinorocket.chip_amount",
+                TextUtils.formatWithCommas(data.balance())).getString(), 235, 42, 0xFFFFFF);
 
         context.drawString(this.font, Component.translatable("gui.casinorocket.casino_ledger.game"), 10, 28, 0xFFD96A, false);
         context.drawString(this.font, Component.translatable("gui.casinorocket.casino_ledger.record"), 10, 76, 0xFFD96A, false);
@@ -254,60 +255,60 @@ public class CasinoLedgerScreen extends AbstractContainerScreen<CasinoLedgerScre
     }
 
     private enum LedgerGame {
-        SLOTS("Slots") {
+        SLOTS("gui.casinorocket.casino_ledger.slots") {
             @Override
             CasinoLedgerOpenData.GameStats stats(CasinoLedgerOpenData data) {
                 return data.slots();
             }
         },
-        BLACKJACK("Blackjack") {
+        BLACKJACK("gui.casinorocket.casino_ledger.blackjack") {
             @Override
             CasinoLedgerOpenData.GameStats stats(CasinoLedgerOpenData data) {
                 return data.blackjack();
             }
         };
 
-        private final String label;
+        private final String labelKey;
 
-        LedgerGame(String label) {
-            this.label = label;
+        LedgerGame(String labelKey) {
+            this.labelKey = labelKey;
         }
 
-        String label() {
-            return this.label;
+        Component label() {
+            return Component.translatable(this.labelKey);
         }
 
         abstract CasinoLedgerOpenData.GameStats stats(CasinoLedgerOpenData data);
     }
 
     private enum LedgerStat {
-        HIGHEST_WIN("Highest Win") {
+        HIGHEST_WIN("gui.casinorocket.casino_ledger.highest_win") {
             @Override
             List<CasinoLedgerOpenData.LeaderboardRow> rows(CasinoLedgerOpenData.GameStats stats) {
                 return stats.highestWin();
             }
         },
-        TOTAL_WON("Total Won") {
+        TOTAL_WON("gui.casinorocket.casino_ledger.total_won") {
             @Override
             List<CasinoLedgerOpenData.LeaderboardRow> rows(CasinoLedgerOpenData.GameStats stats) {
                 return stats.totalWon();
             }
         },
-        TOTAL_LOST("Total Lost") {
+        TOTAL_LOST("gui.casinorocket.casino_ledger.total_lost") {
             @Override
             List<CasinoLedgerOpenData.LeaderboardRow> rows(CasinoLedgerOpenData.GameStats stats) {
                 return stats.totalLost();
             }
         };
 
-        private final String label;
+        private final String labelKey;
 
-        LedgerStat(String label) {
-            this.label = label;
+        LedgerStat(String labelKey) {
+            this.labelKey = labelKey;
         }
 
-        String label() {
-            return this.label;
+        Component label() {
+            return Component.translatable(this.labelKey);
         }
 
         abstract List<CasinoLedgerOpenData.LeaderboardRow> rows(CasinoLedgerOpenData.GameStats stats);

@@ -86,14 +86,16 @@ public class EventGachaMachineBlock extends Block {
         ItemStack stack = player.getMainHandItem();
 
         if (!stack.is(ModItems.EVENT_COIN)) {
-            player.displayClientMessage(Component.literal("This machine only accepts Event Coins!").withStyle(ChatFormatting.RED), true);
+            player.displayClientMessage(Component.translatable("message.casinorocket.event_machine_only_accepts_event_coins")
+                    .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
 
         boolean hasItems = GachaponUtils.hasValidPool("event");
         boolean hasPokemon = PokemonGachaponUtils.hasValidPool("event");
         if (!hasItems && !hasPokemon) {
-            player.displayClientMessage(Component.literal("There's no event at the moment.").withStyle(ChatFormatting.RED), true);
+            player.displayClientMessage(Component.translatable("message.casinorocket.no_event_active")
+                    .withStyle(ChatFormatting.RED), true);
             return InteractionResult.FAIL;
         }
 

@@ -15,7 +15,7 @@ public class SlotUtils {
 
     public static Component getRatesText() {
         if (SlotReels.STRIPS == null || SlotReels.STRIPS.length < 3) {
-            return Component.literal("Slot rates are not loaded.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.slot_rates_not_loaded").withStyle(ChatFormatting.RED);
         }
 
         SlotSymbol[] reel1 = SlotReels.STRIPS[0];
@@ -23,9 +23,9 @@ public class SlotUtils {
         SlotSymbol[] reel3 = SlotReels.STRIPS[2];
 
         MutableComponent out = Component.literal("")
-                .append(Component.literal("Slots Rates").withStyle(ChatFormatting.UNDERLINE))
+                .append(Component.translatable("command.casinorocket.slots_rates").withStyle(ChatFormatting.UNDERLINE))
                 .append("\n")
-                .append(Component.literal("Per played line: ").withStyle(ChatFormatting.GRAY));
+                .append(Component.translatable("command.casinorocket.per_played_line").withStyle(ChatFormatting.GRAY));
 
         double totalWin = 0.0;
         List<RateLine> lines = new ArrayList<>();
@@ -36,16 +36,17 @@ public class SlotUtils {
         double cherry3 = probability(reel1, SlotSymbol.CHERRY) * probability(reel2, SlotSymbol.CHERRY)
                 * probability(reel3, SlotSymbol.CHERRY);
 
-        lines.add(new RateLine("Cherry (1 symbol)", cherry1, "x2"));
-        lines.add(new RateLine("Cherry (2 symbols)", cherry2, "x3"));
-        lines.add(new RateLine("Cherry (3 symbols)", cherry3, "x5"));
+        lines.add(new RateLine(Component.translatable("command.casinorocket.slot_symbol.cherry_1"), cherry1, "x2"));
+        lines.add(new RateLine(Component.translatable("command.casinorocket.slot_symbol.cherry_2"), cherry2, "x3"));
+        lines.add(new RateLine(Component.translatable("command.casinorocket.slot_symbol.cherry_3"), cherry3, "x5"));
         totalWin += cherry1 + cherry2 + cherry3;
 
         for (SlotSymbol symbol : SlotSymbol.values()) {
             if (symbol == SlotSymbol.HAUNTER || symbol == SlotSymbol.CHERRY) continue;
 
             double chance = probability(reel1, symbol) * probability(reel2, symbol) * probability(reel3, symbol);
-            lines.add(new RateLine(symbol.name() + " (3 symbols)", chance, "x" + symbol.getTripleMultiplier()));
+            lines.add(new RateLine(Component.translatable("command.casinorocket.slot_symbol.triple",
+                    symbol.name()), chance, "x" + symbol.getTripleMultiplier()));
             totalWin += chance;
         }
 
@@ -56,13 +57,14 @@ public class SlotUtils {
             if (!first) out.append(Component.literal(", "));
             first = false;
 
-            out.append(Component.literal(line.label() + " -> " + line.multiplier() + ": "))
+            out.append(line.label())
+                    .append(Component.literal(" -> " + line.multiplier() + ": "))
                     .append(formatPercent(line.chance()));
         }
 
         out.append("\n")
-                .append(Component.literal("Modes: ").withStyle(ChatFormatting.GRAY))
-                .append(Component.literal("Mode 1 = 1 line, Mode 2 = 3 lines, Mode 3 = 5 lines").withStyle(ChatFormatting.WHITE));
+                .append(Component.translatable("command.casinorocket.modes").withStyle(ChatFormatting.GRAY))
+                .append(Component.translatable("command.casinorocket.slot_modes").withStyle(ChatFormatting.WHITE));
 
         return out;
     }
@@ -80,7 +82,7 @@ public class SlotUtils {
         };
 
         if (valueFn == null) {
-            return Component.literal("Invalid key.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.invalid_key").withStyle(ChatFormatting.RED);
         }
 
         List<Map.Entry<UUID, Long>> rows = new ArrayList<>();
@@ -93,7 +95,7 @@ public class SlotUtils {
         }
 
         if (rows.isEmpty()) {
-            return Component.literal("No leaderboard entries yet.").withStyle(ChatFormatting.GRAY);
+            return Component.translatable("command.casinorocket.no_leaderboard_entries").withStyle(ChatFormatting.GRAY);
         }
 
         rows.sort(Comparator.<Map.Entry<UUID, Long>>comparingLong(Map.Entry::getValue).reversed());
@@ -101,11 +103,11 @@ public class SlotUtils {
         int limit = Math.min(10, rows.size());
         List<Map.Entry<UUID, Long>> top = rows.subList(0, limit);
 
-        String titleLabel = switch (k) {
-            case "highest_win" -> "Slots - Highest Win";
-            case "total_win" -> "Slots - Total Won";
-            case "total_lost" -> "Slots - Total Lost";
-            default -> "Slots Leaderboard";
+        Component titleLabel = switch (k) {
+            case "highest_win" -> Component.translatable("command.casinorocket.slots_highest_win");
+            case "total_win" -> Component.translatable("command.casinorocket.slots_total_won");
+            case "total_lost" -> Component.translatable("command.casinorocket.slots_total_lost");
+            default -> Component.translatable("command.casinorocket.slots_leaderboard");
         };
 
         ChatFormatting titleColor = switch (k) {
@@ -116,7 +118,8 @@ public class SlotUtils {
         };
 
         MutableComponent out = Component.literal("\n")
-                .append(Component.literal("Top 10 - " + titleLabel).withStyle(titleColor, ChatFormatting.BOLD))
+                .append(Component.translatable("command.casinorocket.leaderboard_top", titleLabel)
+                        .withStyle(titleColor, ChatFormatting.BOLD))
                 .append(Component.literal("\n"));
 
         for (int i = 0; i < top.size(); i++) {
@@ -175,7 +178,7 @@ public class SlotUtils {
                 .withStyle(TextUtils.percentagesColor(rounded));
     }
 
-    private record RateLine(String label, double chance, String multiplier) {}
+    private record RateLine(Component label, double chance, String multiplier) {}
 
 }
 

@@ -39,13 +39,13 @@ public class MenuScreenReceiver {
 
                 SlotMachineOpenData data = new SlotMachineOpenData(pos, key, balance, betBase, lines);
                 player.openMenu(new MenuDataProvider<>(
-                        Component.literal("Slot Machine Menu"),
+                        Component.translatable("gui.casinorocket.slot_machine_menu"),
                         data,
                         SlotMachineOpenData.CODEC,
                         (syncId, inv, p, openData) -> new SlotMachineMenuScreenHandler(syncId, inv, openData)
                 ));
             }
-            case "blackjack" -> player.displayClientMessage(Component.literal("This machine has no menu."), true);
+            case "blackjack" -> player.displayClientMessage(Component.translatable("message.casinorocket.machine_has_no_menu"), true);
             default -> CasinoRocket.LOGGER.warn("[MenuOpen] Unknown machineKey={} from {}", key, player.getGameProfile().getName());
         }
     }

@@ -176,7 +176,8 @@ public class ChipTableScreen extends AbstractContainerScreen<ChipTableScreenHand
         int rowY = panelY + 17;
         for (ChipTableExchange.ValueEntry entry : entries) {
             context.renderItem(entry.stack(), panelX + 5, rowY);
-            context.drawString(this.font, TextUtils.formatWithCommas(entry.value()) + " chips",
+            context.drawString(this.font, Component.translatable("gui.casinorocket.chip_amount",
+                            TextUtils.formatWithCommas(entry.value())),
                     panelX + 26, rowY + 4, 0xFFFFFF, false);
             rowY += VALUE_PANEL_ROW_HEIGHT;
         }

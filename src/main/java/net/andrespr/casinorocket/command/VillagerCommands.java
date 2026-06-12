@@ -115,7 +115,7 @@ public final class VillagerCommands {
 
         IShop shop = SHOP_TYPES.get(type);
         if (shop == null) {
-            source.sendFailure(Component.literal("Unknown casino worker type: " + type));
+            source.sendFailure(Component.translatable("command.casinorocket.unknown_casino_worker_type", type));
             return 0;
         }
 
@@ -125,7 +125,7 @@ public final class VillagerCommands {
 
         VillagerTradeHelper.ShopData data = shop.build();
         if (!VillagerTradeHelper.hasTrades(data)) {
-            source.sendFailure(Component.literal("Casino worker type has no valid offers with the currently loaded mods: " + type));
+            source.sendFailure(Component.translatable("command.casinorocket.casino_worker_no_valid_offers", type));
             return 0;
         }
 
@@ -151,13 +151,13 @@ public final class VillagerCommands {
         try {
             villager = EntityType.VILLAGER.create(world);
             if (villager == null) {
-                source.sendFailure(Component.literal("Failed to create villager entity."));
+                source.sendFailure(Component.translatable("command.casinorocket.failed_create_villager"));
                 return 0;
             }
             villager.load(root);
         } catch (Exception e) {
             CasinoRocket.LOGGER.error("Error creating villager from NBT", e);
-            source.sendFailure(Component.literal("Error creating villager from NBT: " + e.getMessage()));
+            source.sendFailure(Component.translatable("command.casinorocket.error_create_villager_nbt", e.getMessage()));
             return 0;
         }
         SuitData.setSuitServer(villager, data.suitId);
@@ -173,12 +173,12 @@ public final class VillagerCommands {
             spawned = world.addFreshEntity(villager);
         } catch (Exception e) {
             CasinoRocket.LOGGER.error("Exception when spawning entity", e);
-            source.sendFailure(Component.literal("Exception when spawning entity: " + e.getMessage()));
+            source.sendFailure(Component.translatable("command.casinorocket.exception_spawning_entity", e.getMessage()));
             return 0;
         }
 
         if (!spawned) {
-            source.sendFailure(Component.literal("The entity couldn't be spawned in the world."));
+            source.sendFailure(Component.translatable("command.casinorocket.entity_spawn_failed"));
             return 0;
         }
         SuitSync.sendSuitSync(villager, data.suitId);
@@ -186,7 +186,7 @@ public final class VillagerCommands {
             CasinoRocketPackets.sendToPlayer(player, new SuitSyncPayload(villager.getId(), data.suitId));
         }
 
-        source.sendSuccess(() -> Component.literal("§a¡" + type + " spawned correctly!"), false);
+        source.sendSuccess(() -> Component.translatable("command.casinorocket.casino_worker_spawned", type), false);
         return 1;
     }
 
@@ -194,32 +194,32 @@ public final class VillagerCommands {
     private static int executeSetSuit(CommandSourceStack source, String suitName) {
         ServerPlayer player = source.getPlayer();
         if (player == null) {
-            source.sendFailure(Component.literal("This command can only be used by a player."));
+            source.sendFailure(Component.translatable("command.casinorocket.player_only_command"));
             return 0;
         }
 
         Integer suitValue = SUIT_NAMES.get(suitName);
         if (suitValue == null) {
-            source.sendFailure(Component.literal("Unknown suit name: " + suitName));
+            source.sendFailure(Component.translatable("command.casinorocket.unknown_suit_name", suitName));
             return 0;
         }
 
         Villager villager = getLookedVillager(source);
         if (villager == null) {
-            source.sendFailure(Component.literal("You must be looking at a Villager!"));
+            source.sendFailure(Component.translatable("command.casinorocket.must_look_at_villager"));
             return 0;
         }
 
         int current = SuitData.getSuit(villager);
         if (current == suitValue) {
-            source.sendSuccess(() -> Component.literal("Suit already set to " + suitName), false);
+            source.sendSuccess(() -> Component.translatable("command.casinorocket.suit_already_set", suitName), false);
             return 1;
         }
 
         SuitData.setSuitServer(villager, suitValue);
         SuitSync.sendSuitSync(villager, suitValue);
 
-        source.sendSuccess(() -> Component.literal(suitName + " set to " + villager.getName().getString()), true);
+        source.sendSuccess(() -> Component.translatable("command.casinorocket.suit_set", suitName, villager.getName()), true);
         return 1;
     }
 
@@ -227,14 +227,14 @@ public final class VillagerCommands {
     private static int executeSetAi(CommandSourceStack source, boolean enabled) {
         Villager villager = getLookedVillager(source);
         if (villager == null) {
-            source.sendFailure(Component.literal("You must be looking at a Villager!"));
+            source.sendFailure(Component.translatable("command.casinorocket.must_look_at_villager"));
             return 0;
         }
 
         villager.setNoAi(!enabled);
 
         source.sendSuccess(() ->
-                Component.literal("AI set to " + enabled + " for " + villager.getName().getString()), true);
+                Component.translatable("command.casinorocket.ai_set", enabled, villager.getName()), true);
         return 1;
     }
 
@@ -242,13 +242,13 @@ public final class VillagerCommands {
     private static int executeLookPlayer(CommandSourceStack source, boolean enabled) {
         Villager villager = getLookedVillager(source);
         if (villager == null) {
-            source.sendFailure(Component.literal("You must be looking at a Villager!"));
+            source.sendFailure(Component.translatable("command.casinorocket.must_look_at_villager"));
             return 0;
         }
 
         LookPlayerData.setLookPlayer(villager, enabled ? 1 : 0);
 
-        source.sendSuccess(() -> Component.literal("LookPlayer set to " + enabled + " for " + villager.getName().getString()), true);
+        source.sendSuccess(() -> Component.translatable("command.casinorocket.look_player_set", enabled, villager.getName()), true);
         return 1;
     }
 
@@ -256,13 +256,13 @@ public final class VillagerCommands {
     private static int executeLookDirection(CommandSourceStack source, String dir) {
         Villager villager = getLookedVillager(source);
         if (villager == null) {
-            source.sendFailure(Component.literal("You must be looking at a Villager!"));
+            source.sendFailure(Component.translatable("command.casinorocket.must_look_at_villager"));
             return 0;
         }
 
         Float yaw = directionToYaw(dir);
         if (yaw == null) {
-            source.sendFailure(Component.literal("Invalid direction: " + dir));
+            source.sendFailure(Component.translatable("command.casinorocket.invalid_direction", dir));
             return 0;
         }
 
@@ -278,7 +278,7 @@ public final class VillagerCommands {
         villager.yHeadRotO = yaw;
         villager.xRotO = 0f;
 
-        source.sendSuccess(() -> Component.literal("Idle direction set to " + dir + " for " + villager.getName().getString()), true);
+        source.sendSuccess(() -> Component.translatable("command.casinorocket.idle_direction_set", dir, villager.getName()), true);
         return 1;
     }
 

@@ -28,7 +28,7 @@ public final class BlackjackUtils {
         };
 
         if (valueFn == null) {
-            return Component.literal("Invalid key.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.invalid_key").withStyle(ChatFormatting.RED);
         }
 
         List<Map.Entry<UUID, Long>> rows = new ArrayList<>();
@@ -41,7 +41,7 @@ public final class BlackjackUtils {
         }
 
         if (rows.isEmpty()) {
-            return Component.literal("No leaderboard entries yet.").withStyle(ChatFormatting.GRAY);
+            return Component.translatable("command.casinorocket.no_leaderboard_entries").withStyle(ChatFormatting.GRAY);
         }
 
         rows.sort(Comparator.<Map.Entry<UUID, Long>>comparingLong(Map.Entry::getValue).reversed());
@@ -49,11 +49,11 @@ public final class BlackjackUtils {
         int limit = Math.min(10, rows.size());
         List<Map.Entry<UUID, Long>> top = rows.subList(0, limit);
 
-        String titleLabel = switch (k) {
-            case "highest_win" -> "Blackjack - Highest Win";
-            case "total_win" -> "Blackjack - Total Won";
-            case "total_lost" -> "Blackjack - Total Lost";
-            default -> "Blackjack Leaderboard";
+        Component titleLabel = switch (k) {
+            case "highest_win" -> Component.translatable("command.casinorocket.blackjack_highest_win");
+            case "total_win" -> Component.translatable("command.casinorocket.blackjack_total_won");
+            case "total_lost" -> Component.translatable("command.casinorocket.blackjack_total_lost");
+            default -> Component.translatable("command.casinorocket.blackjack_leaderboard");
         };
 
         ChatFormatting titleColor = switch (k) {
@@ -64,7 +64,8 @@ public final class BlackjackUtils {
         };
 
         MutableComponent out = Component.literal("\n")
-                .append(Component.literal("Top 10 - " + titleLabel).withStyle(titleColor, ChatFormatting.BOLD))
+                .append(Component.translatable("command.casinorocket.leaderboard_top", titleLabel)
+                        .withStyle(titleColor, ChatFormatting.BOLD))
                 .append(Component.literal("\n"));
 
         for (int i = 0; i < top.size(); i++) {

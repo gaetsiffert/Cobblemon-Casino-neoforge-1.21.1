@@ -98,14 +98,14 @@ public final class PlushiesGachaponUtils {
     public static Component getRates() {
 
         if (ENTRIES.isEmpty()) {
-            return Component.literal("No plushies are available. Pokeblocks is probably not installed.").withStyle(ChatFormatting.RED);
+            return Component.translatable("message.casinorocket.no_plushies_available").withStyle(ChatFormatting.RED);
         }
         if (TOTAL_WEIGHT <= 0) {
-            return Component.literal("Plushies total weight is 0.").withStyle(ChatFormatting.RED);
+            return Component.translatable("command.casinorocket.plushies_total_weight_zero").withStyle(ChatFormatting.RED);
         }
 
         MutableComponent result = Component.literal("")
-                .append(Component.literal("Rates:").withStyle(ChatFormatting.UNDERLINE))
+                .append(Component.translatable("command.casinorocket.rates").withStyle(ChatFormatting.UNDERLINE))
                 .append("\n");
 
         List<CachedEntry> sorted = new ArrayList<>(ENTRIES);
@@ -117,14 +117,14 @@ public final class PlushiesGachaponUtils {
             first = false;
 
             ItemStack stack = new ItemStack(e.item());
-            String name = stack.getHoverName().getString();
-
             double pct = (e.weight() * 100.0) / TOTAL_WEIGHT;
             double rounded = Math.round(pct * 100.0) / 100.0;
 
             ChatFormatting color = TextUtils.percentagesColor(rounded);
 
-            result.append(Component.literal(name + ": ").append(Component.literal(String.format("%.2f%%", rounded)).withStyle(color)));
+            result.append(stack.getHoverName())
+                    .append(Component.literal(": ")
+                            .append(Component.literal(String.format("%.2f%%", rounded)).withStyle(color)));
         }
 
         return result;
