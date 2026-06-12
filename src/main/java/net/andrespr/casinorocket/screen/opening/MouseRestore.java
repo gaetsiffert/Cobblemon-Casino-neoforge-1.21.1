@@ -44,7 +44,9 @@ public final class MouseRestore {
 
         GLFW.glfwSetCursorPos(handle, x, y);
 
-        clear();
+        if (applyAttemptsRemaining <= 0) {
+            clear();
+        }
         return true;
     }
 

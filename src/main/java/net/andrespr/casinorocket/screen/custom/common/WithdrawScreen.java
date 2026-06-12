@@ -32,6 +32,7 @@ public class WithdrawScreen extends CasinoMachineScreen<WithdrawScreenHandler> {
         int baseY = (this.height - this.imageHeight) / 2;
 
         this.withdrawButton = ModButtons.doWithdraw(baseX, baseY, 46, 2, b -> onDoWithdrawPressed());
+        this.addRenderableWidget(ModButtons.back(baseX, baseY, 6, 2, b -> onBackPressed()));
         this.addRenderableWidget(this.withdrawButton);
         updateWithdrawButtonState();
     }

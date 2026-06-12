@@ -57,6 +57,8 @@ public final class ModGuiTextures {
             id("textures/gui/common/buttons/mode2_button.png");     // 14x42 -> 14x14 (x3)
     public static final ResourceLocation BTN_MODE3 =
             id("textures/gui/common/buttons/mode3_button.png");     // 14x42 -> 14x14 (x3)
+    public static final ResourceLocation BTN_BACK =
+            id("textures/gui/common/buttons/back_button.png");      // 25x24 -> 25x12 (x2)
 
     // === SLOT MACHINE SYMBOLS ===
     public static final ResourceLocation HAUNTER =

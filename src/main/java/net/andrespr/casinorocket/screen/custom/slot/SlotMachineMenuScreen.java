@@ -5,7 +5,6 @@ import net.andrespr.casinorocket.network.c2s.slots.ChangeBetBaseC2SPayload;
 import net.andrespr.casinorocket.network.c2s.slots.ChangeLinesModeC2SPayload;
 import net.andrespr.casinorocket.screen.ModGuiTextures;
 import net.andrespr.casinorocket.screen.custom.CasinoMachineScreen;
-import net.andrespr.casinorocket.screen.opening.MouseRestore;
 import net.andrespr.casinorocket.screen.widget.ModButtons;
 import net.andrespr.casinorocket.screen.widget.SlotButton;
 import net.andrespr.casinorocket.games.slot.SlotMachineConstants;
@@ -48,6 +47,7 @@ public class SlotMachineMenuScreen extends CasinoMachineScreen<SlotMachineMenuSc
         this.mode2Button = ModButtons.mode2(baseX, baseY, 6, 82, b -> onMode2Pressed());
         this.mode3Button = ModButtons.mode3(baseX, baseY, 6, 97, b -> onMode3Pressed());
 
+        this.addRenderableWidget(ModButtons.back(baseX, baseY, 6, 131, b -> onBackPressed()));
         this.addRenderableWidget(this.plusButton);
         this.addRenderableWidget(this.subtractButton);
         this.addRenderableWidget(this.mode1Button);
@@ -97,7 +97,6 @@ public class SlotMachineMenuScreen extends CasinoMachineScreen<SlotMachineMenuSc
     @Override
     protected void containerTick() {
         super.containerTick();
-        MouseRestore.applyIfPending(minecraft);
     }
 
     // === BACKGROUND ===
@@ -132,8 +131,10 @@ public class SlotMachineMenuScreen extends CasinoMachineScreen<SlotMachineMenuSc
         String formatted = TextUtils.formatCompact(finalBet);
         context.drawString(font, formatted, 23, 38, 0x00AA00, true);
 
+        int linesLayoutX = 35;
+        int linesLayoutY = 112;
         int srcY = (linesMode - 1) * 30;
-        context.blit(ModGuiTextures.LINES_LAYOUT, 21,112, 0, srcY,
+        context.blit(ModGuiTextures.LINES_LAYOUT, linesLayoutX, linesLayoutY, 0, srcY,
                 43, 30, 43, 30 * 3);
 
     }

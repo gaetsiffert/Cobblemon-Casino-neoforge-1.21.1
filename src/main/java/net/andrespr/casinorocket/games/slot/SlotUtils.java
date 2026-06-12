@@ -13,6 +13,60 @@ import java.util.function.ToLongFunction;
 
 public class SlotUtils {
 
+    public static Component getRatesText() {
+        if (SlotReels.STRIPS == null || SlotReels.STRIPS.length < 3) {
+            return Component.literal("Slot rates are not loaded.").withStyle(ChatFormatting.RED);
+        }
+
+        SlotSymbol[] reel1 = SlotReels.STRIPS[0];
+        SlotSymbol[] reel2 = SlotReels.STRIPS[1];
+        SlotSymbol[] reel3 = SlotReels.STRIPS[2];
+
+        MutableComponent out = Component.literal("")
+                .append(Component.literal("Slots Rates").withStyle(ChatFormatting.UNDERLINE))
+                .append("\n")
+                .append(Component.literal("Per played line: ").withStyle(ChatFormatting.GRAY));
+
+        double totalWin = 0.0;
+        List<RateLine> lines = new ArrayList<>();
+
+        double cherry1 = probability(reel1, SlotSymbol.CHERRY) * (1.0 - probability(reel2, SlotSymbol.CHERRY));
+        double cherry2 = probability(reel1, SlotSymbol.CHERRY) * probability(reel2, SlotSymbol.CHERRY)
+                * (1.0 - probability(reel3, SlotSymbol.CHERRY));
+        double cherry3 = probability(reel1, SlotSymbol.CHERRY) * probability(reel2, SlotSymbol.CHERRY)
+                * probability(reel3, SlotSymbol.CHERRY);
+
+        lines.add(new RateLine("Cherry (1 symbol)", cherry1, "x2"));
+        lines.add(new RateLine("Cherry (2 symbols)", cherry2, "x3"));
+        lines.add(new RateLine("Cherry (3 symbols)", cherry3, "x5"));
+        totalWin += cherry1 + cherry2 + cherry3;
+
+        for (SlotSymbol symbol : SlotSymbol.values()) {
+            if (symbol == SlotSymbol.HAUNTER || symbol == SlotSymbol.CHERRY) continue;
+
+            double chance = probability(reel1, symbol) * probability(reel2, symbol) * probability(reel3, symbol);
+            lines.add(new RateLine(symbol.name() + " (3 symbols)", chance, "x" + symbol.getTripleMultiplier()));
+            totalWin += chance;
+        }
+
+        out.append(formatPercent(totalWin)).append("\n");
+
+        boolean first = true;
+        for (RateLine line : lines) {
+            if (!first) out.append(Component.literal(", "));
+            first = false;
+
+            out.append(Component.literal(line.label() + " -> " + line.multiplier() + ": "))
+                    .append(formatPercent(line.chance()));
+        }
+
+        out.append("\n")
+                .append(Component.literal("Modes: ").withStyle(ChatFormatting.GRAY))
+                .append(Component.literal("Mode 1 = 1 line, Mode 2 = 3 lines, Mode 3 = 5 lines").withStyle(ChatFormatting.WHITE));
+
+        return out;
+    }
+
     public static Component getLeaderboardText(MinecraftServer server, String key) {
         PlayerSlotMachineData data = PlayerSlotMachineData.get(server);
 
@@ -102,6 +156,26 @@ public class SlotUtils {
         String s = id.toString().replace("-", "");
         return s.substring(0, 8);
     }
+
+    private static double probability(SlotSymbol[] reel, SlotSymbol symbol) {
+        if (reel == null || reel.length == 0) return 0.0;
+
+        int count = 0;
+        for (SlotSymbol entry : reel) {
+            if (entry == symbol) count++;
+        }
+
+        return (double) count / reel.length;
+    }
+
+    private static MutableComponent formatPercent(double rate) {
+        double percentage = rate * 100.0;
+        double rounded = Math.round(percentage * 100.0) / 100.0;
+        return Component.literal(String.format(Locale.ROOT, "%.2f%%", rounded))
+                .withStyle(TextUtils.percentagesColor(rounded));
+    }
+
+    private record RateLine(String label, double chance, String multiplier) {}
 
 }
 

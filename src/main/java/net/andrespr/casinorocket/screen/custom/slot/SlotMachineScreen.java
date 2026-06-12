@@ -10,7 +10,6 @@ import net.andrespr.casinorocket.screen.ModGuiTextures;
 import net.andrespr.casinorocket.screen.custom.CasinoMachineScreen;
 import net.andrespr.casinorocket.screen.layout.DancingClefairy;
 import net.andrespr.casinorocket.screen.layout.SlotLineSprite;
-import net.andrespr.casinorocket.screen.opening.MouseRestore;
 import net.andrespr.casinorocket.screen.widget.ModButtons;
 import net.andrespr.casinorocket.screen.widget.SlotButton;
 import net.andrespr.casinorocket.sound.ModSounds;
@@ -249,7 +248,6 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
     @Override
     public void containerTick() {
         super.containerTick();
-        MouseRestore.applyIfPending(minecraft);
 
         if (isSpinning) {
             boolean anySpinning = false;
@@ -510,7 +508,7 @@ public class SlotMachineScreen extends CasinoMachineScreen<SlotMachineScreenHand
         if (best == null) return;
 
         switch (best) {
-            case SEVEN -> minecraft.player.playSound(ModSounds.JACKPOT, 1f, 1f);
+            case SEVEN -> {}
             case ROCKET -> minecraft.player.playSound(ModSounds.LEGENDARY_PRIZE, 1f, 1f);
             case MEW -> minecraft.player.playSound(ModSounds.ULTRARARE_PRIZE, 1f, 1f);
             case PIKACHU -> minecraft.player.playSound(ModSounds.RARE_PRIZE, 1f, 1f);

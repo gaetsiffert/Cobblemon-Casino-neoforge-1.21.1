@@ -30,14 +30,22 @@ public abstract class CasinoMachineScreen<T extends AbstractContainerMenu> exten
         this.renderTooltip(context, mouseX, mouseY);
     }
 
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        MouseRestore.applyIfPending(minecraft);
+    }
+
     protected void onBetPressed() {
         if (minecraft != null && minecraft.player != null) {
+            MouseRestore.capture();
             CasinoRocketPackets.sendToServer(new OpenBetScreenC2SPayload());
         }
     }
 
     protected void onWithdrawPressed() {
         if (minecraft != null && minecraft.player != null) {
+            MouseRestore.capture();
             CasinoRocketPackets.sendToServer(new OpenWithdrawScreenC2SPayload());
         }
     }
@@ -51,6 +59,10 @@ public abstract class CasinoMachineScreen<T extends AbstractContainerMenu> exten
 
     protected boolean returnToMachineOnEsc() {
         return true;
+    }
+
+    protected void onBackPressed() {
+        this.onClose();
     }
 
     @Override

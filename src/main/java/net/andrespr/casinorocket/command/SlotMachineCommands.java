@@ -13,6 +13,9 @@ public final class SlotMachineCommands {
 
     public static LiteralArgumentBuilder<CommandSourceStack> buildSubcommand() {
         return Commands.literal("slots")
+                .then(Commands.literal("rates")
+                        .executes(SlotMachineCommands::executeRates)
+                )
                 .then(Commands.literal("leaderboard")
                         .then(Commands.literal("highest_win")
                                 .executes(ctx -> executeLeaderboard(ctx, "highest_win")))
@@ -21,6 +24,14 @@ public final class SlotMachineCommands {
                         .then(Commands.literal("total_lost")
                                 .executes(ctx -> executeLeaderboard(ctx, "total_lost")))
                 );
+    }
+
+    private static int executeRates(CommandContext<CommandSourceStack> context) {
+        ServerPlayer sender = getPlayer(context);
+        if (sender == null) return 0;
+
+        sender.displayClientMessage(SlotUtils.getRatesText(), false);
+        return 1;
     }
 
     private static int executeLeaderboard(CommandContext<CommandSourceStack> context, String key) {

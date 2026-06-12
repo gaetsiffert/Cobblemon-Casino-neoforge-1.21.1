@@ -33,6 +33,7 @@ public class BetScreen extends CasinoMachineScreen<BetScreenHandler> {
         int baseY = (this.height - this.imageHeight) / 2;
 
         this.betButton = ModButtons.doBet(baseX, baseY, 46, 2, b -> onDoBetPressed());
+        this.addRenderableWidget(ModButtons.back(baseX, baseY, 6, 2, b -> onBackPressed()));
         this.addRenderableWidget(this.betButton);
         updateBetButtonState();
     }

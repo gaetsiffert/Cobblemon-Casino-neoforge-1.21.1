@@ -8,9 +8,11 @@ import net.andrespr.casinorocket.data.PlayerSlotMachineData;
 import net.andrespr.casinorocket.games.slot.SlotMachineConstants;
 import net.andrespr.casinorocket.games.slot.SlotSpinEngine;
 import net.andrespr.casinorocket.games.slot.SlotSpinResult;
+import net.andrespr.casinorocket.games.slot.SlotSymbol;
 import net.andrespr.casinorocket.network.c2s.slots.DoSpinC2SPayload;
 import net.andrespr.casinorocket.network.s2c.SendSpinResultS2CPayload;
 import net.andrespr.casinorocket.screen.custom.slot.SlotMachineScreenHandler;
+import net.andrespr.casinorocket.sound.SlotJackpotSoundScheduler;
 import net.andrespr.casinorocket.util.MoneyCalculator;
 import net.andrespr.casinorocket.network.CasinoRocketPackets;
 import net.minecraft.server.MinecraftServer;
@@ -19,13 +21,15 @@ import java.util.UUID;
 
 public class DoSpinReceiver {
 
+    private static final int JACKPOT_SOUND_DELAY_TICKS = 54;
+
     public static void handle(DoSpinC2SPayload payload, IPayloadContext context) {
 
         ServerPlayer player = (ServerPlayer) context.player();
         MinecraftServer server = player.getServer();
         if (server == null) return;
 
-        if (!(player.containerMenu instanceof SlotMachineScreenHandler)) {
+        if (!(player.containerMenu instanceof SlotMachineScreenHandler handler)) {
             return;
         }
         if (!player.containerMenu.stillValid(player)) return;
@@ -52,6 +56,10 @@ public class DoSpinReceiver {
         SlotSpinEngine.SpinStop stop = outcome.stop();
         SlotSpinResult spinResult = outcome.result();
 
+        if (isJackpot(spinResult)) {
+            SlotJackpotSoundScheduler.schedule(player.serverLevel(), handler.getMachinePos(), JACKPOT_SOUND_DELAY_TICKS);
+        }
+
         int stop1 = stop.index1();
         int stop2 = stop.index2();
         int stop3 = stop.index3();
@@ -76,6 +84,11 @@ public class DoSpinReceiver {
         CasinoRocketPackets.sendToPlayer(player,
                 SendSpinResultS2CPayload.from(newBalance, linesMode, stop1, stop2, stop3, spinResult)
         );
+    }
+
+    private static boolean isJackpot(SlotSpinResult result) {
+        return result.lines().stream()
+                .anyMatch(line -> line.win() && line.symbol() == SlotSymbol.SEVEN);
     }
 
 }

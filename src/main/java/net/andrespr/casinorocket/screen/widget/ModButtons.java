@@ -8,6 +8,10 @@ public final class ModButtons {
 
     private ModButtons() {}
 
+    public static BackButton back(int baseX, int baseY, int x, int y, Button.OnPress onPress) {
+        return new BackButton(baseX + x, baseY + y, onPress);
+    }
+
     // BET MENU
     public static CommonButton doBet(int baseX, int baseY, int x, int y, Button.OnPress onPress) {
         return new CommonButton(baseX + x, baseY + y, 29, 12, ModGuiTextures.BTN_SMALL, onPress, Component.translatable("button.casinorocket.bet"));
